@@ -3,6 +3,7 @@ import Footer from "@/components/Footer";
 import CategoryHeader from "@/components/CategoryHeader";
 import NewsCard from "@/components/NewsCard";
 import Sidebar from "@/components/Sidebar";
+import SEO from "@/components/SEO";
 import { getCategoryBySlug } from "@/data/categories";
 import { getNewsByCategory } from "@/data/mockNews";
 
@@ -12,6 +13,13 @@ const BusinessPage = () => {
 
   return (
     <div className="min-h-screen bg-background">
+      <SEO
+        title={`${category.titleHindi} समाचार`}
+        description={category.description}
+        canonical={category.path}
+        ogType="website"
+      />
+
       <Header />
       
       <main className="container py-6">

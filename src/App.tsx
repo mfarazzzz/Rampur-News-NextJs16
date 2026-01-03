@@ -3,6 +3,7 @@ import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { HelmetProvider } from "react-helmet-async";
 import Index from "./pages/Index";
 import Rampur from "./pages/Rampur";
 import UP from "./pages/UP";
@@ -22,31 +23,33 @@ import NotFound from "./pages/NotFound";
 const queryClient = new QueryClient();
 
 const App = () => (
-  <QueryClientProvider client={queryClient}>
-    <TooltipProvider>
-      <Toaster />
-      <Sonner />
-      <BrowserRouter>
-        <Routes>
-          <Route path="/" element={<Index />} />
-          <Route path="/rampur" element={<Rampur />} />
-          <Route path="/up" element={<UP />} />
-          <Route path="/national" element={<National />} />
-          <Route path="/politics" element={<Politics />} />
-          <Route path="/crime" element={<Crime />} />
-          <Route path="/education-jobs" element={<EducationJobs />} />
-          <Route path="/business" element={<Business />} />
-          <Route path="/entertainment" element={<Entertainment />} />
-          <Route path="/sports" element={<Sports />} />
-          <Route path="/health" element={<Health />} />
-          <Route path="/religion-culture" element={<ReligionCulture />} />
-          <Route path="/food-lifestyle" element={<FoodLifestyle />} />
-          <Route path="/nearby" element={<Nearby />} />
-          <Route path="*" element={<NotFound />} />
-        </Routes>
-      </BrowserRouter>
-    </TooltipProvider>
-  </QueryClientProvider>
+  <HelmetProvider>
+    <QueryClientProvider client={queryClient}>
+      <TooltipProvider>
+        <Toaster />
+        <Sonner />
+        <BrowserRouter>
+          <Routes>
+            <Route path="/" element={<Index />} />
+            <Route path="/rampur" element={<Rampur />} />
+            <Route path="/up" element={<UP />} />
+            <Route path="/national" element={<National />} />
+            <Route path="/politics" element={<Politics />} />
+            <Route path="/crime" element={<Crime />} />
+            <Route path="/education-jobs" element={<EducationJobs />} />
+            <Route path="/business" element={<Business />} />
+            <Route path="/entertainment" element={<Entertainment />} />
+            <Route path="/sports" element={<Sports />} />
+            <Route path="/health" element={<Health />} />
+            <Route path="/religion-culture" element={<ReligionCulture />} />
+            <Route path="/food-lifestyle" element={<FoodLifestyle />} />
+            <Route path="/nearby" element={<Nearby />} />
+            <Route path="*" element={<NotFound />} />
+          </Routes>
+        </BrowserRouter>
+      </TooltipProvider>
+    </QueryClientProvider>
+  </HelmetProvider>
 );
 
 export default App;
