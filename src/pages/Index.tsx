@@ -4,7 +4,7 @@ import BreakingNewsTicker from "@/components/BreakingNewsTicker";
 import CategorySection from "@/components/CategorySection";
 import Sidebar from "@/components/Sidebar";
 import NewsCard from "@/components/NewsCard";
-import { categories } from "@/data/categories";
+import SEO from "@/components/SEO";
 import { mockNewsData, getFeaturedNews } from "@/data/mockNews";
 
 const Index = () => {
@@ -12,8 +12,12 @@ const Index = () => {
 
   return (
     <div className="min-h-screen bg-background">
-      {/* SEO Meta - Would be handled by react-helmet in production */}
-      <title>रामपुर न्यूज़ - रामपुर की ताज़ा खबरें | Rampur News</title>
+      <SEO
+        title="रामपुर की ताज़ा खबरें"
+        description="रामपुर न्यूज़ - रामपुर जिले और उत्तर प्रदेश की ताज़ा, विश्वसनीय खबरें। राजनीति, अपराध, शिक्षा, खेल, मनोरंजन और स्थानीय समाचार।"
+        canonical="/"
+        ogType="website"
+      />
 
       <Header />
       <BreakingNewsTicker />
