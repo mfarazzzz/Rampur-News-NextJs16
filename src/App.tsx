@@ -22,6 +22,7 @@ import Nearby from "./pages/Nearby";
 import NotFound from "./pages/NotFound";
 
 // Education Module Pages
+import EducationHub from "./pages/education/EducationHub";
 import ExamCalendarPage from "./pages/education/ExamCalendar";
 import ResultCalendarPage from "./pages/education/ResultCalendar";
 import InstitutionsPage from "./pages/education/Institutions";
@@ -66,7 +67,7 @@ const App = () => (
               <Route path="/national" element={<National />} />
               <Route path="/politics" element={<Politics />} />
               <Route path="/crime" element={<Crime />} />
-              <Route path="/education-jobs" element={<EducationJobs />} />
+              <Route path="/education-jobs" element={<EducationHub />} />
               <Route path="/business" element={<Business />} />
               <Route path="/entertainment" element={<Entertainment />} />
               <Route path="/sports" element={<Sports />} />
