@@ -27,15 +27,18 @@ import ExamCalendarPage from "./pages/education/ExamCalendar";
 import ResultCalendarPage from "./pages/education/ResultCalendar";
 import InstitutionsPage from "./pages/education/Institutions";
 import InstitutionDetailPage from "./pages/education/InstitutionDetail";
+import EducationNewsSection from "./pages/education/NewsSection";
 
 // Culture Module Pages
 import HolidaysCalendarPage from "./pages/culture/HolidaysCalendar";
 
 // Lifestyle Module Pages
+import LifestyleHub from "./pages/lifestyle/LifestyleHub";
 import RestaurantsPage from "./pages/lifestyle/Restaurants";
 import FashionPage from "./pages/lifestyle/Fashion";
 import ShoppingPage from "./pages/lifestyle/Shopping";
 import EventsPage from "./pages/lifestyle/Events";
+import PlacesPage from "./pages/lifestyle/PlacesPage";
 
 // Admin pages
 import AdminLayout from "@/components/admin/AdminLayout";
@@ -73,7 +76,7 @@ const App = () => (
               <Route path="/sports" element={<Sports />} />
               <Route path="/health" element={<Health />} />
               <Route path="/religion-culture" element={<ReligionCulture />} />
-              <Route path="/food-lifestyle" element={<FoodLifestyle />} />
+              <Route path="/food-lifestyle" element={<LifestyleHub />} />
               <Route path="/nearby" element={<Nearby />} />
               
               {/* Education Module Routes */}
@@ -81,15 +84,22 @@ const App = () => (
               <Route path="/education-jobs/results" element={<ResultCalendarPage />} />
               <Route path="/education-jobs/institutions" element={<InstitutionsPage />} />
               <Route path="/education-jobs/institutions/:slug" element={<InstitutionDetailPage />} />
+              <Route path="/education-jobs/news" element={<EducationNewsSection />} />
               
               {/* Culture Module Routes */}
               <Route path="/religion-culture/holidays" element={<HolidaysCalendarPage />} />
               
               {/* Lifestyle Module Routes */}
               <Route path="/food-lifestyle/restaurants" element={<RestaurantsPage />} />
+              <Route path="/food-lifestyle/restaurants/:slug" element={<RestaurantsPage />} />
               <Route path="/food-lifestyle/fashion" element={<FashionPage />} />
+              <Route path="/food-lifestyle/fashion/:slug" element={<FashionPage />} />
               <Route path="/food-lifestyle/shopping" element={<ShoppingPage />} />
+              <Route path="/food-lifestyle/shopping/:slug" element={<ShoppingPage />} />
+              <Route path="/food-lifestyle/places" element={<PlacesPage />} />
+              <Route path="/food-lifestyle/places/:slug" element={<PlacesPage />} />
               <Route path="/food-lifestyle/events" element={<EventsPage />} />
+              <Route path="/food-lifestyle/events/:slug" element={<EventsPage />} />
               
               {/* Admin routes */}
               <Route path="/admin/login" element={<AdminLogin />} />

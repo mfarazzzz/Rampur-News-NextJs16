@@ -7,3 +7,4 @@ export { QuickNavCard } from './QuickNavCard';
 export { HeroSection } from './HeroSection';
 export { TestimonialCard } from './TestimonialCard';
 export { VideoCard } from './VideoCard';
+export { default as NewsCard } from './NewsCard';
