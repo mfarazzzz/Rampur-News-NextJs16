@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
+        xmlns:news="http://www.google.com/schemas/sitemap-news/0.9">
+  
+  <!-- 
+    Google News Sitemap
+    This sitemap should be dynamically generated with articles from the last 48 hours
+    For production, integrate with your CMS/backend to auto-generate this file
+  -->
+  
+  <!-- Example News Article Entry -->
+  <url>
+    <loc>https://rampurnews.com/rampur/example-article-slug</loc>
+    <news:news>
+      <news:publication>
+        <news:name>रामपुर न्यूज़</news:name>
+        <news:language>hi</news:language>
+      </news:publication>
+      <news:publication_date>2026-01-03T10:00:00+05:30</news:publication_date>
+      <news:title>उदाहरण समाचार शीर्षक - रामपुर की ताज़ा खबर</news:title>
+      <news:keywords>रामपुर, उत्तर प्रदेश, ताज़ा खबर</news:keywords>
+    </news:news>
+  </url>
+  
+  <!-- Add more news articles here -->
+  <!-- Articles should be from the last 48 hours for Google News -->
+  
+</urlset>
