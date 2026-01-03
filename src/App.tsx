@@ -21,6 +21,12 @@ import FoodLifestyle from "./pages/FoodLifestyle";
 import Nearby from "./pages/Nearby";
 import NotFound from "./pages/NotFound";
 
+// Education Module Pages
+import ExamCalendarPage from "./pages/education/ExamCalendar";
+import ResultCalendarPage from "./pages/education/ResultCalendar";
+import InstitutionsPage from "./pages/education/Institutions";
+import InstitutionDetailPage from "./pages/education/InstitutionDetail";
+
 // Admin pages
 import AdminLayout from "@/components/admin/AdminLayout";
 import AdminLogin from "@/pages/admin/AdminLogin";
@@ -58,6 +64,12 @@ const App = () => (
               <Route path="/religion-culture" element={<ReligionCulture />} />
               <Route path="/food-lifestyle" element={<FoodLifestyle />} />
               <Route path="/nearby" element={<Nearby />} />
+              
+              {/* Education Module Routes */}
+              <Route path="/education-jobs/exams" element={<ExamCalendarPage />} />
+              <Route path="/education-jobs/results" element={<ResultCalendarPage />} />
+              <Route path="/education-jobs/institutions" element={<InstitutionsPage />} />
+              <Route path="/education-jobs/institutions/:slug" element={<InstitutionDetailPage />} />
               
               {/* Admin routes */}
               <Route path="/admin/login" element={<AdminLogin />} />
