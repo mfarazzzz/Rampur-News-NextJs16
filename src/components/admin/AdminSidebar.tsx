@@ -13,7 +13,8 @@ import {
   Newspaper,
   ChevronLeft,
   ChevronRight,
-  Plus
+  Plus,
+  Layers
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useState } from 'react';
@@ -28,6 +29,7 @@ interface NavItem {
 const navItems: NavItem[] = [
   { title: 'Dashboard', titleHindi: 'डैशबोर्ड', href: '/admin', icon: LayoutDashboard },
   { title: 'Articles', titleHindi: 'लेख', href: '/admin/articles', icon: FileText },
+  { title: 'Content', titleHindi: 'कंटेंट', href: '/admin/content', icon: Layers },
   { title: 'Categories', titleHindi: 'श्रेणियाँ', href: '/admin/categories', icon: FolderOpen },
   { title: 'Authors', titleHindi: 'लेखक', href: '/admin/authors', icon: Users },
   { title: 'Media', titleHindi: 'मीडिया', href: '/admin/media', icon: Image },
