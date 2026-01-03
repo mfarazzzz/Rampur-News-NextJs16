@@ -1,14 +1,16 @@
 import { Link } from "react-router-dom";
 import { 
   FileText, Trophy, Building2, Briefcase, Bell, Newspaper,
-  Calendar, GraduationCap, Users, TrendingUp, ArrowRight, Play
+  Calendar, GraduationCap, Users, TrendingUp, ArrowRight, Play, Award
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import SEO from "@/components/SEO";
 import { HeroSection, ExamCard, ResultCard, CareerCard, QuickNavCard, TestimonialCard, VideoCard } from "@/components/education";
+import NewsCard from "@/components/education/NewsCard";
 import { useExams, useResults } from "@/hooks/useExtendedCMS";
 import { mockCareerGuides, mockTestimonials, mockVideoTutorials, mockEducationNews } from "@/services/cms/extendedMockData";
 
@@ -20,6 +22,9 @@ const EducationHub = () => {
   const featuredTestimonials = mockTestimonials.filter(t => t.isFeatured).slice(0, 2);
   const featuredVideos = mockVideoTutorials.filter(v => v.isFeatured).slice(0, 4);
   const latestNews = mockEducationNews.slice(0, 3);
+  const breakingNews = mockEducationNews.filter(n => n.isBreaking);
+  const scholarshipNews = mockEducationNews.filter(n => n.category === 'scholarship').slice(0, 3);
+  const examUpdates = mockEducationNews.filter(n => n.category === 'exam-news' || n.category === 'result-news').slice(0, 4);
 
   return (
     <>
@@ -229,6 +234,65 @@ const EducationHub = () => {
             </div>
           </section>
         )}
+
+        {/* Education News Section */}
+        <section className="py-10 container mx-auto px-4">
+          <div className="flex items-center justify-between mb-6">
+            <div>
+              <h2 className="text-2xl font-bold text-foreground flex items-center gap-2">
+                <Newspaper className="h-6 w-6 text-primary" />
+                शिक्षा समाचार
+              </h2>
+              <p className="text-muted-foreground mt-1">ताज़ा अपडेट, छात्रवृत्ति और परीक्षा समाचार</p>
+            </div>
+            <Button variant="outline" asChild>
+              <Link to="/education-jobs/news">
+                सभी देखें <ArrowRight className="h-4 w-4 ml-1" />
+              </Link>
+            </Button>
+          </div>
+          
+          <div className="grid lg:grid-cols-3 gap-6">
+            {/* Main News */}
+            <div className="lg:col-span-2 grid md:grid-cols-2 gap-4">
+              {examUpdates.map(news => (
+                <NewsCard key={news.id} news={news} />
+              ))}
+            </div>
+            
+            {/* Scholarship Sidebar */}
+            <Card className="border-amber-200 bg-amber-50/50 dark:bg-amber-950/20 dark:border-amber-800">
+              <CardHeader className="pb-3">
+                <CardTitle className="text-base flex items-center gap-2">
+                  <Award className="h-5 w-5 text-amber-600" />
+                  छात्रवृत्ति अलर्ट
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="space-y-3">
+                  {scholarshipNews.map(news => (
+                    <div key={news.id} className="border-b border-amber-200/50 dark:border-amber-800/50 pb-3 last:border-0 last:pb-0">
+                      <Link 
+                        to={`/education-jobs/news/${news.slug}`}
+                        className="block text-sm hover:text-primary transition-colors"
+                      >
+                        <Badge variant="secondary" className="text-[10px] mb-1 bg-amber-100 text-amber-700 dark:bg-amber-900 dark:text-amber-300">
+                          {news.isImportant ? 'महत्वपूर्ण' : 'छात्रवृत्ति'}
+                        </Badge>
+                        <span className="block font-medium">{news.titleHindi}</span>
+                      </Link>
+                    </div>
+                  ))}
+                </div>
+                <Button variant="link" size="sm" className="mt-3 p-0 text-amber-700 dark:text-amber-400" asChild>
+                  <Link to="/education-jobs/news?category=scholarship">
+                    सभी छात्रवृत्ति देखें <ArrowRight className="h-3 w-3 ml-1" />
+                  </Link>
+                </Button>
+              </CardContent>
+            </Card>
+          </div>
+        </section>
 
         {/* Testimonials Section */}
         {featuredTestimonials.length > 0 && (
