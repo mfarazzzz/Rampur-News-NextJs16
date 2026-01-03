@@ -27,6 +27,15 @@ import ResultCalendarPage from "./pages/education/ResultCalendar";
 import InstitutionsPage from "./pages/education/Institutions";
 import InstitutionDetailPage from "./pages/education/InstitutionDetail";
 
+// Culture Module Pages
+import HolidaysCalendarPage from "./pages/culture/HolidaysCalendar";
+
+// Lifestyle Module Pages
+import RestaurantsPage from "./pages/lifestyle/Restaurants";
+import FashionPage from "./pages/lifestyle/Fashion";
+import ShoppingPage from "./pages/lifestyle/Shopping";
+import EventsPage from "./pages/lifestyle/Events";
+
 // Admin pages
 import AdminLayout from "@/components/admin/AdminLayout";
 import AdminLogin from "@/pages/admin/AdminLogin";
@@ -37,6 +46,7 @@ import CategoriesManager from "@/pages/admin/CategoriesManager";
 import AuthorsManager from "@/pages/admin/AuthorsManager";
 import MediaLibrary from "@/pages/admin/MediaLibrary";
 import SettingsPage from "@/pages/admin/SettingsPage";
+import ContentManagerPage from "@/pages/admin/ContentManager";
 
 const queryClient = new QueryClient();
 
@@ -71,12 +81,22 @@ const App = () => (
               <Route path="/education-jobs/institutions" element={<InstitutionsPage />} />
               <Route path="/education-jobs/institutions/:slug" element={<InstitutionDetailPage />} />
               
+              {/* Culture Module Routes */}
+              <Route path="/religion-culture/holidays" element={<HolidaysCalendarPage />} />
+              
+              {/* Lifestyle Module Routes */}
+              <Route path="/food-lifestyle/restaurants" element={<RestaurantsPage />} />
+              <Route path="/food-lifestyle/fashion" element={<FashionPage />} />
+              <Route path="/food-lifestyle/shopping" element={<ShoppingPage />} />
+              <Route path="/food-lifestyle/events" element={<EventsPage />} />
+              
               {/* Admin routes */}
               <Route path="/admin/login" element={<AdminLogin />} />
               <Route path="/admin" element={<AdminLayout />}>
                 <Route index element={<AdminDashboard />} />
                 <Route path="articles" element={<ArticlesList />} />
                 <Route path="articles/:id" element={<ArticleEditor />} />
+                <Route path="content" element={<ContentManagerPage />} />
                 <Route path="categories" element={<CategoriesManager />} />
                 <Route path="authors" element={<AuthorsManager />} />
                 <Route path="media" element={<MediaLibrary />} />
