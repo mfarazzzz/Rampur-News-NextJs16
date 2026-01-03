@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import { Facebook, Twitter, Youtube, Instagram, Mail, Phone, MapPin } from "lucide-react";
+import { Facebook, Twitter, Youtube, Instagram, Mail, Phone, MapPin, Settings } from "lucide-react";
 import { categories } from "@/data/categories";
 
 const Footer = () => {
@@ -147,7 +147,7 @@ const Footer = () => {
         <div className="container py-4">
           <div className="flex flex-col md:flex-row items-center justify-between gap-4 text-sm text-gray-400">
             <p>© {currentYear} रामपुर न्यूज़। सर्वाधिकार सुरक्षित।</p>
-            <div className="flex gap-4">
+            <div className="flex gap-4 items-center">
               <Link to="/terms" className="hover:text-primary transition-colors">
                 नियम और शर्तें
               </Link>
@@ -156,6 +156,10 @@ const Footer = () => {
               </Link>
               <Link to="/disclaimer" className="hover:text-primary transition-colors">
                 अस्वीकरण
+              </Link>
+              <Link to="/admin" className="flex items-center gap-1 hover:text-primary transition-colors">
+                <Settings size={14} />
+                Admin
               </Link>
             </div>
           </div>
