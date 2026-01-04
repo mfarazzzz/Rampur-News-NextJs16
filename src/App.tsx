@@ -39,6 +39,11 @@ import FashionPage from "./pages/lifestyle/Fashion";
 import ShoppingPage from "./pages/lifestyle/Shopping";
 import EventsPage from "./pages/lifestyle/Events";
 import PlacesPage from "./pages/lifestyle/PlacesPage";
+import RestaurantDetail from "./pages/lifestyle/RestaurantDetail";
+import FashionDetail from "./pages/lifestyle/FashionDetail";
+import ShoppingDetail from "./pages/lifestyle/ShoppingDetail";
+import PlaceDetail from "./pages/lifestyle/PlaceDetail";
+import EventDetail from "./pages/lifestyle/EventDetail";
 
 // Admin pages
 import AdminLayout from "@/components/admin/AdminLayout";
@@ -91,15 +96,15 @@ const App = () => (
               
               {/* Lifestyle Module Routes */}
               <Route path="/food-lifestyle/restaurants" element={<RestaurantsPage />} />
-              <Route path="/food-lifestyle/restaurants/:slug" element={<RestaurantsPage />} />
+              <Route path="/food-lifestyle/restaurants/:slug" element={<RestaurantDetail />} />
               <Route path="/food-lifestyle/fashion" element={<FashionPage />} />
-              <Route path="/food-lifestyle/fashion/:slug" element={<FashionPage />} />
+              <Route path="/food-lifestyle/fashion/:slug" element={<FashionDetail />} />
               <Route path="/food-lifestyle/shopping" element={<ShoppingPage />} />
-              <Route path="/food-lifestyle/shopping/:slug" element={<ShoppingPage />} />
+              <Route path="/food-lifestyle/shopping/:slug" element={<ShoppingDetail />} />
               <Route path="/food-lifestyle/places" element={<PlacesPage />} />
-              <Route path="/food-lifestyle/places/:slug" element={<PlacesPage />} />
+              <Route path="/food-lifestyle/places/:slug" element={<PlaceDetail />} />
               <Route path="/food-lifestyle/events" element={<EventsPage />} />
-              <Route path="/food-lifestyle/events/:slug" element={<EventsPage />} />
+              <Route path="/food-lifestyle/events/:slug" element={<EventDetail />} />
               
               {/* Admin routes */}
               <Route path="/admin/login" element={<AdminLogin />} />

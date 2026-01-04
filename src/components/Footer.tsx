@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import { Facebook, Twitter, Youtube, Instagram, Mail, Phone, MapPin, Settings } from "lucide-react";
+import { Facebook, Twitter, Youtube, Instagram, Mail, Phone, MapPin, Settings, MessageCircle, Send } from "lucide-react";
 import { categories } from "@/data/categories";
 
 const Footer = () => {
@@ -7,6 +7,35 @@ const Footer = () => {
 
   return (
     <footer className="bg-news-dark text-primary-foreground mt-12">
+      {/* WhatsApp & Telegram CTA Bar */}
+      <div className="bg-gradient-to-r from-[#25D366] to-[#0088cc] py-4">
+        <div className="container">
+          <div className="flex flex-col md:flex-row items-center justify-center gap-4 text-white">
+            <span className="font-medium">ताज़ा खबरों के लिए हमसे जुड़ें:</span>
+            <div className="flex gap-3">
+              <a
+                href="https://whatsapp.com/channel/rampurnews"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex items-center gap-2 bg-white/20 hover:bg-white/30 px-4 py-2 rounded-full transition-colors"
+              >
+                <MessageCircle size={18} />
+                <span>WhatsApp चैनल</span>
+              </a>
+              <a
+                href="https://t.me/rampurnews"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex items-center gap-2 bg-white/20 hover:bg-white/30 px-4 py-2 rounded-full transition-colors"
+              >
+                <Send size={18} />
+                <span>Telegram चैनल</span>
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+      
       {/* Main Footer */}
       <div className="container py-12">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
@@ -22,6 +51,24 @@ const Footer = () => {
               रामपुर न्यूज़ आपके लिए लाता है रामपुर, उत्तर प्रदेश और देश-विदेश की ताज़ा और विश्वसनीय खबरें। हम पत्रकारिता के उच्चतम मानकों का पालन करते हैं।
             </p>
             <div className="flex gap-3">
+              <a
+                href="https://whatsapp.com/channel/rampurnews"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="w-9 h-9 flex items-center justify-center bg-[#25D366] hover:bg-[#20BD5A] rounded-full transition-colors"
+                aria-label="WhatsApp"
+              >
+                <MessageCircle size={18} />
+              </a>
+              <a
+                href="https://t.me/rampurnews"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="w-9 h-9 flex items-center justify-center bg-[#0088cc] hover:bg-[#007AB8] rounded-full transition-colors"
+                aria-label="Telegram"
+              >
+                <Send size={18} />
+              </a>
               <a
                 href="#"
                 className="w-9 h-9 flex items-center justify-center bg-primary/20 hover:bg-primary rounded-full transition-colors"
