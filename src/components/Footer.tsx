@@ -117,20 +117,10 @@ const Footer = () => {
             </ul>
           </div>
 
-          {/* More Categories */}
+          {/* Quick Links */}
           <div>
-            <h3 className="text-lg font-bold mb-4 border-b border-primary pb-2">अन्य श्रेणियां</h3>
+            <h3 className="text-lg font-bold mb-4 border-b border-primary pb-2">त्वरित लिंक</h3>
             <ul className="space-y-2">
-              {categories.slice(7).map((cat) => (
-                <li key={cat.id}>
-                  <Link
-                    to={cat.path}
-                    className="text-sm text-gray-300 hover:text-primary transition-colors"
-                  >
-                    {cat.titleHindi}
-                  </Link>
-                </li>
-              ))}
               <li>
                 <Link to="/about" className="text-sm text-gray-300 hover:text-primary transition-colors">
                   हमारे बारे में
@@ -142,8 +132,23 @@ const Footer = () => {
                 </Link>
               </li>
               <li>
-                <Link to="/privacy" className="text-sm text-gray-300 hover:text-primary transition-colors">
-                  गोपनीयता नीति
+                <Link to="/editorial-policy" className="text-sm text-gray-300 hover:text-primary transition-colors">
+                  संपादकीय नीति
+                </Link>
+              </li>
+              <li>
+                <Link to="/corrections-policy" className="text-sm text-gray-300 hover:text-primary transition-colors">
+                  सुधार नीति
+                </Link>
+              </li>
+              <li>
+                <Link to="/ownership" className="text-sm text-gray-300 hover:text-primary transition-colors">
+                  स्वामित्व प्रकटीकरण
+                </Link>
+              </li>
+              <li>
+                <Link to="/grievance" className="text-sm text-gray-300 hover:text-primary transition-colors">
+                  शिकायत निवारण
                 </Link>
               </li>
             </ul>
@@ -155,13 +160,21 @@ const Footer = () => {
             <ul className="space-y-3">
               <li className="flex items-start gap-3 text-sm text-gray-300">
                 <MapPin size={18} className="text-primary flex-shrink-0 mt-0.5" />
-                <span>रामपुर, उत्तर प्रदेश, भारत - 244901</span>
+                <span>Off Main Road, Opp. Zila Sahakari Bank Ltd, Milak, Rampur, UP - 243701</span>
               </li>
-              <li className="flex items-center gap-3 text-sm text-gray-300">
-                <Phone size={18} className="text-primary flex-shrink-0" />
-                <a href="tel:+911234567890" className="hover:text-primary transition-colors">
-                  +91 12345 67890
-                </a>
+              <li className="flex items-start gap-3 text-sm text-gray-300">
+                <Phone size={18} className="text-primary flex-shrink-0 mt-0.5" />
+                <div className="flex flex-col gap-1">
+                  <a href="tel:+919997877012" className="hover:text-primary transition-colors">
+                    +91 99978 77012
+                  </a>
+                  <a href="tel:+919997929196" className="hover:text-primary transition-colors">
+                    +91 99979 29196
+                  </a>
+                  <a href="tel:+918077848980" className="hover:text-primary transition-colors">
+                    +91 80778 48980
+                  </a>
+                </div>
               </li>
               <li className="flex items-center gap-3 text-sm text-gray-300">
                 <Mail size={18} className="text-primary flex-shrink-0" />
@@ -194,7 +207,7 @@ const Footer = () => {
         <div className="container py-4">
           <div className="flex flex-col md:flex-row items-center justify-between gap-4 text-sm text-gray-400">
             <p>© {currentYear} रामपुर न्यूज़। सर्वाधिकार सुरक्षित।</p>
-            <div className="flex gap-4 items-center">
+            <div className="flex flex-wrap gap-4 items-center justify-center">
               <Link to="/terms" className="hover:text-primary transition-colors">
                 नियम और शर्तें
               </Link>
@@ -203,6 +216,9 @@ const Footer = () => {
               </Link>
               <Link to="/disclaimer" className="hover:text-primary transition-colors">
                 अस्वीकरण
+              </Link>
+              <Link to="/grievance" className="hover:text-primary transition-colors">
+                शिकायत निवारण
               </Link>
               <Link to="/admin" className="flex items-center gap-1 hover:text-primary transition-colors">
                 <Settings size={14} />

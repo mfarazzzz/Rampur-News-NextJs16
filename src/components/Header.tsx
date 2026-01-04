@@ -129,6 +129,7 @@ const Header = () => {
                 </Link>
               </li>
             ))}
+            {/* More Categories Dropdown */}
             {moreNavItems.length > 0 && (
               <li className="relative group">
                 <button className="px-4 py-2 text-sm font-medium text-foreground hover:text-primary flex items-center gap-1">
@@ -137,7 +138,7 @@ const Header = () => {
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
                   </svg>
                 </button>
-                <ul className="absolute top-full left-0 bg-card shadow-lg rounded-lg py-2 min-w-48 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all z-50">
+                <ul className="absolute top-full left-0 bg-card shadow-lg rounded-lg py-2 min-w-48 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all z-50 border border-border">
                   {moreNavItems.map((item) => (
                     <li key={item.id}>
                       <Link
@@ -151,6 +152,42 @@ const Header = () => {
                 </ul>
               </li>
             )}
+            {/* About Dropdown */}
+            <li className="relative group">
+              <button className="px-4 py-2 text-sm font-medium text-foreground hover:text-primary flex items-center gap-1">
+                हमारे बारे में
+                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                </svg>
+              </button>
+              <ul className="absolute top-full right-0 bg-card shadow-lg rounded-lg py-2 min-w-48 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all z-50 border border-border">
+                <li>
+                  <Link to="/about" className="block px-4 py-2 text-sm hover:bg-muted hover:text-primary transition-colors">
+                    हमारे बारे में
+                  </Link>
+                </li>
+                <li>
+                  <Link to="/contact" className="block px-4 py-2 text-sm hover:bg-muted hover:text-primary transition-colors">
+                    संपर्क करें
+                  </Link>
+                </li>
+                <li>
+                  <Link to="/editorial-policy" className="block px-4 py-2 text-sm hover:bg-muted hover:text-primary transition-colors">
+                    संपादकीय नीति
+                  </Link>
+                </li>
+                <li>
+                  <Link to="/ownership" className="block px-4 py-2 text-sm hover:bg-muted hover:text-primary transition-colors">
+                    स्वामित्व प्रकटीकरण
+                  </Link>
+                </li>
+                <li>
+                  <Link to="/grievance" className="block px-4 py-2 text-sm hover:bg-muted hover:text-primary transition-colors">
+                    शिकायत निवारण
+                  </Link>
+                </li>
+              </ul>
+            </li>
           </ul>
 
           {/* Mobile Navigation */}
@@ -181,6 +218,43 @@ const Header = () => {
                     </Link>
                   </li>
                 ))}
+                {/* Mobile About Section */}
+                <li className="pt-4 border-t border-border mt-4">
+                  <span className="px-4 text-xs font-semibold text-muted-foreground uppercase">हमारे बारे में</span>
+                </li>
+                <li>
+                  <Link
+                    to="/about"
+                    onClick={() => setIsMenuOpen(false)}
+                    className={`block px-4 py-3 text-base font-medium rounded-lg transition-colors ${
+                      isActive("/about") ? "bg-primary text-primary-foreground" : "hover:bg-muted"
+                    }`}
+                  >
+                    हमारे बारे में
+                  </Link>
+                </li>
+                <li>
+                  <Link
+                    to="/contact"
+                    onClick={() => setIsMenuOpen(false)}
+                    className={`block px-4 py-3 text-base font-medium rounded-lg transition-colors ${
+                      isActive("/contact") ? "bg-primary text-primary-foreground" : "hover:bg-muted"
+                    }`}
+                  >
+                    संपर्क करें
+                  </Link>
+                </li>
+                <li>
+                  <Link
+                    to="/editorial-policy"
+                    onClick={() => setIsMenuOpen(false)}
+                    className={`block px-4 py-3 text-base font-medium rounded-lg transition-colors ${
+                      isActive("/editorial-policy") ? "bg-primary text-primary-foreground" : "hover:bg-muted"
+                    }`}
+                  >
+                    संपादकीय नीति
+                  </Link>
+                </li>
               </ul>
             </div>
           )}
