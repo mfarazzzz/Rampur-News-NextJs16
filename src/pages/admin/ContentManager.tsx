@@ -10,6 +10,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from 
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Switch } from '@/components/ui/switch';
 import { toast } from 'sonner';
 import { 
   useExams, useResults, useInstitutions, useHolidays, 
@@ -23,19 +24,40 @@ import {
   useCreateShoppingCentre, useDeleteShoppingCentre, useUpdateShoppingCentre,
   useCreateFamousPlace, useDeleteFamousPlace, useUpdateFamousPlace,
 } from '@/hooks/useExtendedCMS';
+import { mockNewsData, NewsArticle } from '@/data/mockNews';
 import { 
   Plus, Trash2, Search, Calendar, GraduationCap, Utensils, 
-  Shirt, Store, Landmark, PartyPopper, Moon, Pencil
+  Shirt, Store, Landmark, PartyPopper, Moon, Pencil, Newspaper,
+  MapPin, Building, Briefcase, Film, Trophy, Heart, Church, Eye
 } from 'lucide-react';
 import ContentEditDialog from '@/components/admin/ContentEditDialog';
 import ImageUploader from '@/components/admin/ImageUploader';
 
+// News categories for admin
+const newsCategories = [
+  { id: 'rampur', label: 'रामपुर', icon: MapPin },
+  { id: 'up', label: 'उत्तर प्रदेश', icon: Building },
+  { id: 'national', label: 'राष्ट्रीय', icon: Newspaper },
+  { id: 'politics', label: 'राजनीति', icon: Briefcase },
+  { id: 'crime', label: 'अपराध', icon: Eye },
+  { id: 'education-jobs', label: 'शिक्षा-नौकरी', icon: GraduationCap },
+  { id: 'business', label: 'व्यापार', icon: Briefcase },
+  { id: 'entertainment', label: 'मनोरंजन', icon: Film },
+  { id: 'sports', label: 'खेल', icon: Trophy },
+  { id: 'health', label: 'स्वास्थ्य', icon: Heart },
+  { id: 'religion-culture', label: 'धर्म-संस्कृति', icon: Church },
+  { id: 'food-lifestyle', label: 'फूड-लाइफस्टाइल', icon: Utensils },
+];
+
 const ContentManagerPage = () => {
-  const [activeTab, setActiveTab] = useState('exams');
+  const [activeSection, setActiveSection] = useState<'news' | 'education' | 'lifestyle'>('news');
+  const [activeTab, setActiveTab] = useState('rampur');
   const [searchQuery, setSearchQuery] = useState('');
   const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);
   const [editDialogOpen, setEditDialogOpen] = useState(false);
   const [editingItem, setEditingItem] = useState<Record<string, any> | null>(null);
+  const [newsEditDialogOpen, setNewsEditDialogOpen] = useState(false);
+  const [editingNews, setEditingNews] = useState<NewsArticle | null>(null);
 
   // Data hooks
   const { data: examsData, isLoading: loadingExams } = useExams({ limit: 100 });
@@ -88,6 +110,13 @@ const ContentManagerPage = () => {
   const famousPlaces = placesData?.data || [];
   const events = eventsData?.data || [];
 
+  // Get news for current category
+  const currentNews = mockNewsData[activeTab] || [];
+  const filteredNews = currentNews.filter(news => 
+    news.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+    news.excerpt.toLowerCase().includes(searchQuery.toLowerCase())
+  );
+
   const handleDelete = async (type: string, id: string) => {
     if (!confirm('क्या आप वाकई इसे हटाना चाहते हैं?')) return;
     
@@ -129,6 +158,11 @@ const ContentManagerPage = () => {
     setEditDialogOpen(true);
   };
 
+  const handleEditNews = (news: NewsArticle) => {
+    setEditingNews(news);
+    setNewsEditDialogOpen(true);
+  };
+
   const handleSaveEdit = async (data: Record<string, any>) => {
     if (!editingItem?.id) return;
     
@@ -166,17 +200,78 @@ const ContentManagerPage = () => {
     }
   };
 
-  const tabs = [
+  const educationTabs = [
+    { id: 'edu-news', label: 'समाचार', icon: Newspaper, count: mockNewsData['education-jobs']?.length || 0 },
     { id: 'exams', label: 'परीक्षाएं', icon: GraduationCap, count: exams.length },
     { id: 'results', label: 'परिणाम', icon: Calendar, count: results.length },
     { id: 'institutions', label: 'संस्थान', icon: GraduationCap, count: institutions.length },
     { id: 'holidays', label: 'छुट्टियाँ', icon: Moon, count: holidays.length },
+  ];
+
+  const lifestyleTabs = [
+    { id: 'lifestyle-news', label: 'समाचार', icon: Newspaper, count: mockNewsData['food-lifestyle']?.length || 0 },
     { id: 'restaurants', label: 'रेस्तरां', icon: Utensils, count: restaurants.length },
     { id: 'fashion', label: 'फैशन', icon: Shirt, count: fashionStores.length },
     { id: 'shopping', label: 'शॉपिंग', icon: Store, count: shoppingCentres.length },
     { id: 'places', label: 'स्थान', icon: Landmark, count: famousPlaces.length },
     { id: 'events', label: 'कार्यक्रम', icon: PartyPopper, count: events.length },
   ];
+
+  const renderNewsTable = (news: NewsArticle[]) => (
+    <Card>
+      <CardContent className="p-0">
+        <Table>
+          <TableHeader>
+            <TableRow>
+              <TableHead>शीर्षक</TableHead>
+              <TableHead>स्लग</TableHead>
+              <TableHead>लेखक</TableHead>
+              <TableHead>तारीख</TableHead>
+              <TableHead>स्थिति</TableHead>
+              <TableHead className="w-28">कार्रवाई</TableHead>
+            </TableRow>
+          </TableHeader>
+          <TableBody>
+            {news.map((item) => (
+              <TableRow key={item.id}>
+                <TableCell className="max-w-xs truncate">{item.title}</TableCell>
+                <TableCell className="font-mono text-xs text-muted-foreground">{item.slug}</TableCell>
+                <TableCell>{item.author}</TableCell>
+                <TableCell>{new Date(item.publishedDate).toLocaleDateString('hi-IN')}</TableCell>
+                <TableCell>
+                  <div className="flex gap-1">
+                    {item.isFeatured && <Badge variant="default">फीचर्ड</Badge>}
+                    {item.isBreaking && <Badge variant="destructive">ब्रेकिंग</Badge>}
+                    {!item.isFeatured && !item.isBreaking && <Badge variant="secondary">सामान्य</Badge>}
+                  </div>
+                </TableCell>
+                <TableCell>
+                  <div className="flex gap-1">
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      className="text-primary hover:text-primary"
+                      onClick={() => handleEditNews(item)}
+                    >
+                      <Pencil className="h-4 w-4" />
+                    </Button>
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      className="text-destructive hover:text-destructive"
+                      onClick={() => toast.info('डेमो मोड में डिलीट नहीं हो सकता')}
+                    >
+                      <Trash2 className="h-4 w-4" />
+                    </Button>
+                  </div>
+                </TableCell>
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
+      </CardContent>
+    </Card>
+  );
 
   return (
     <>
@@ -211,142 +306,235 @@ const ContentManagerPage = () => {
                 <DialogHeader>
                   <DialogTitle>नई सामग्री जोड़ें</DialogTitle>
                 </DialogHeader>
-                <AddContentForm 
-                  type={activeTab} 
-                  onSuccess={() => {
-                    setIsAddDialogOpen(false);
-                    toast.success('सफलतापूर्वक जोड़ा गया');
-                  }}
-                  onCreate={{
-                    exam: createExam.mutateAsync,
-                    holiday: createHoliday.mutateAsync,
-                    restaurant: createRestaurant.mutateAsync,
-                    event: createEvent.mutateAsync,
-                    institution: createInstitution.mutateAsync,
-                    fashion: createFashionStore.mutateAsync,
-                    shopping: createShoppingCentre.mutateAsync,
-                    place: createFamousPlace.mutateAsync,
-                  }}
-                />
+                {activeSection === 'news' ? (
+                  <AddNewsForm 
+                    category={activeTab}
+                    onSuccess={() => {
+                      setIsAddDialogOpen(false);
+                      toast.success('समाचार जोड़ा गया');
+                    }}
+                  />
+                ) : (
+                  <AddContentForm 
+                    type={activeTab} 
+                    onSuccess={() => {
+                      setIsAddDialogOpen(false);
+                      toast.success('सफलतापूर्वक जोड़ा गया');
+                    }}
+                    onCreate={{
+                      exam: createExam.mutateAsync,
+                      holiday: createHoliday.mutateAsync,
+                      restaurant: createRestaurant.mutateAsync,
+                      event: createEvent.mutateAsync,
+                      institution: createInstitution.mutateAsync,
+                      fashion: createFashionStore.mutateAsync,
+                      shopping: createShoppingCentre.mutateAsync,
+                      place: createFamousPlace.mutateAsync,
+                    }}
+                  />
+                )}
               </DialogContent>
             </Dialog>
           </div>
         </div>
 
-        <Tabs value={activeTab} onValueChange={setActiveTab}>
-          <TabsList className="flex-wrap h-auto gap-1 p-1">
-            {tabs.map(tab => (
-              <TabsTrigger 
-                key={tab.id} 
-                value={tab.id}
-                className="gap-2 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground"
-              >
-                <tab.icon className="h-4 w-4" />
-                {tab.label}
-                <Badge variant="secondary" className="ml-1">{tab.count}</Badge>
-              </TabsTrigger>
+        {/* Section Tabs */}
+        <div className="flex gap-2 border-b pb-2">
+          <Button
+            variant={activeSection === 'news' ? 'default' : 'ghost'}
+            onClick={() => { setActiveSection('news'); setActiveTab('rampur'); }}
+            className="gap-2"
+          >
+            <Newspaper className="h-4 w-4" />
+            समाचार
+          </Button>
+          <Button
+            variant={activeSection === 'education' ? 'default' : 'ghost'}
+            onClick={() => { setActiveSection('education'); setActiveTab('edu-news'); }}
+            className="gap-2"
+          >
+            <GraduationCap className="h-4 w-4" />
+            शिक्षा
+          </Button>
+          <Button
+            variant={activeSection === 'lifestyle' ? 'default' : 'ghost'}
+            onClick={() => { setActiveSection('lifestyle'); setActiveTab('lifestyle-news'); }}
+            className="gap-2"
+          >
+            <Utensils className="h-4 w-4" />
+            लाइफस्टाइल
+          </Button>
+        </div>
+
+        {/* News Section */}
+        {activeSection === 'news' && (
+          <Tabs value={activeTab} onValueChange={setActiveTab}>
+            <TabsList className="flex-wrap h-auto gap-1 p-1">
+              {newsCategories.map(cat => (
+                <TabsTrigger 
+                  key={cat.id} 
+                  value={cat.id}
+                  className="gap-2 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground"
+                >
+                  <cat.icon className="h-4 w-4" />
+                  {cat.label}
+                  <Badge variant="secondary" className="ml-1">{mockNewsData[cat.id]?.length || 0}</Badge>
+                </TabsTrigger>
+              ))}
+            </TabsList>
+
+            {newsCategories.map(cat => (
+              <TabsContent key={cat.id} value={cat.id} className="mt-4">
+                {renderNewsTable(filteredNews.length > 0 ? filteredNews : (mockNewsData[cat.id] || []))}
+              </TabsContent>
             ))}
-          </TabsList>
+          </Tabs>
+        )}
 
-          <TabsContent value="exams" className="mt-4">
-            <ContentTable 
-              data={exams}
-              columns={['titleHindi', 'examDate', 'organization', 'status']}
-              columnLabels={{ titleHindi: 'शीर्षक', examDate: 'तारीख', organization: 'संस्था', status: 'स्थिति' }}
-              onDelete={(id) => handleDelete('exams', id)}
-              onEdit={handleEdit}
-              isLoading={loadingExams}
-            />
-          </TabsContent>
+        {/* Education Section */}
+        {activeSection === 'education' && (
+          <Tabs value={activeTab} onValueChange={setActiveTab}>
+            <TabsList className="flex-wrap h-auto gap-1 p-1">
+              {educationTabs.map(tab => (
+                <TabsTrigger 
+                  key={tab.id} 
+                  value={tab.id}
+                  className="gap-2 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground"
+                >
+                  <tab.icon className="h-4 w-4" />
+                  {tab.label}
+                  <Badge variant="secondary" className="ml-1">{tab.count}</Badge>
+                </TabsTrigger>
+              ))}
+            </TabsList>
 
-          <TabsContent value="results" className="mt-4">
-            <ContentTable 
-              data={results}
-              columns={['titleHindi', 'resultDate', 'organizationHindi']}
-              columnLabels={{ titleHindi: 'शीर्षक', resultDate: 'तारीख', organizationHindi: 'संस्था' }}
-              onDelete={(id) => handleDelete('results', id)}
-              onEdit={handleEdit}
-              isLoading={loadingResults}
-            />
-          </TabsContent>
+            <TabsContent value="edu-news" className="mt-4">
+              {renderNewsTable(mockNewsData['education-jobs'] || [])}
+            </TabsContent>
 
-          <TabsContent value="institutions" className="mt-4">
-            <ContentTable 
-              data={institutions}
-              columns={['nameHindi', 'type', 'city', 'affiliation']}
-              columnLabels={{ nameHindi: 'नाम', type: 'प्रकार', city: 'शहर', affiliation: 'संबद्धता' }}
-              onDelete={(id) => handleDelete('institutions', id)}
-              onEdit={handleEdit}
-              isLoading={loadingInstitutions}
-            />
-          </TabsContent>
+            <TabsContent value="exams" className="mt-4">
+              <ContentTable 
+                data={exams}
+                columns={['titleHindi', 'slug', 'examDate', 'organization', 'status']}
+                columnLabels={{ titleHindi: 'शीर्षक', slug: 'स्लग', examDate: 'तारीख', organization: 'संस्था', status: 'स्थिति' }}
+                onDelete={(id) => handleDelete('exams', id)}
+                onEdit={handleEdit}
+                isLoading={loadingExams}
+              />
+            </TabsContent>
 
-          <TabsContent value="holidays" className="mt-4">
-            <ContentTable 
-              data={holidays}
-              columns={['nameHindi', 'date', 'type', 'isPublicHoliday']}
-              columnLabels={{ nameHindi: 'नाम', date: 'तारीख', type: 'प्रकार', isPublicHoliday: 'सार्वजनिक' }}
-              onDelete={(id) => handleDelete('holidays', id)}
-              onEdit={handleEdit}
-              isLoading={loadingHolidays}
-            />
-          </TabsContent>
+            <TabsContent value="results" className="mt-4">
+              <ContentTable 
+                data={results}
+                columns={['titleHindi', 'slug', 'resultDate', 'organizationHindi']}
+                columnLabels={{ titleHindi: 'शीर्षक', slug: 'स्लग', resultDate: 'तारीख', organizationHindi: 'संस्था' }}
+                onDelete={(id) => handleDelete('results', id)}
+                onEdit={handleEdit}
+                isLoading={loadingResults}
+              />
+            </TabsContent>
 
-          <TabsContent value="restaurants" className="mt-4">
-            <ContentTable 
-              data={restaurants}
-              columns={['nameHindi', 'type', 'addressHindi', 'rating']}
-              columnLabels={{ nameHindi: 'नाम', type: 'प्रकार', addressHindi: 'पता', rating: 'रेटिंग' }}
-              onDelete={(id) => handleDelete('restaurants', id)}
-              onEdit={handleEdit}
-              isLoading={loadingRestaurants}
-            />
-          </TabsContent>
+            <TabsContent value="institutions" className="mt-4">
+              <ContentTable 
+                data={institutions}
+                columns={['nameHindi', 'slug', 'type', 'city', 'affiliation']}
+                columnLabels={{ nameHindi: 'नाम', slug: 'स्लग', type: 'प्रकार', city: 'शहर', affiliation: 'संबद्धता' }}
+                onDelete={(id) => handleDelete('institutions', id)}
+                onEdit={handleEdit}
+                isLoading={loadingInstitutions}
+              />
+            </TabsContent>
 
-          <TabsContent value="fashion" className="mt-4">
-            <ContentTable 
-              data={fashionStores}
-              columns={['nameHindi', 'type', 'category', 'addressHindi']}
-              columnLabels={{ nameHindi: 'नाम', type: 'प्रकार', category: 'श्रेणी', addressHindi: 'पता' }}
-              onDelete={(id) => handleDelete('fashion', id)}
-              onEdit={handleEdit}
-              isLoading={loadingFashion}
-            />
-          </TabsContent>
+            <TabsContent value="holidays" className="mt-4">
+              <ContentTable 
+                data={holidays}
+                columns={['nameHindi', 'slug', 'date', 'type', 'isPublicHoliday']}
+                columnLabels={{ nameHindi: 'नाम', slug: 'स्लग', date: 'तारीख', type: 'प्रकार', isPublicHoliday: 'सार्वजनिक' }}
+                onDelete={(id) => handleDelete('holidays', id)}
+                onEdit={handleEdit}
+                isLoading={loadingHolidays}
+              />
+            </TabsContent>
+          </Tabs>
+        )}
 
-          <TabsContent value="shopping" className="mt-4">
-            <ContentTable 
-              data={shoppingCentres}
-              columns={['nameHindi', 'type', 'addressHindi', 'storeCount']}
-              columnLabels={{ nameHindi: 'नाम', type: 'प्रकार', addressHindi: 'पता', storeCount: 'दुकानें' }}
-              onDelete={(id) => handleDelete('shopping', id)}
-              onEdit={handleEdit}
-              isLoading={loadingShopping}
-            />
-          </TabsContent>
+        {/* Lifestyle Section */}
+        {activeSection === 'lifestyle' && (
+          <Tabs value={activeTab} onValueChange={setActiveTab}>
+            <TabsList className="flex-wrap h-auto gap-1 p-1">
+              {lifestyleTabs.map(tab => (
+                <TabsTrigger 
+                  key={tab.id} 
+                  value={tab.id}
+                  className="gap-2 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground"
+                >
+                  <tab.icon className="h-4 w-4" />
+                  {tab.label}
+                  <Badge variant="secondary" className="ml-1">{tab.count}</Badge>
+                </TabsTrigger>
+              ))}
+            </TabsList>
 
-          <TabsContent value="places" className="mt-4">
-            <ContentTable 
-              data={famousPlaces}
-              columns={['nameHindi', 'type', 'addressHindi', 'rating']}
-              columnLabels={{ nameHindi: 'नाम', type: 'प्रकार', addressHindi: 'पता', rating: 'रेटिंग' }}
-              onDelete={(id) => handleDelete('places', id)}
-              onEdit={handleEdit}
-              isLoading={loadingPlaces}
-            />
-          </TabsContent>
+            <TabsContent value="lifestyle-news" className="mt-4">
+              {renderNewsTable(mockNewsData['food-lifestyle'] || [])}
+            </TabsContent>
 
-          <TabsContent value="events" className="mt-4">
-            <ContentTable 
-              data={events}
-              columns={['titleHindi', 'date', 'venueHindi', 'status']}
-              columnLabels={{ titleHindi: 'शीर्षक', date: 'तारीख', venueHindi: 'स्थान', status: 'स्थिति' }}
-              onDelete={(id) => handleDelete('events', id)}
-              onEdit={handleEdit}
-              isLoading={loadingEvents}
-            />
-          </TabsContent>
-        </Tabs>
+            <TabsContent value="restaurants" className="mt-4">
+              <ContentTable 
+                data={restaurants}
+                columns={['nameHindi', 'slug', 'type', 'addressHindi', 'rating']}
+                columnLabels={{ nameHindi: 'नाम', slug: 'स्लग', type: 'प्रकार', addressHindi: 'पता', rating: 'रेटिंग' }}
+                onDelete={(id) => handleDelete('restaurants', id)}
+                onEdit={handleEdit}
+                isLoading={loadingRestaurants}
+              />
+            </TabsContent>
+
+            <TabsContent value="fashion" className="mt-4">
+              <ContentTable 
+                data={fashionStores}
+                columns={['nameHindi', 'slug', 'type', 'category', 'addressHindi']}
+                columnLabels={{ nameHindi: 'नाम', slug: 'स्लग', type: 'प्रकार', category: 'श्रेणी', addressHindi: 'पता' }}
+                onDelete={(id) => handleDelete('fashion', id)}
+                onEdit={handleEdit}
+                isLoading={loadingFashion}
+              />
+            </TabsContent>
+
+            <TabsContent value="shopping" className="mt-4">
+              <ContentTable 
+                data={shoppingCentres}
+                columns={['nameHindi', 'slug', 'type', 'addressHindi', 'storeCount']}
+                columnLabels={{ nameHindi: 'नाम', slug: 'स्लग', type: 'प्रकार', addressHindi: 'पता', storeCount: 'दुकानें' }}
+                onDelete={(id) => handleDelete('shopping', id)}
+                onEdit={handleEdit}
+                isLoading={loadingShopping}
+              />
+            </TabsContent>
+
+            <TabsContent value="places" className="mt-4">
+              <ContentTable 
+                data={famousPlaces}
+                columns={['nameHindi', 'slug', 'type', 'addressHindi', 'rating']}
+                columnLabels={{ nameHindi: 'नाम', slug: 'स्लग', type: 'प्रकार', addressHindi: 'पता', rating: 'रेटिंग' }}
+                onDelete={(id) => handleDelete('places', id)}
+                onEdit={handleEdit}
+                isLoading={loadingPlaces}
+              />
+            </TabsContent>
+
+            <TabsContent value="events" className="mt-4">
+              <ContentTable 
+                data={events}
+                columns={['titleHindi', 'slug', 'date', 'venueHindi', 'status']}
+                columnLabels={{ titleHindi: 'शीर्षक', slug: 'स्लग', date: 'तारीख', venueHindi: 'स्थान', status: 'स्थिति' }}
+                onDelete={(id) => handleDelete('events', id)}
+                onEdit={handleEdit}
+                isLoading={loadingEvents}
+              />
+            </TabsContent>
+          </Tabs>
+        )}
       </div>
 
       {/* Edit Dialog */}
@@ -356,6 +544,17 @@ const ContentManagerPage = () => {
         type={activeTab}
         data={editingItem}
         onSave={handleSaveEdit}
+      />
+
+      {/* News Edit Dialog */}
+      <NewsEditDialog
+        open={newsEditDialogOpen}
+        onOpenChange={setNewsEditDialogOpen}
+        news={editingNews}
+        onSave={async (data) => {
+          toast.success('समाचार अपडेट किया गया (डेमो)');
+          setNewsEditDialogOpen(false);
+        }}
       />
     </>
   );
@@ -383,6 +582,7 @@ const ContentTable = ({ data, columns, columnLabels, onDelete, onEdit, isLoading
   const formatValue = (value: any, key: string) => {
     if (value === undefined || value === null) return '-';
     if (typeof value === 'boolean') return value ? 'हाँ' : 'नहीं';
+    if (key === 'slug') return <span className="font-mono text-xs text-muted-foreground">{value}</span>;
     if (key.includes('date') || key.includes('Date')) {
       return new Date(value).toLocaleDateString('hi-IN');
     }
@@ -436,6 +636,379 @@ const ContentTable = ({ data, columns, columnLabels, onDelete, onEdit, isLoading
   );
 };
 
+// Add News Form Component
+interface AddNewsFormProps {
+  category: string;
+  onSuccess: () => void;
+}
+
+const AddNewsForm = ({ category, onSuccess }: AddNewsFormProps) => {
+  const [formData, setFormData] = useState<Record<string, any>>({
+    category,
+    isFeatured: false,
+    isBreaking: false,
+  });
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
+  const generateSlug = (title: string) => {
+    return title
+      .toLowerCase()
+      .replace(/[^\w\s-]/g, '')
+      .replace(/\s+/g, '-')
+      .replace(/-+/g, '-')
+      .trim();
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setIsSubmitting(true);
+    
+    try {
+      // In real implementation, this would call the API
+      console.log('Adding news:', formData);
+      toast.success('समाचार जोड़ा गया (डेमो)');
+      onSuccess();
+    } catch {
+      toast.error('त्रुटि हुई');
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  const updateField = (key: string, value: any) => {
+    setFormData(prev => {
+      const updated = { ...prev, [key]: value };
+      if (key === 'title' && !prev.slugManual) {
+        updated.slug = generateSlug(value);
+      }
+      return updated;
+    });
+  };
+
+  return (
+    <form onSubmit={handleSubmit} className="space-y-4">
+      <div className="space-y-2">
+        <Label>शीर्षक *</Label>
+        <Input 
+          value={formData.title || ''}
+          onChange={(e) => updateField('title', e.target.value)} 
+          placeholder="समाचार का शीर्षक..."
+          required 
+        />
+      </div>
+
+      <div className="space-y-2">
+        <Label>स्लग (URL) *</Label>
+        <Input 
+          value={formData.slug || ''}
+          onChange={(e) => {
+            setFormData(prev => ({ ...prev, slug: e.target.value, slugManual: true }));
+          }} 
+          placeholder="news-slug-url"
+          className="font-mono"
+          required 
+        />
+        <p className="text-xs text-muted-foreground">URL में उपयोग होगा: /news/{formData.slug || 'slug'}</p>
+      </div>
+
+      <div className="space-y-2">
+        <Label>सारांश *</Label>
+        <Textarea 
+          value={formData.excerpt || ''}
+          onChange={(e) => updateField('excerpt', e.target.value)} 
+          placeholder="समाचार का संक्षिप्त विवरण..."
+          rows={3}
+          required
+        />
+      </div>
+
+      <div className="space-y-2">
+        <Label>पूर्ण विवरण</Label>
+        <Textarea 
+          value={formData.content || ''}
+          onChange={(e) => updateField('content', e.target.value)} 
+          placeholder="समाचार का पूर्ण विवरण..."
+          rows={6}
+        />
+      </div>
+
+      <div className="grid grid-cols-2 gap-4">
+        <div className="space-y-2">
+          <Label>लेखक</Label>
+          <Input 
+            value={formData.author || ''}
+            onChange={(e) => updateField('author', e.target.value)} 
+            placeholder="लेखक का नाम"
+          />
+        </div>
+        <div className="space-y-2">
+          <Label>प्रकाशन तारीख</Label>
+          <Input 
+            type="datetime-local"
+            value={formData.publishedDate || ''}
+            onChange={(e) => updateField('publishedDate', e.target.value)} 
+          />
+        </div>
+      </div>
+
+      <ImageUploader
+        value={formData.image}
+        onChange={(v) => updateField('image', v)}
+        label="फीचर्ड इमेज"
+      />
+
+      <div className="flex items-center justify-between py-2">
+        <div>
+          <Label>फीचर्ड</Label>
+          <p className="text-sm text-muted-foreground">होम पेज पर दिखाएं</p>
+        </div>
+        <Switch 
+          checked={formData.isFeatured || false}
+          onCheckedChange={(v) => updateField('isFeatured', v)}
+        />
+      </div>
+
+      <div className="flex items-center justify-between py-2">
+        <div>
+          <Label>ब्रेकिंग न्यूज़</Label>
+          <p className="text-sm text-muted-foreground">ब्रेकिंग टिकर में दिखाएं</p>
+        </div>
+        <Switch 
+          checked={formData.isBreaking || false}
+          onCheckedChange={(v) => updateField('isBreaking', v)}
+        />
+      </div>
+
+      <div className="border-t pt-4 space-y-4">
+        <h4 className="font-medium">SEO सेटिंग्स</h4>
+        <div className="space-y-2">
+          <Label>मेटा विवरण</Label>
+          <Textarea 
+            value={formData.metaDescription || ''}
+            onChange={(e) => updateField('metaDescription', e.target.value)} 
+            placeholder="सर्च इंजन के लिए विवरण (160 अक्षर तक)"
+            rows={2}
+            maxLength={160}
+          />
+          <p className="text-xs text-muted-foreground">{(formData.metaDescription || '').length}/160</p>
+        </div>
+        <div className="space-y-2">
+          <Label>कीवर्ड्स (कॉमा से अलग)</Label>
+          <Input 
+            value={formData.keywords || ''}
+            onChange={(e) => updateField('keywords', e.target.value)} 
+            placeholder="रामपुर, न्यूज़, ब्रेकिंग"
+          />
+        </div>
+      </div>
+
+      <Button type="submit" className="w-full" disabled={isSubmitting}>
+        {isSubmitting ? 'जोड़ रहे हैं...' : 'समाचार जोड़ें'}
+      </Button>
+    </form>
+  );
+};
+
+// News Edit Dialog
+interface NewsEditDialogProps {
+  open: boolean;
+  onOpenChange: (open: boolean) => void;
+  news: NewsArticle | null;
+  onSave: (data: Record<string, any>) => Promise<void>;
+}
+
+const NewsEditDialog = ({ open, onOpenChange, news, onSave }: NewsEditDialogProps) => {
+  const [formData, setFormData] = useState<Record<string, any>>({});
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [activeTab, setActiveTab] = useState('basic');
+
+  useState(() => {
+    if (news) {
+      setFormData({ ...news });
+    }
+  });
+
+  const updateField = (key: string, value: any) => {
+    setFormData(prev => ({ ...prev, [key]: value }));
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setIsSubmitting(true);
+    try {
+      await onSave(formData);
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  if (!news) return null;
+
+  return (
+    <Dialog open={open} onOpenChange={onOpenChange}>
+      <DialogContent className="max-w-2xl max-h-[80vh] overflow-y-auto">
+        <DialogHeader>
+          <DialogTitle>समाचार संपादित करें</DialogTitle>
+        </DialogHeader>
+        <form onSubmit={handleSubmit} className="space-y-4">
+          <Tabs value={activeTab} onValueChange={setActiveTab}>
+            <TabsList>
+              <TabsTrigger value="basic">मूल जानकारी</TabsTrigger>
+              <TabsTrigger value="content">कंटेंट</TabsTrigger>
+              <TabsTrigger value="seo">SEO</TabsTrigger>
+              <TabsTrigger value="settings">सेटिंग्स</TabsTrigger>
+            </TabsList>
+
+            <TabsContent value="basic" className="space-y-4 pt-4">
+              <div className="space-y-2">
+                <Label>शीर्षक *</Label>
+                <Input 
+                  value={formData.title || news.title}
+                  onChange={(e) => updateField('title', e.target.value)} 
+                  required 
+                />
+              </div>
+              <div className="space-y-2">
+                <Label>स्लग (URL) *</Label>
+                <Input 
+                  value={formData.slug || news.slug}
+                  onChange={(e) => updateField('slug', e.target.value)} 
+                  className="font-mono"
+                  required 
+                />
+              </div>
+              <div className="grid grid-cols-2 gap-4">
+                <div className="space-y-2">
+                  <Label>लेखक</Label>
+                  <Input 
+                    value={formData.author || news.author}
+                    onChange={(e) => updateField('author', e.target.value)} 
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label>श्रेणी</Label>
+                  <Select 
+                    value={formData.category || news.category} 
+                    onValueChange={(v) => updateField('category', v)}
+                  >
+                    <SelectTrigger><SelectValue /></SelectTrigger>
+                    <SelectContent>
+                      {newsCategories.map(cat => (
+                        <SelectItem key={cat.id} value={cat.id}>{cat.label}</SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+              </div>
+            </TabsContent>
+
+            <TabsContent value="content" className="space-y-4 pt-4">
+              <div className="space-y-2">
+                <Label>सारांश</Label>
+                <Textarea 
+                  value={formData.excerpt || news.excerpt}
+                  onChange={(e) => updateField('excerpt', e.target.value)} 
+                  rows={3}
+                />
+              </div>
+              <div className="space-y-2">
+                <Label>पूर्ण विवरण</Label>
+                <Textarea 
+                  value={formData.content || news.content || ''}
+                  onChange={(e) => updateField('content', e.target.value)} 
+                  rows={8}
+                />
+              </div>
+              <ImageUploader
+                value={formData.image || news.image}
+                onChange={(v) => updateField('image', v)}
+                label="फीचर्ड इमेज"
+              />
+            </TabsContent>
+
+            <TabsContent value="seo" className="space-y-4 pt-4">
+              <div className="space-y-2">
+                <Label>मेटा टाइटल</Label>
+                <Input 
+                  value={formData.metaTitle || formData.title || news.title}
+                  onChange={(e) => updateField('metaTitle', e.target.value)} 
+                  maxLength={60}
+                />
+                <p className="text-xs text-muted-foreground">{(formData.metaTitle || formData.title || news.title).length}/60</p>
+              </div>
+              <div className="space-y-2">
+                <Label>मेटा विवरण</Label>
+                <Textarea 
+                  value={formData.metaDescription || formData.excerpt || news.excerpt}
+                  onChange={(e) => updateField('metaDescription', e.target.value)} 
+                  rows={2}
+                  maxLength={160}
+                />
+                <p className="text-xs text-muted-foreground">{(formData.metaDescription || formData.excerpt || news.excerpt).length}/160</p>
+              </div>
+              <div className="space-y-2">
+                <Label>कीवर्ड्स</Label>
+                <Input 
+                  value={formData.keywords || ''}
+                  onChange={(e) => updateField('keywords', e.target.value)} 
+                  placeholder="रामपुर, समाचार, ब्रेकिंग"
+                />
+              </div>
+              <div className="space-y-2">
+                <Label>OG इमेज URL</Label>
+                <Input 
+                  value={formData.ogImage || formData.image || news.image}
+                  onChange={(e) => updateField('ogImage', e.target.value)} 
+                />
+              </div>
+            </TabsContent>
+
+            <TabsContent value="settings" className="space-y-4 pt-4">
+              <div className="flex items-center justify-between py-2">
+                <div>
+                  <Label>फीचर्ड</Label>
+                  <p className="text-sm text-muted-foreground">होम पेज पर दिखाएं</p>
+                </div>
+                <Switch 
+                  checked={formData.isFeatured ?? news.isFeatured ?? false}
+                  onCheckedChange={(v) => updateField('isFeatured', v)}
+                />
+              </div>
+              <div className="flex items-center justify-between py-2">
+                <div>
+                  <Label>ब्रेकिंग न्यूज़</Label>
+                  <p className="text-sm text-muted-foreground">ब्रेकिंग टिकर में दिखाएं</p>
+                </div>
+                <Switch 
+                  checked={formData.isBreaking ?? news.isBreaking ?? false}
+                  onCheckedChange={(v) => updateField('isBreaking', v)}
+                />
+              </div>
+              <div className="space-y-2">
+                <Label>प्रकाशन तारीख</Label>
+                <Input 
+                  type="datetime-local"
+                  value={formData.publishedDate?.split('.')[0] || news.publishedDate?.split('.')[0] || ''}
+                  onChange={(e) => updateField('publishedDate', e.target.value)} 
+                />
+              </div>
+            </TabsContent>
+          </Tabs>
+
+          <div className="flex justify-end gap-2 pt-4 border-t">
+            <Button type="button" variant="outline" onClick={() => onOpenChange(false)}>
+              रद्द करें
+            </Button>
+            <Button type="submit" disabled={isSubmitting}>
+              {isSubmitting ? 'सेव हो रहा है...' : 'सेव करें'}
+            </Button>
+          </div>
+        </form>
+      </DialogContent>
+    </Dialog>
+  );
+};
+
 // Add Content Form Component
 interface AddContentFormProps {
   type: string;
@@ -447,14 +1020,21 @@ const AddContentForm = ({ type, onSuccess, onCreate }: AddContentFormProps) => {
   const [formData, setFormData] = useState<Record<string, any>>({});
   const [isSubmitting, setIsSubmitting] = useState(false);
 
+  const generateSlug = (text: string) => {
+    return text
+      .toLowerCase()
+      .replace(/[^\w\s-]/g, '')
+      .replace(/\s+/g, '-')
+      .replace(/-+/g, '-')
+      .trim() || `item-${Date.now()}`;
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsSubmitting(true);
     
     try {
-      const slug = formData.title?.toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, '') || 
-                   formData.name?.toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, '') || 
-                   `item-${Date.now()}`;
+      const slug = formData.slug || generateSlug(formData.title || formData.name || '');
       
       switch (type) {
         case 'exams':
@@ -491,10 +1071,33 @@ const AddContentForm = ({ type, onSuccess, onCreate }: AddContentFormProps) => {
   };
 
   const updateField = (key: string, value: any) => {
-    setFormData(prev => ({ ...prev, [key]: value }));
+    setFormData(prev => {
+      const updated = { ...prev, [key]: value };
+      // Auto-generate slug from title or name
+      if ((key === 'title' || key === 'name') && !prev.slugManual) {
+        updated.slug = generateSlug(value);
+      }
+      return updated;
+    });
   };
 
   const renderFormFields = () => {
+    // Common slug field for all types
+    const slugField = (
+      <div className="space-y-2">
+        <Label>स्लग (URL)</Label>
+        <Input 
+          value={formData.slug || ''}
+          onChange={(e) => {
+            setFormData(prev => ({ ...prev, slug: e.target.value, slugManual: true }));
+          }}
+          placeholder="auto-generated-slug"
+          className="font-mono text-sm"
+        />
+        <p className="text-xs text-muted-foreground">URL में उपयोग होगा</p>
+      </div>
+    );
+
     switch (type) {
       case 'exams':
         return (
@@ -509,6 +1112,7 @@ const AddContentForm = ({ type, onSuccess, onCreate }: AddContentFormProps) => {
                 <Input onChange={(e) => updateField('title', e.target.value)} required />
               </div>
             </div>
+            {slugField}
             <div className="grid grid-cols-2 gap-4">
               <div className="space-y-2">
                 <Label>परीक्षा तारीख</Label>
@@ -562,6 +1166,7 @@ const AddContentForm = ({ type, onSuccess, onCreate }: AddContentFormProps) => {
                 <Input onChange={(e) => updateField('name', e.target.value)} required />
               </div>
             </div>
+            {slugField}
             <div className="grid grid-cols-2 gap-4">
               <div className="space-y-2">
                 <Label>तारीख</Label>
@@ -611,6 +1216,7 @@ const AddContentForm = ({ type, onSuccess, onCreate }: AddContentFormProps) => {
                 <Input onChange={(e) => updateField('name', e.target.value)} required />
               </div>
             </div>
+            {slugField}
             <div className="grid grid-cols-2 gap-4">
               <div className="space-y-2">
                 <Label>प्रकार</Label>
@@ -688,6 +1294,7 @@ const AddContentForm = ({ type, onSuccess, onCreate }: AddContentFormProps) => {
                 <Input onChange={(e) => updateField('name', e.target.value)} required />
               </div>
             </div>
+            {slugField}
             <div className="grid grid-cols-2 gap-4">
               <div className="space-y-2">
                 <Label>प्रकार</Label>
@@ -716,7 +1323,7 @@ const AddContentForm = ({ type, onSuccess, onCreate }: AddContentFormProps) => {
             </div>
             <div className="space-y-2">
               <Label>ब्रांड्स (कॉमा से अलग)</Label>
-              <Input placeholder="Raymond, Peter England" onChange={(e) => updateField('brands', e.target.value)} />
+              <Input placeholder="Levis, Peter England" onChange={(e) => updateField('brands', e.target.value)} />
             </div>
             <div className="grid grid-cols-2 gap-4">
               <div className="space-y-2">
@@ -728,27 +1335,10 @@ const AddContentForm = ({ type, onSuccess, onCreate }: AddContentFormProps) => {
                 <Input onChange={(e) => updateField('address', e.target.value)} />
               </div>
             </div>
-            <div className="grid grid-cols-2 gap-4">
-              <div className="space-y-2">
-                <Label>फोन</Label>
-                <Input onChange={(e) => updateField('phone', e.target.value)} />
-              </div>
-              <div className="space-y-2">
-                <Label>रेटिंग (1-5)</Label>
-                <Input type="number" min="1" max="5" step="0.1" onChange={(e) => updateField('rating', parseFloat(e.target.value))} />
-              </div>
-            </div>
             <ImageUploader
               value={formData.image}
               onChange={(v) => updateField('image', v)}
               label="मुख्य इमेज"
-            />
-            <ImageUploader
-              value={formData.gallery}
-              onChange={(v) => updateField('gallery', v)}
-              label="गैलरी"
-              multiple
-              maxImages={10}
             />
           </>
         );
@@ -766,6 +1356,7 @@ const AddContentForm = ({ type, onSuccess, onCreate }: AddContentFormProps) => {
                 <Input onChange={(e) => updateField('name', e.target.value)} required />
               </div>
             </div>
+            {slugField}
             <div className="grid grid-cols-2 gap-4">
               <div className="space-y-2">
                 <Label>प्रकार</Label>
@@ -773,9 +1364,9 @@ const AddContentForm = ({ type, onSuccess, onCreate }: AddContentFormProps) => {
                   <SelectTrigger><SelectValue placeholder="चुनें" /></SelectTrigger>
                   <SelectContent>
                     <SelectItem value="mall">मॉल</SelectItem>
-                    <SelectItem value="market">बाज़ार</SelectItem>
+                    <SelectItem value="market">बाजार</SelectItem>
+                    <SelectItem value="plaza">प्लाजा</SelectItem>
                     <SelectItem value="complex">कॉम्प्लेक्स</SelectItem>
-                    <SelectItem value="plaza">प्लाज़ा</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
@@ -785,8 +1376,8 @@ const AddContentForm = ({ type, onSuccess, onCreate }: AddContentFormProps) => {
               </div>
             </div>
             <div className="space-y-2">
-              <Label>दुकानें (कॉमा से अलग)</Label>
-              <Input placeholder="Big Bazaar, Reliance Fresh" onChange={(e) => updateField('stores', e.target.value)} />
+              <Label>प्रमुख स्टोर (कॉमा से अलग)</Label>
+              <Input placeholder="Big Bazaar, Reliance" onChange={(e) => updateField('stores', e.target.value)} />
             </div>
             <div className="grid grid-cols-2 gap-4">
               <div className="space-y-2">
@@ -798,27 +1389,10 @@ const AddContentForm = ({ type, onSuccess, onCreate }: AddContentFormProps) => {
                 <Input onChange={(e) => updateField('address', e.target.value)} />
               </div>
             </div>
-            <div className="grid grid-cols-2 gap-4">
-              <div className="space-y-2">
-                <Label>फोन</Label>
-                <Input onChange={(e) => updateField('phone', e.target.value)} />
-              </div>
-              <div className="space-y-2">
-                <Label>रेटिंग (1-5)</Label>
-                <Input type="number" min="1" max="5" step="0.1" onChange={(e) => updateField('rating', parseFloat(e.target.value))} />
-              </div>
-            </div>
             <ImageUploader
               value={formData.image}
               onChange={(v) => updateField('image', v)}
               label="मुख्य इमेज"
-            />
-            <ImageUploader
-              value={formData.gallery}
-              onChange={(v) => updateField('gallery', v)}
-              label="गैलरी"
-              multiple
-              maxImages={10}
             />
           </>
         );
@@ -836,6 +1410,7 @@ const AddContentForm = ({ type, onSuccess, onCreate }: AddContentFormProps) => {
                 <Input onChange={(e) => updateField('name', e.target.value)} required />
               </div>
             </div>
+            {slugField}
             <div className="grid grid-cols-2 gap-4">
               <div className="space-y-2">
                 <Label>प्रकार</Label>
@@ -844,15 +1419,14 @@ const AddContentForm = ({ type, onSuccess, onCreate }: AddContentFormProps) => {
                   <SelectContent>
                     <SelectItem value="historical">ऐतिहासिक</SelectItem>
                     <SelectItem value="religious">धार्मिक</SelectItem>
-                    <SelectItem value="natural">प्राकृतिक</SelectItem>
-                    <SelectItem value="recreational">मनोरंजन</SelectItem>
-                    <SelectItem value="cultural">सांस्कृतिक</SelectItem>
+                    <SelectItem value="park">पार्क</SelectItem>
+                    <SelectItem value="tourist">पर्यटन</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
               <div className="space-y-2">
-                <Label>प्रवेश शुल्क</Label>
-                <Input placeholder="निःशुल्क या ₹50" onChange={(e) => updateField('entryFee', e.target.value)} />
+                <Label>रेटिंग (1-5)</Label>
+                <Input type="number" min="1" max="5" step="0.1" onChange={(e) => updateField('rating', parseFloat(e.target.value))} />
               </div>
             </div>
             <div className="grid grid-cols-2 gap-4">
@@ -865,37 +1439,14 @@ const AddContentForm = ({ type, onSuccess, onCreate }: AddContentFormProps) => {
                 <Input onChange={(e) => updateField('address', e.target.value)} />
               </div>
             </div>
-            <div className="grid grid-cols-2 gap-4">
-              <div className="space-y-2">
-                <Label>समय</Label>
-                <Input placeholder="सुबह 6 - शाम 8" onChange={(e) => updateField('timings', e.target.value)} />
-              </div>
-              <div className="space-y-2">
-                <Label>रेटिंग (1-5)</Label>
-                <Input type="number" min="1" max="5" step="0.1" onChange={(e) => updateField('rating', parseFloat(e.target.value))} />
-              </div>
-            </div>
-            <div className="grid grid-cols-2 gap-4">
-              <div className="space-y-2">
-                <Label>विवरण (हिंदी)</Label>
-                <Textarea onChange={(e) => updateField('descriptionHindi', e.target.value)} />
-              </div>
-              <div className="space-y-2">
-                <Label>Description</Label>
-                <Textarea onChange={(e) => updateField('description', e.target.value)} />
-              </div>
+            <div className="space-y-2">
+              <Label>विवरण</Label>
+              <Textarea onChange={(e) => updateField('description', e.target.value)} />
             </div>
             <ImageUploader
               value={formData.image}
               onChange={(v) => updateField('image', v)}
               label="मुख्य इमेज"
-            />
-            <ImageUploader
-              value={formData.gallery}
-              onChange={(v) => updateField('gallery', v)}
-              label="गैलरी"
-              multiple
-              maxImages={10}
             />
           </>
         );
@@ -913,24 +1464,15 @@ const AddContentForm = ({ type, onSuccess, onCreate }: AddContentFormProps) => {
                 <Input onChange={(e) => updateField('title', e.target.value)} required />
               </div>
             </div>
+            {slugField}
             <div className="grid grid-cols-2 gap-4">
               <div className="space-y-2">
                 <Label>तारीख</Label>
                 <Input type="date" onChange={(e) => updateField('date', e.target.value)} required />
               </div>
               <div className="space-y-2">
-                <Label>श्रेणी</Label>
-                <Select onValueChange={(v) => updateField('category', v)}>
-                  <SelectTrigger><SelectValue placeholder="चुनें" /></SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="cultural">सांस्कृतिक</SelectItem>
-                    <SelectItem value="religious">धार्मिक</SelectItem>
-                    <SelectItem value="sports">खेल</SelectItem>
-                    <SelectItem value="educational">शैक्षिक</SelectItem>
-                    <SelectItem value="entertainment">मनोरंजन</SelectItem>
-                    <SelectItem value="food">खाना</SelectItem>
-                  </SelectContent>
-                </Select>
+                <Label>समय</Label>
+                <Input type="time" onChange={(e) => updateField('time', e.target.value)} />
               </div>
             </div>
             <div className="grid grid-cols-2 gap-4">
@@ -943,127 +1485,29 @@ const AddContentForm = ({ type, onSuccess, onCreate }: AddContentFormProps) => {
                 <Input onChange={(e) => updateField('venue', e.target.value)} />
               </div>
             </div>
-            <div className="grid grid-cols-2 gap-4">
-              <div className="space-y-2">
-                <Label>शहर</Label>
-                <Input defaultValue="रामपुर" onChange={(e) => updateField('city', e.target.value)} />
-              </div>
-              <div className="space-y-2">
-                <Label>पता</Label>
-                <Input onChange={(e) => updateField('address', e.target.value)} />
-              </div>
-            </div>
-            <div className="grid grid-cols-2 gap-4">
-              <div className="space-y-2">
-                <Label>विवरण (हिंदी)</Label>
-                <Textarea onChange={(e) => updateField('descriptionHindi', e.target.value)} />
-              </div>
-              <div className="space-y-2">
-                <Label>Description</Label>
-                <Textarea onChange={(e) => updateField('description', e.target.value)} />
-              </div>
+            <div className="space-y-2">
+              <Label>विवरण</Label>
+              <Textarea onChange={(e) => updateField('description', e.target.value)} />
             </div>
             <ImageUploader
               value={formData.image}
               onChange={(v) => updateField('image', v)}
               label="इमेज"
-            />
-          </>
-        );
-
-      case 'institutions':
-        return (
-          <>
-            <div className="grid grid-cols-2 gap-4">
-              <div className="space-y-2">
-                <Label>नाम (हिंदी)</Label>
-                <Input onChange={(e) => updateField('nameHindi', e.target.value)} required />
-              </div>
-              <div className="space-y-2">
-                <Label>Name (English)</Label>
-                <Input onChange={(e) => updateField('name', e.target.value)} required />
-              </div>
-            </div>
-            <div className="grid grid-cols-2 gap-4">
-              <div className="space-y-2">
-                <Label>प्रकार</Label>
-                <Select onValueChange={(v) => updateField('type', v)}>
-                  <SelectTrigger><SelectValue placeholder="चुनें" /></SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="school">स्कूल</SelectItem>
-                    <SelectItem value="college">कॉलेज</SelectItem>
-                    <SelectItem value="university">विश्वविद्यालय</SelectItem>
-                    <SelectItem value="coaching">कोचिंग</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-              <div className="space-y-2">
-                <Label>संबद्धता</Label>
-                <Input placeholder="CBSE, UP Board, etc." onChange={(e) => updateField('affiliation', e.target.value)} />
-              </div>
-            </div>
-            <div className="grid grid-cols-2 gap-4">
-              <div className="space-y-2">
-                <Label>पता (हिंदी)</Label>
-                <Input onChange={(e) => updateField('addressHindi', e.target.value)} />
-              </div>
-              <div className="space-y-2">
-                <Label>Address</Label>
-                <Input onChange={(e) => updateField('address', e.target.value)} />
-              </div>
-            </div>
-            <div className="grid grid-cols-3 gap-4">
-              <div className="space-y-2">
-                <Label>शहर</Label>
-                <Input defaultValue="रामपुर" onChange={(e) => updateField('city', e.target.value)} />
-              </div>
-              <div className="space-y-2">
-                <Label>जिला</Label>
-                <Input defaultValue="रामपुर" onChange={(e) => updateField('district', e.target.value)} />
-              </div>
-              <div className="space-y-2">
-                <Label>पिनकोड</Label>
-                <Input onChange={(e) => updateField('pincode', e.target.value)} />
-              </div>
-            </div>
-            <div className="grid grid-cols-2 gap-4">
-              <div className="space-y-2">
-                <Label>विवरण (हिंदी)</Label>
-                <Textarea onChange={(e) => updateField('descriptionHindi', e.target.value)} />
-              </div>
-              <div className="space-y-2">
-                <Label>Description</Label>
-                <Textarea onChange={(e) => updateField('description', e.target.value)} />
-              </div>
-            </div>
-            <ImageUploader
-              value={formData.image}
-              onChange={(v) => updateField('image', v)}
-              label="इमेज"
-            />
-            <ImageUploader
-              value={formData.gallery}
-              onChange={(v) => updateField('gallery', v)}
-              label="गैलरी"
-              multiple
-              maxImages={10}
             />
           </>
         );
 
       default:
-        return <p className="text-muted-foreground">इस प्रकार के लिए फॉर्म उपलब्ध नहीं है</p>;
+        return <p>इस प्रकार के लिए फॉर्म उपलब्ध नहीं है</p>;
     }
   };
 
   return (
     <form onSubmit={handleSubmit} className="space-y-4">
       {renderFormFields()}
-      <div className="flex justify-end gap-2 pt-4">
-        <Button type="submit" disabled={isSubmitting}>
-          {isSubmitting ? 'जोड़ा जा रहा है...' : 'जोड़ें'}
-        </Button>
-      </div>
+      <Button type="submit" className="w-full" disabled={isSubmitting}>
+        {isSubmitting ? 'जोड़ रहे हैं...' : 'जोड़ें'}
+      </Button>
     </form>
   );
 };
