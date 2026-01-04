@@ -306,12 +306,19 @@ const ContentManagerPage = () => {
                 <DialogHeader>
                   <DialogTitle>नई सामग्री जोड़ें</DialogTitle>
                 </DialogHeader>
-                {activeSection === 'news' ? (
+                {activeSection === 'news' || activeTab === 'edu-news' || activeTab === 'lifestyle-news' ? (
                   <AddNewsForm 
-                    category={activeTab}
+                    category={activeSection === 'news' ? activeTab : (activeTab === 'edu-news' ? 'education-jobs' : 'food-lifestyle')}
                     onSuccess={() => {
                       setIsAddDialogOpen(false);
                       toast.success('समाचार जोड़ा गया');
+                    }}
+                  />
+                ) : activeTab === 'results' ? (
+                  <AddResultForm 
+                    onSuccess={() => {
+                      setIsAddDialogOpen(false);
+                      toast.success('परिणाम जोड़ा गया');
                     }}
                   />
                 ) : (
@@ -809,6 +816,149 @@ const AddNewsForm = ({ category, onSuccess }: AddNewsFormProps) => {
   );
 };
 
+// Add Result Form Component
+interface AddResultFormProps {
+  onSuccess: () => void;
+}
+
+const AddResultForm = ({ onSuccess }: AddResultFormProps) => {
+  const [formData, setFormData] = useState<Record<string, any>>({});
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
+  const generateSlug = (text: string) => {
+    return text
+      .toLowerCase()
+      .replace(/[^\w\s-]/g, '')
+      .replace(/\s+/g, '-')
+      .replace(/-+/g, '-')
+      .trim() || `result-${Date.now()}`;
+  };
+
+  const updateField = (key: string, value: any) => {
+    setFormData(prev => {
+      const updated = { ...prev, [key]: value };
+      if ((key === 'title' || key === 'titleHindi') && !prev.slugManual) {
+        updated.slug = generateSlug(value);
+      }
+      return updated;
+    });
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setIsSubmitting(true);
+    
+    try {
+      const slug = formData.slug || generateSlug(formData.title || formData.titleHindi || '');
+      // For now, just show success - in a real app this would call a mutation
+      console.log('Result data:', { ...formData, slug, status: 'announced' });
+      toast.success('परिणाम जोड़ा गया (डेमो मोड)');
+      onSuccess();
+    } catch {
+      toast.error('जोड़ने में त्रुटि');
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  return (
+    <form onSubmit={handleSubmit} className="space-y-4">
+      <div className="grid grid-cols-2 gap-4">
+        <div className="space-y-2">
+          <Label>शीर्षक (हिंदी) *</Label>
+          <Input 
+            onChange={(e) => updateField('titleHindi', e.target.value)} 
+            placeholder="परीक्षा परिणाम का नाम"
+            required 
+          />
+        </div>
+        <div className="space-y-2">
+          <Label>Title (English) *</Label>
+          <Input 
+            onChange={(e) => updateField('title', e.target.value)} 
+            placeholder="Result title in English"
+            required 
+          />
+        </div>
+      </div>
+
+      <div className="space-y-2">
+        <Label>स्लग (URL)</Label>
+        <Input 
+          value={formData.slug || ''}
+          onChange={(e) => {
+            setFormData(prev => ({ ...prev, slug: e.target.value, slugManual: true }));
+          }} 
+          placeholder="result-slug-url"
+          className="font-mono"
+        />
+      </div>
+
+      <div className="grid grid-cols-2 gap-4">
+        <div className="space-y-2">
+          <Label>परिणाम तारीख *</Label>
+          <Input 
+            type="date" 
+            onChange={(e) => updateField('resultDate', e.target.value)} 
+            required 
+          />
+        </div>
+        <div className="space-y-2">
+          <Label>श्रेणी</Label>
+          <Select onValueChange={(v) => updateField('category', v)}>
+            <SelectTrigger><SelectValue placeholder="चुनें" /></SelectTrigger>
+            <SelectContent>
+              <SelectItem value="board">बोर्ड</SelectItem>
+              <SelectItem value="entrance">प्रवेश</SelectItem>
+              <SelectItem value="government">सरकारी</SelectItem>
+              <SelectItem value="university">विश्वविद्यालय</SelectItem>
+            </SelectContent>
+          </Select>
+        </div>
+      </div>
+
+      <div className="grid grid-cols-2 gap-4">
+        <div className="space-y-2">
+          <Label>संस्था (हिंदी)</Label>
+          <Input onChange={(e) => updateField('organizationHindi', e.target.value)} />
+        </div>
+        <div className="space-y-2">
+          <Label>Organization</Label>
+          <Input onChange={(e) => updateField('organization', e.target.value)} />
+        </div>
+      </div>
+
+      <div className="space-y-2">
+        <Label>परिणाम लिंक</Label>
+        <Input 
+          type="url"
+          onChange={(e) => updateField('resultLink', e.target.value)} 
+          placeholder="https://results.example.com"
+        />
+      </div>
+
+      <div className="space-y-2">
+        <Label>विवरण</Label>
+        <Textarea 
+          onChange={(e) => updateField('description', e.target.value)} 
+          placeholder="परिणाम के बारे में जानकारी..."
+          rows={3}
+        />
+      </div>
+
+      <ImageUploader
+        value={formData.image}
+        onChange={(v) => updateField('image', v)}
+        label="इमेज"
+      />
+
+      <Button type="submit" className="w-full" disabled={isSubmitting}>
+        {isSubmitting ? 'जोड़ रहे हैं...' : 'परिणाम जोड़ें'}
+      </Button>
+    </form>
+  );
+};
+
 // News Edit Dialog
 interface NewsEditDialogProps {
   open: boolean;
@@ -1139,6 +1289,78 @@ const AddContentForm = ({ type, onSuccess, onCreate }: AddContentFormProps) => {
               <div className="space-y-2">
                 <Label>Organization</Label>
                 <Input onChange={(e) => updateField('organization', e.target.value)} />
+              </div>
+            </div>
+            <div className="space-y-2">
+              <Label>विवरण</Label>
+              <Textarea onChange={(e) => updateField('description', e.target.value)} />
+            </div>
+            <ImageUploader
+              value={formData.image}
+              onChange={(v) => updateField('image', v)}
+              label="इमेज"
+            />
+          </>
+        );
+
+      case 'institutions':
+        return (
+          <>
+            <div className="grid grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <Label>नाम (हिंदी)</Label>
+                <Input onChange={(e) => updateField('nameHindi', e.target.value)} required />
+              </div>
+              <div className="space-y-2">
+                <Label>Name (English)</Label>
+                <Input onChange={(e) => updateField('name', e.target.value)} required />
+              </div>
+            </div>
+            {slugField}
+            <div className="grid grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <Label>प्रकार</Label>
+                <Select onValueChange={(v) => updateField('type', v)}>
+                  <SelectTrigger><SelectValue placeholder="चुनें" /></SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="school">स्कूल</SelectItem>
+                    <SelectItem value="college">कॉलेज</SelectItem>
+                    <SelectItem value="university">विश्वविद्यालय</SelectItem>
+                    <SelectItem value="coaching">कोचिंग</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+              <div className="space-y-2">
+                <Label>बोर्ड/संबद्धता</Label>
+                <Select onValueChange={(v) => updateField('board', v)}>
+                  <SelectTrigger><SelectValue placeholder="चुनें" /></SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="CBSE">CBSE</SelectItem>
+                    <SelectItem value="UP Board">UP Board</SelectItem>
+                    <SelectItem value="ICSE">ICSE</SelectItem>
+                    <SelectItem value="Other">अन्य</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+            </div>
+            <div className="grid grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <Label>पता (हिंदी)</Label>
+                <Input onChange={(e) => updateField('addressHindi', e.target.value)} />
+              </div>
+              <div className="space-y-2">
+                <Label>Address</Label>
+                <Input onChange={(e) => updateField('address', e.target.value)} />
+              </div>
+            </div>
+            <div className="grid grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <Label>फोन</Label>
+                <Input onChange={(e) => updateField('phone', e.target.value)} />
+              </div>
+              <div className="space-y-2">
+                <Label>वेबसाइट</Label>
+                <Input onChange={(e) => updateField('website', e.target.value)} />
               </div>
             </div>
             <div className="space-y-2">
