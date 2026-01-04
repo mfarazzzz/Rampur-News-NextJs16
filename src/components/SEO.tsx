@@ -26,6 +26,9 @@ interface SEOProps {
   article?: ArticleData;
   newsArticle?: NewsArticleSchema;
   isHomepage?: boolean;
+  keywords?: string[];
+  isAMP?: boolean;
+  speakable?: string[];
 }
 
 const SEO = ({
@@ -37,23 +40,38 @@ const SEO = ({
   article,
   newsArticle,
   isHomepage = false,
+  keywords = [],
+  isAMP = false,
+  speakable = [],
 }: SEOProps) => {
   const siteName = "रामपुर न्यूज़ | Rampur News";
   const fullTitle = `${title} | ${siteName}`;
   const siteUrl = "https://rampurnews.com";
   const canonicalUrl = canonical ? `${siteUrl}${canonical}` : siteUrl;
 
-  // Website Schema (for homepage)
+  // Default keywords for Hindi news
+  const defaultKeywords = [
+    "रामपुर", "रामपुर न्यूज़", "Rampur News", "उत्तर प्रदेश", 
+    "हिंदी समाचार", "ताज़ा खबरें", "Hindi News", "UP News",
+    "रामपुर समाचार", "लोकल न्यूज़", "ब्रेकिंग न्यूज़"
+  ];
+  const allKeywords = [...new Set([...defaultKeywords, ...keywords])];
+
+  // Website Schema (for homepage) - Enhanced for Google Discover
   const websiteSchema = {
     "@context": "https://schema.org",
     "@type": "WebSite",
     name: siteName,
+    alternateName: ["Rampur News", "रामपुर न्यूज़", "RampurNews.com"],
     url: siteUrl,
-    description: "रामपुर न्यूज़ - रामपुर जिले और उत्तर प्रदेश की ताज़ा, विश्वसनीय खबरें।",
+    description: "रामपुर न्यूज़ - रामपुर जिले और उत्तर प्रदेश की ताज़ा, विश्वसनीय खबरें। Breaking News, Local Updates, Education, Sports, Entertainment.",
     inLanguage: "hi-IN",
     potentialAction: {
       "@type": "SearchAction",
-      target: `${siteUrl}/search?q={search_term_string}`,
+      target: {
+        "@type": "EntryPoint",
+        urlTemplate: `${siteUrl}/search?q={search_term_string}`,
+      },
       "query-input": "required name=search_term_string",
     },
     publisher: {
@@ -69,11 +87,13 @@ const SEO = ({
     },
   };
 
-  // News Media Organization Schema
+  // News Media Organization Schema - Enhanced for Google News
   const organizationSchema = {
     "@context": "https://schema.org",
     "@type": "NewsMediaOrganization",
+    "@id": `${siteUrl}/#organization`,
     name: siteName,
+    alternateName: "Rampur News",
     url: siteUrl,
     logo: {
       "@type": "ImageObject",
@@ -85,36 +105,57 @@ const SEO = ({
       "https://facebook.com/RampurNews",
       "https://twitter.com/RampurNews",
       "https://instagram.com/RampurNews",
+      "https://youtube.com/@RampurNews",
+      "https://whatsapp.com/channel/RampurNews",
+      "https://t.me/RampurNews",
     ],
     contactPoint: {
       "@type": "ContactPoint",
       telephone: "+91-XXXXXXXXXX",
       contactType: "customer service",
       areaServed: "IN",
-      availableLanguage: "Hindi",
+      availableLanguage: ["Hindi", "English"],
     },
+    foundingDate: "2024-01-01",
+    publishingPrinciples: `${siteUrl}/about#editorial-policy`,
+    masthead: `${siteUrl}/about#team`,
+    ownershipFundingInfo: `${siteUrl}/about#ownership`,
+    actionableFeedbackPolicy: `${siteUrl}/contact`,
+    correctionsPolicy: `${siteUrl}/corrections-policy`,
+    ethicsPolicy: `${siteUrl}/ethics-policy`,
+    unnamedSourcesPolicy: `${siteUrl}/sources-policy`,
   };
 
-  // NewsArticle Schema
+  // NewsArticle Schema - Enhanced for AI/Perplexity/Google Discover
   const newsArticleSchema = newsArticle
     ? {
         "@context": "https://schema.org",
         "@type": "NewsArticle",
+        "@id": `${canonicalUrl}#article`,
         mainEntityOfPage: {
           "@type": "WebPage",
           "@id": canonicalUrl,
         },
         headline: newsArticle.headline,
+        name: newsArticle.headline,
         description: newsArticle.description,
-        image: newsArticle.image || ogImage,
+        articleBody: newsArticle.description,
+        image: {
+          "@type": "ImageObject",
+          url: newsArticle.image || ogImage,
+          width: 1200,
+          height: 630,
+        },
         datePublished: newsArticle.datePublished || new Date().toISOString(),
         dateModified: newsArticle.dateModified || newsArticle.datePublished || new Date().toISOString(),
         author: {
           "@type": "Person",
           name: newsArticle.author || "रामपुर न्यूज़ संवाददाता",
+          url: `${siteUrl}/author/${encodeURIComponent(newsArticle.author || "rampur-news")}`,
         },
         publisher: {
-          "@type": "Organization",
+          "@type": "NewsMediaOrganization",
+          "@id": `${siteUrl}/#organization`,
           name: siteName,
           logo: {
             "@type": "ImageObject",
@@ -125,6 +166,31 @@ const SEO = ({
         },
         articleSection: newsArticle.section || "समाचार",
         inLanguage: "hi-IN",
+        isAccessibleForFree: true,
+        isPartOf: {
+          "@type": "WebSite",
+          "@id": `${siteUrl}/#website`,
+          name: siteName,
+        },
+        keywords: allKeywords.join(", "),
+        copyrightYear: new Date().getFullYear(),
+        copyrightHolder: {
+          "@type": "Organization",
+          name: siteName,
+        },
+      }
+    : null;
+
+  // Speakable Schema for Google Assistant / Voice Search
+  const speakableSchema = speakable.length > 0 || newsArticle
+    ? {
+        "@context": "https://schema.org",
+        "@type": "WebPage",
+        speakable: {
+          "@type": "SpeakableSpecification",
+          cssSelector: speakable.length > 0 ? speakable : [".article-headline", ".article-summary", "h1", ".excerpt"],
+        },
+        url: canonicalUrl,
       }
     : null;
 
@@ -150,20 +216,56 @@ const SEO = ({
       }
     : null;
 
-  // CollectionPage Schema for category pages
+  // CollectionPage Schema for category pages - Enhanced
   const collectionPageSchema = !isHomepage && !newsArticle
     ? {
         "@context": "https://schema.org",
         "@type": "CollectionPage",
+        "@id": `${canonicalUrl}#collection`,
         name: fullTitle,
         description: description,
         url: canonicalUrl,
         inLanguage: "hi-IN",
         isPartOf: {
           "@type": "WebSite",
+          "@id": `${siteUrl}/#website`,
           name: siteName,
           url: siteUrl,
         },
+        about: {
+          "@type": "Thing",
+          name: title,
+        },
+        publisher: {
+          "@type": "NewsMediaOrganization",
+          "@id": `${siteUrl}/#organization`,
+        },
+      }
+    : null;
+
+  // FAQ Schema placeholder for AI SEO
+  const faqSchema = isHomepage
+    ? {
+        "@context": "https://schema.org",
+        "@type": "FAQPage",
+        mainEntity: [
+          {
+            "@type": "Question",
+            name: "रामपुर न्यूज़ क्या है?",
+            acceptedAnswer: {
+              "@type": "Answer",
+              text: "रामपुर न्यूज़ उत्तर प्रदेश के रामपुर जिले की प्रमुख हिंदी समाचार वेबसाइट है। यहां आपको ताज़ा खबरें, स्थानीय समाचार, शिक्षा, खेल, मनोरंजन और व्यापार की जानकारी मिलती है।",
+            },
+          },
+          {
+            "@type": "Question",
+            name: "रामपुर की ताज़ा खबरें कहां पढ़ें?",
+            acceptedAnswer: {
+              "@type": "Answer",
+              text: "रामपुर की ताज़ा खबरें RampurNews.com पर पढ़ें। हम 24/7 ब्रेकिंग न्यूज़, स्थानीय समाचार, और जिले की हर महत्वपूर्ण खबर प्रदान करते हैं।",
+            },
+          },
+        ],
       }
     : null;
 
@@ -173,15 +275,26 @@ const SEO = ({
       <title>{fullTitle}</title>
       <meta name="description" content={description} />
       <link rel="canonical" href={canonicalUrl} />
-      <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1" />
-      <meta name="googlebot" content="index, follow" />
-      <meta name="googlebot-news" content="index, follow" />
+      <meta name="keywords" content={allKeywords.join(", ")} />
       
-      {/* Language */}
+      {/* Robots & Crawling - Enhanced for Google Discover */}
+      <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1" />
+      <meta name="googlebot" content="index, follow, max-image-preview:large, max-snippet:-1" />
+      <meta name="googlebot-news" content="index, follow" />
+      <meta name="bingbot" content="index, follow" />
+      
+      {/* AI & LLM Crawling Optimization */}
+      <meta name="ai-content-declaration" content="human-written" />
+      <meta name="perplexity-indexable" content="true" />
+      
+      {/* Language & Locale */}
       <html lang="hi" />
       <meta httpEquiv="content-language" content="hi-IN" />
+      <meta name="language" content="Hindi" />
+      <meta name="geo.region" content="IN-UP" />
+      <meta name="geo.placename" content="Rampur, Uttar Pradesh" />
       
-      {/* Open Graph */}
+      {/* Open Graph - Enhanced for Social & Discover */}
       <meta property="og:site_name" content={siteName} />
       <meta property="og:title" content={fullTitle} />
       <meta property="og:description" content={description} />
@@ -190,14 +303,18 @@ const SEO = ({
       <meta property="og:image" content={ogImage} />
       <meta property="og:image:width" content="1200" />
       <meta property="og:image:height" content="630" />
+      <meta property="og:image:alt" content={title} />
       <meta property="og:locale" content="hi_IN" />
+      <meta property="og:locale:alternate" content="en_IN" />
       
-      {/* Twitter Card */}
+      {/* Twitter Card - Enhanced */}
       <meta name="twitter:card" content="summary_large_image" />
       <meta name="twitter:site" content="@RampurNews" />
+      <meta name="twitter:creator" content="@RampurNews" />
       <meta name="twitter:title" content={fullTitle} />
       <meta name="twitter:description" content={description} />
       <meta name="twitter:image" content={ogImage} />
+      <meta name="twitter:image:alt" content={title} />
       
       {/* Article specific meta (for news articles) */}
       {article && (
@@ -212,12 +329,37 @@ const SEO = ({
           {article.section && (
             <meta property="article:section" content={article.section} />
           )}
+          <meta property="article:publisher" content="https://facebook.com/RampurNews" />
+          <meta property="article:opinion" content="false" />
         </>
       )}
       
-      {/* Google News */}
-      <meta name="news_keywords" content="रामपुर, उत्तर प्रदेश, हिंदी समाचार, ताज़ा खबरें, Rampur News" />
+      {/* Google News & Discover */}
+      <meta name="news_keywords" content={allKeywords.slice(0, 10).join(", ")} />
+      <meta name="original-source" content={canonicalUrl} />
+      <meta name="syndication-source" content={canonicalUrl} />
       <meta name="google-site-verification" content="YOUR_VERIFICATION_CODE" />
+      
+      {/* Mobile & App */}
+      <meta name="mobile-web-app-capable" content="yes" />
+      <meta name="apple-mobile-web-app-capable" content="yes" />
+      <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+      <meta name="apple-mobile-web-app-title" content="रामपुर न्यूज़" />
+      <meta name="application-name" content="Rampur News" />
+      <meta name="theme-color" content="#DC2626" />
+      <meta name="msapplication-TileColor" content="#DC2626" />
+      
+      {/* AMP Link */}
+      {isAMP && <link rel="amphtml" href={`${canonicalUrl}?amp=1`} />}
+      
+      {/* RSS & Atom Feeds */}
+      <link rel="alternate" type="application/rss+xml" title="रामपुर न्यूज़ RSS" href={`${siteUrl}/feed.xml`} />
+      <link rel="alternate" type="application/atom+xml" title="रामपुर न्यूज़ Atom" href={`${siteUrl}/atom.xml`} />
+      
+      {/* Preconnect for performance */}
+      <link rel="preconnect" href="https://fonts.googleapis.com" />
+      <link rel="preconnect" href="https://picsum.photos" />
+      <link rel="dns-prefetch" href="https://www.google-analytics.com" />
       
       {/* JSON-LD Structured Data */}
       {isHomepage && (
@@ -236,6 +378,12 @@ const SEO = ({
         </script>
       )}
       
+      {speakableSchema && (
+        <script type="application/ld+json">
+          {JSON.stringify(speakableSchema)}
+        </script>
+      )}
+      
       {breadcrumbSchema && (
         <script type="application/ld+json">
           {JSON.stringify(breadcrumbSchema)}
@@ -245,6 +393,12 @@ const SEO = ({
       {collectionPageSchema && (
         <script type="application/ld+json">
           {JSON.stringify(collectionPageSchema)}
+        </script>
+      )}
+      
+      {faqSchema && (
+        <script type="application/ld+json">
+          {JSON.stringify(faqSchema)}
         </script>
       )}
     </Helmet>
