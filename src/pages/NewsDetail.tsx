@@ -1,13 +1,13 @@
 import { useParams, Link } from "react-router-dom";
 import { ArrowLeft, Clock, Share2, User } from "lucide-react";
-import { Helmet } from "react-helmet-async";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import Sidebar from "@/components/Sidebar";
 import ShareButtons from "@/components/ShareButtons";
 import NewsCard from "@/components/NewsCard";
+import SEO from "@/components/SEO";
 import { Button } from "@/components/ui/button";
-import { mockNewsData, getRelativeTimeHindi, formatDateHindi, NewsArticle } from "@/data/mockNews";
+import { mockNewsData, formatDateHindi, NewsArticle } from "@/data/mockNews";
 
 // Valid news categories
 const validCategories = [
@@ -33,6 +33,15 @@ const getCategoryHindi = (category: string): string => {
     "nearby": "आस-पास"
   };
   return categoryMap[category] || category;
+};
+
+// Calculate reading time in Hindi
+const getReadingTime = (content: string | undefined, excerpt: string): string => {
+  const text = content || excerpt;
+  const wordsPerMinute = 200;
+  const wordCount = text.split(/\s+/).length;
+  const minutes = Math.ceil(wordCount / wordsPerMinute);
+  return `${minutes} मिनट`;
 };
 
 const NewsDetail = () => {
@@ -90,51 +99,51 @@ const NewsDetail = () => {
     .filter((a) => a.id !== article.id)
     .slice(0, 4);
 
-  const articleUrl = `${window.location.origin}/${category}/${slug}`;
+  const articleUrl = `/${category}/${slug}`;
+  const readingTime = article.readTime || getReadingTime(article.content, article.excerpt);
+
+  // Keywords for SEO
+  const keywords = [
+    article.categoryHindi,
+    "रामपुर",
+    "उत्तर प्रदेश",
+    "ताज़ा खबर",
+    category,
+    ...article.title.split(" ").slice(0, 5)
+  ];
 
   return (
     <div className="min-h-screen bg-background">
-      <Helmet>
-        <title>{article.title} | रामपुर न्यूज़</title>
-        <meta name="description" content={article.excerpt} />
-        <meta property="og:title" content={article.title} />
-        <meta property="og:description" content={article.excerpt} />
-        <meta property="og:image" content={article.image} />
-        <meta property="og:type" content="article" />
-        <meta property="og:url" content={articleUrl} />
-        <meta name="twitter:card" content="summary_large_image" />
-        <meta name="twitter:title" content={article.title} />
-        <meta name="twitter:description" content={article.excerpt} />
-        <meta name="twitter:image" content={article.image} />
-        <script type="application/ld+json">
-          {JSON.stringify({
-            "@context": "https://schema.org",
-            "@type": "NewsArticle",
-            "headline": article.title,
-            "description": article.excerpt,
-            "image": article.image,
-            "author": {
-              "@type": "Person",
-              "name": article.author
-            },
-            "datePublished": article.publishedDate,
-            "publisher": {
-              "@type": "Organization",
-              "name": "रामपुर न्यूज़",
-              "logo": {
-                "@type": "ImageObject",
-                "url": `${window.location.origin}/favicon.ico`
-              }
-            }
-          })}
-        </script>
-      </Helmet>
+      <SEO
+        title={article.title}
+        description={article.excerpt}
+        canonical={articleUrl}
+        ogImage={article.image}
+        ogType="article"
+        keywords={keywords}
+        article={{
+          publishedTime: article.publishedDate,
+          modifiedTime: article.publishedDate,
+          author: article.author,
+          section: article.categoryHindi
+        }}
+        newsArticle={{
+          headline: article.title,
+          description: article.excerpt,
+          image: article.image,
+          datePublished: article.publishedDate,
+          dateModified: article.publishedDate,
+          author: article.author,
+          section: article.categoryHindi
+        }}
+        speakable={[".article-headline", ".article-summary", "h1"]}
+      />
 
       <Header />
 
       <main className="container mx-auto px-4 py-6">
         {/* Breadcrumb */}
-        <nav className="flex items-center gap-2 text-sm text-muted-foreground mb-6">
+        <nav className="flex items-center gap-2 text-sm text-muted-foreground mb-6" aria-label="Breadcrumb">
           <Link to="/" className="hover:text-primary">होम</Link>
           <span>/</span>
           <Link to={`/${category}`} className="hover:text-primary">
@@ -146,12 +155,13 @@ const NewsDetail = () => {
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           {/* Main Content */}
-          <article className="lg:col-span-2">
+          <article className="lg:col-span-2" itemScope itemType="https://schema.org/NewsArticle">
             {/* Category & Breaking Badge */}
             <div className="flex items-center gap-3 mb-4">
               <Link 
                 to={`/${category}`}
                 className="text-sm font-semibold text-primary hover:underline"
+                itemProp="articleSection"
               >
                 {article.categoryHindi}
               </Link>
@@ -161,33 +171,44 @@ const NewsDetail = () => {
             </div>
 
             {/* Title */}
-            <h1 className="text-2xl md:text-3xl lg:text-4xl font-bold text-foreground mb-4 leading-tight">
+            <h1 
+              className="article-headline text-2xl md:text-3xl lg:text-4xl font-bold text-foreground mb-4 leading-tight"
+              itemProp="headline"
+            >
               {article.title}
             </h1>
 
             {/* Meta Info */}
             <div className="flex flex-wrap items-center gap-4 text-sm text-muted-foreground mb-6 pb-6 border-b border-border">
-              <span className="flex items-center gap-1">
+              <span className="flex items-center gap-1" itemProp="author" itemScope itemType="https://schema.org/Person">
                 <User size={14} />
-                {article.author}
+                <span itemProp="name">{article.author}</span>
               </span>
-              <span className="flex items-center gap-1">
+              <time 
+                className="flex items-center gap-1"
+                dateTime={article.publishedDate}
+                itemProp="datePublished"
+              >
                 <Clock size={14} />
                 {formatDateHindi(article.publishedDate)}
-              </span>
-              {article.readTime && (
-                <span>पढ़ने का समय: {article.readTime}</span>
+              </time>
+              <span>पढ़ने का समय: {readingTime}</span>
+              {article.views && (
+                <span>{article.views.toLocaleString('hi-IN')} बार पढ़ा गया</span>
               )}
             </div>
 
             {/* Featured Image */}
-            <div className="rounded-lg overflow-hidden mb-6">
+            <figure className="rounded-lg overflow-hidden mb-6">
               <img
                 src={article.image}
                 alt={article.title}
                 className="w-full h-auto object-cover"
+                itemProp="image"
+                loading="eager"
               />
-            </div>
+              <meta itemProp="thumbnailUrl" content={article.image} />
+            </figure>
 
             {/* Share Buttons */}
             <div className="flex items-center gap-4 mb-6">
@@ -195,12 +216,12 @@ const NewsDetail = () => {
                 <Share2 size={16} />
                 शेयर करें:
               </span>
-              <ShareButtons url={articleUrl} title={article.title} />
+              <ShareButtons url={`${window.location.origin}${articleUrl}`} title={article.title} />
             </div>
 
             {/* Article Content */}
-            <div className="prose prose-lg max-w-none text-foreground">
-              <p className="text-lg font-medium leading-relaxed mb-6">
+            <div className="prose prose-lg max-w-none text-foreground" itemProp="articleBody">
+              <p className="article-summary text-lg font-medium leading-relaxed mb-6">
                 {article.excerpt}
               </p>
               {article.content ? (
@@ -220,6 +241,15 @@ const NewsDetail = () => {
               )}
             </div>
 
+            {/* Hidden metadata for schema */}
+            <meta itemProp="dateModified" content={article.publishedDate} />
+            <div itemProp="publisher" itemScope itemType="https://schema.org/Organization" style={{ display: 'none' }}>
+              <meta itemProp="name" content="रामपुर न्यूज़" />
+              <div itemProp="logo" itemScope itemType="https://schema.org/ImageObject">
+                <meta itemProp="url" content="https://rampurnews.com/logo.png" />
+              </div>
+            </div>
+
             {/* Tags */}
             <div className="flex flex-wrap gap-2 mt-8 pt-6 border-t border-border">
               <span className="text-sm font-medium text-foreground">टैग:</span>
@@ -231,6 +261,9 @@ const NewsDetail = () => {
               </Link>
               <span className="px-3 py-1 bg-muted text-muted-foreground text-sm rounded-full">
                 रामपुर न्यूज़
+              </span>
+              <span className="px-3 py-1 bg-muted text-muted-foreground text-sm rounded-full">
+                उत्तर प्रदेश
               </span>
             </div>
 

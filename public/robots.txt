@@ -1,7 +1,9 @@
 # Robots.txt for RampurNews.com
 # Hindi News Portal - Rampur, Uttar Pradesh
 
-# Google
+# =================================
+# Google Crawlers
+# =================================
 User-agent: Googlebot
 Allow: /
 Crawl-delay: 1
@@ -12,12 +14,83 @@ Allow: /
 User-agent: Googlebot-Image
 Allow: /
 
-# Bing
+User-agent: Googlebot-Video
+Allow: /
+
+# =================================
+# Bing & Microsoft Crawlers
+# =================================
 User-agent: Bingbot
 Allow: /
 Crawl-delay: 1
 
+User-agent: msnbot
+Allow: /
+
+# =================================
+# AI/LLM Crawlers - ALLOWED
+# =================================
+
+# OpenAI
+User-agent: GPTBot
+Allow: /
+Crawl-delay: 2
+
+User-agent: ChatGPT-User
+Allow: /
+
+# Anthropic Claude
+User-agent: anthropic-ai
+Allow: /
+
+User-agent: Claude-Web
+Allow: /
+
+User-agent: ClaudeBot
+Allow: /
+
+# Perplexity
+User-agent: PerplexityBot
+Allow: /
+
+# Common Crawl (used by many AI systems)
+User-agent: CCBot
+Allow: /
+
+# You.com
+User-agent: YouBot
+Allow: /
+
+# Cohere
+User-agent: cohere-ai
+Allow: /
+
+# Google AI
+User-agent: Google-Extended
+Allow: /
+
+# Meta AI
+User-agent: FacebookBot
+Allow: /
+
+User-agent: Meta-ExternalAgent
+Allow: /
+
+# ByteDance
+User-agent: Bytespider
+Allow: /
+
+# Apple
+User-agent: Applebot
+Allow: /
+
+# Amazon
+User-agent: Amazonbot
+Allow: /
+
+# =================================
 # Social Media Crawlers
+# =================================
 User-agent: Twitterbot
 Allow: /
 
@@ -33,7 +106,15 @@ Allow: /
 User-agent: TelegramBot
 Allow: /
 
+User-agent: Slackbot
+Allow: /
+
+User-agent: Discordbot
+Allow: /
+
+# =================================
 # Other Search Engines
+# =================================
 User-agent: DuckDuckBot
 Allow: /
 
@@ -43,22 +124,40 @@ Allow: /
 User-agent: Slurp
 Allow: /
 
-# Default
+User-agent: Baiduspider
+Allow: /
+
+# =================================
+# Default (All Other Crawlers)
+# =================================
 User-agent: *
 Allow: /
 Crawl-delay: 2
 
-# Disallow patterns
+# =================================
+# Disallow Patterns
+# =================================
 Disallow: /api/
 Disallow: /admin/
 Disallow: /_next/
 Disallow: /private/
 Disallow: /*.json$
 Disallow: /*?*
+Disallow: /src/
+Disallow: /node_modules/
 
-# Sitemap location
+# =================================
+# Sitemap Locations
+# =================================
 Sitemap: https://rampurnews.com/sitemap.xml
 Sitemap: https://rampurnews.com/sitemap-news.xml
 
+# =================================
 # Host
+# =================================
 Host: https://rampurnews.com
+
+# =================================
+# LLM Information File
+# =================================
+# For AI/LLM crawlers, see: https://rampurnews.com/llms.txt
