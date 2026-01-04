@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { Helmet } from 'react-helmet-async';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
@@ -14,19 +14,28 @@ import { toast } from 'sonner';
 import { 
   useExams, useResults, useInstitutions, useHolidays, 
   useRestaurants, useFashionStores, useShoppingCentres, useFamousPlaces, useEvents,
-  useCreateExam, useDeleteExam, useCreateHoliday, useDeleteHoliday,
-  useCreateRestaurant, useDeleteRestaurant, useCreateEvent, useDeleteEvent,
-  useCreateInstitution, useDeleteInstitution
+  useCreateExam, useDeleteExam, useUpdateExam,
+  useCreateHoliday, useDeleteHoliday, useUpdateHoliday,
+  useCreateRestaurant, useDeleteRestaurant, useUpdateRestaurant,
+  useCreateEvent, useDeleteEvent, useUpdateEvent,
+  useCreateInstitution, useDeleteInstitution, useUpdateInstitution,
+  useCreateFashionStore, useDeleteFashionStore, useUpdateFashionStore,
+  useCreateShoppingCentre, useDeleteShoppingCentre, useUpdateShoppingCentre,
+  useCreateFamousPlace, useDeleteFamousPlace, useUpdateFamousPlace,
 } from '@/hooks/useExtendedCMS';
 import { 
   Plus, Trash2, Search, Calendar, GraduationCap, Utensils, 
-  Shirt, Store, Landmark, PartyPopper, Moon
+  Shirt, Store, Landmark, PartyPopper, Moon, Pencil
 } from 'lucide-react';
+import ContentEditDialog from '@/components/admin/ContentEditDialog';
+import ImageUploader from '@/components/admin/ImageUploader';
 
 const ContentManagerPage = () => {
   const [activeTab, setActiveTab] = useState('exams');
   const [searchQuery, setSearchQuery] = useState('');
   const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);
+  const [editDialogOpen, setEditDialogOpen] = useState(false);
+  const [editingItem, setEditingItem] = useState<Record<string, any> | null>(null);
 
   // Data hooks
   const { data: examsData, isLoading: loadingExams } = useExams({ limit: 100 });
@@ -39,17 +48,35 @@ const ContentManagerPage = () => {
   const { data: placesData, isLoading: loadingPlaces } = useFamousPlaces({ limit: 100 });
   const { data: eventsData, isLoading: loadingEvents } = useEvents({ limit: 100 });
 
-  // Mutations
+  // Create Mutations
   const createExam = useCreateExam();
-  const deleteExam = useDeleteExam();
   const createHoliday = useCreateHoliday();
-  const deleteHoliday = useDeleteHoliday();
   const createRestaurant = useCreateRestaurant();
-  const deleteRestaurant = useDeleteRestaurant();
   const createEvent = useCreateEvent();
-  const deleteEvent = useDeleteEvent();
   const createInstitution = useCreateInstitution();
+  const createFashionStore = useCreateFashionStore();
+  const createShoppingCentre = useCreateShoppingCentre();
+  const createFamousPlace = useCreateFamousPlace();
+
+  // Update Mutations
+  const updateExam = useUpdateExam();
+  const updateHoliday = useUpdateHoliday();
+  const updateRestaurant = useUpdateRestaurant();
+  const updateEvent = useUpdateEvent();
+  const updateInstitution = useUpdateInstitution();
+  const updateFashionStore = useUpdateFashionStore();
+  const updateShoppingCentre = useUpdateShoppingCentre();
+  const updateFamousPlace = useUpdateFamousPlace();
+
+  // Delete Mutations
+  const deleteExam = useDeleteExam();
+  const deleteHoliday = useDeleteHoliday();
+  const deleteRestaurant = useDeleteRestaurant();
+  const deleteEvent = useDeleteEvent();
   const deleteInstitution = useDeleteInstitution();
+  const deleteFashionStore = useDeleteFashionStore();
+  const deleteShoppingCentre = useDeleteShoppingCentre();
+  const deleteFamousPlace = useDeleteFamousPlace();
 
   const exams = examsData?.data || [];
   const results = resultsData?.data || [];
@@ -81,10 +108,61 @@ const ContentManagerPage = () => {
         case 'institutions':
           await deleteInstitution.mutateAsync(id);
           break;
+        case 'fashion':
+          await deleteFashionStore.mutateAsync(id);
+          break;
+        case 'shopping':
+          await deleteShoppingCentre.mutateAsync(id);
+          break;
+        case 'places':
+          await deleteFamousPlace.mutateAsync(id);
+          break;
       }
       toast.success('सफलतापूर्वक हटाया गया');
     } catch {
       toast.error('हटाने में त्रुटि');
+    }
+  };
+
+  const handleEdit = (item: Record<string, any>) => {
+    setEditingItem(item);
+    setEditDialogOpen(true);
+  };
+
+  const handleSaveEdit = async (data: Record<string, any>) => {
+    if (!editingItem?.id) return;
+    
+    try {
+      switch (activeTab) {
+        case 'exams':
+          await updateExam.mutateAsync({ id: editingItem.id, data });
+          break;
+        case 'holidays':
+          await updateHoliday.mutateAsync({ id: editingItem.id, data });
+          break;
+        case 'restaurants':
+          await updateRestaurant.mutateAsync({ id: editingItem.id, data });
+          break;
+        case 'events':
+          await updateEvent.mutateAsync({ id: editingItem.id, data });
+          break;
+        case 'institutions':
+          await updateInstitution.mutateAsync({ id: editingItem.id, data });
+          break;
+        case 'fashion':
+          await updateFashionStore.mutateAsync({ id: editingItem.id, data });
+          break;
+        case 'shopping':
+          await updateShoppingCentre.mutateAsync({ id: editingItem.id, data });
+          break;
+        case 'places':
+          await updateFamousPlace.mutateAsync({ id: editingItem.id, data });
+          break;
+      }
+      setEditDialogOpen(false);
+      setEditingItem(null);
+    } catch {
+      throw new Error('Update failed');
     }
   };
 
@@ -145,6 +223,9 @@ const ContentManagerPage = () => {
                     restaurant: createRestaurant.mutateAsync,
                     event: createEvent.mutateAsync,
                     institution: createInstitution.mutateAsync,
+                    fashion: createFashionStore.mutateAsync,
+                    shopping: createShoppingCentre.mutateAsync,
+                    place: createFamousPlace.mutateAsync,
                   }}
                 />
               </DialogContent>
@@ -173,6 +254,7 @@ const ContentManagerPage = () => {
               columns={['titleHindi', 'examDate', 'organization', 'status']}
               columnLabels={{ titleHindi: 'शीर्षक', examDate: 'तारीख', organization: 'संस्था', status: 'स्थिति' }}
               onDelete={(id) => handleDelete('exams', id)}
+              onEdit={handleEdit}
               isLoading={loadingExams}
             />
           </TabsContent>
@@ -183,6 +265,7 @@ const ContentManagerPage = () => {
               columns={['titleHindi', 'resultDate', 'organizationHindi']}
               columnLabels={{ titleHindi: 'शीर्षक', resultDate: 'तारीख', organizationHindi: 'संस्था' }}
               onDelete={(id) => handleDelete('results', id)}
+              onEdit={handleEdit}
               isLoading={loadingResults}
             />
           </TabsContent>
@@ -193,6 +276,7 @@ const ContentManagerPage = () => {
               columns={['nameHindi', 'type', 'city', 'affiliation']}
               columnLabels={{ nameHindi: 'नाम', type: 'प्रकार', city: 'शहर', affiliation: 'संबद्धता' }}
               onDelete={(id) => handleDelete('institutions', id)}
+              onEdit={handleEdit}
               isLoading={loadingInstitutions}
             />
           </TabsContent>
@@ -203,6 +287,7 @@ const ContentManagerPage = () => {
               columns={['nameHindi', 'date', 'type', 'isPublicHoliday']}
               columnLabels={{ nameHindi: 'नाम', date: 'तारीख', type: 'प्रकार', isPublicHoliday: 'सार्वजनिक' }}
               onDelete={(id) => handleDelete('holidays', id)}
+              onEdit={handleEdit}
               isLoading={loadingHolidays}
             />
           </TabsContent>
@@ -213,6 +298,7 @@ const ContentManagerPage = () => {
               columns={['nameHindi', 'type', 'addressHindi', 'rating']}
               columnLabels={{ nameHindi: 'नाम', type: 'प्रकार', addressHindi: 'पता', rating: 'रेटिंग' }}
               onDelete={(id) => handleDelete('restaurants', id)}
+              onEdit={handleEdit}
               isLoading={loadingRestaurants}
             />
           </TabsContent>
@@ -222,7 +308,8 @@ const ContentManagerPage = () => {
               data={fashionStores}
               columns={['nameHindi', 'type', 'category', 'addressHindi']}
               columnLabels={{ nameHindi: 'नाम', type: 'प्रकार', category: 'श्रेणी', addressHindi: 'पता' }}
-              onDelete={() => {}}
+              onDelete={(id) => handleDelete('fashion', id)}
+              onEdit={handleEdit}
               isLoading={loadingFashion}
             />
           </TabsContent>
@@ -232,7 +319,8 @@ const ContentManagerPage = () => {
               data={shoppingCentres}
               columns={['nameHindi', 'type', 'addressHindi', 'storeCount']}
               columnLabels={{ nameHindi: 'नाम', type: 'प्रकार', addressHindi: 'पता', storeCount: 'दुकानें' }}
-              onDelete={() => {}}
+              onDelete={(id) => handleDelete('shopping', id)}
+              onEdit={handleEdit}
               isLoading={loadingShopping}
             />
           </TabsContent>
@@ -242,7 +330,8 @@ const ContentManagerPage = () => {
               data={famousPlaces}
               columns={['nameHindi', 'type', 'addressHindi', 'rating']}
               columnLabels={{ nameHindi: 'नाम', type: 'प्रकार', addressHindi: 'पता', rating: 'रेटिंग' }}
-              onDelete={() => {}}
+              onDelete={(id) => handleDelete('places', id)}
+              onEdit={handleEdit}
               isLoading={loadingPlaces}
             />
           </TabsContent>
@@ -253,11 +342,21 @@ const ContentManagerPage = () => {
               columns={['titleHindi', 'date', 'venueHindi', 'status']}
               columnLabels={{ titleHindi: 'शीर्षक', date: 'तारीख', venueHindi: 'स्थान', status: 'स्थिति' }}
               onDelete={(id) => handleDelete('events', id)}
+              onEdit={handleEdit}
               isLoading={loadingEvents}
             />
           </TabsContent>
         </Tabs>
       </div>
+
+      {/* Edit Dialog */}
+      <ContentEditDialog
+        open={editDialogOpen}
+        onOpenChange={setEditDialogOpen}
+        type={activeTab}
+        data={editingItem}
+        onSave={handleSaveEdit}
+      />
     </>
   );
 };
@@ -268,10 +367,11 @@ interface ContentTableProps {
   columns: string[];
   columnLabels: Record<string, string>;
   onDelete: (id: string) => void;
+  onEdit: (item: any) => void;
   isLoading: boolean;
 }
 
-const ContentTable = ({ data, columns, columnLabels, onDelete, isLoading }: ContentTableProps) => {
+const ContentTable = ({ data, columns, columnLabels, onDelete, onEdit, isLoading }: ContentTableProps) => {
   if (isLoading) {
     return <div className="text-center py-8 text-muted-foreground">लोड हो रहा है...</div>;
   }
@@ -298,7 +398,7 @@ const ContentTable = ({ data, columns, columnLabels, onDelete, isLoading }: Cont
               {columns.map(col => (
                 <TableHead key={col}>{columnLabels[col]}</TableHead>
               ))}
-              <TableHead className="w-20">कार्रवाई</TableHead>
+              <TableHead className="w-28">कार्रवाई</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -308,14 +408,24 @@ const ContentTable = ({ data, columns, columnLabels, onDelete, isLoading }: Cont
                   <TableCell key={col}>{formatValue(item[col], col)}</TableCell>
                 ))}
                 <TableCell>
-                  <Button
-                    variant="ghost"
-                    size="icon"
-                    className="text-destructive hover:text-destructive"
-                    onClick={() => onDelete(item.id)}
-                  >
-                    <Trash2 className="h-4 w-4" />
-                  </Button>
+                  <div className="flex gap-1">
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      className="text-primary hover:text-primary"
+                      onClick={() => onEdit(item)}
+                    >
+                      <Pencil className="h-4 w-4" />
+                    </Button>
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      className="text-destructive hover:text-destructive"
+                      onClick={() => onDelete(item.id)}
+                    >
+                      <Trash2 className="h-4 w-4" />
+                    </Button>
+                  </div>
                 </TableCell>
               </TableRow>
             ))}
@@ -361,6 +471,15 @@ const AddContentForm = ({ type, onSuccess, onCreate }: AddContentFormProps) => {
           break;
         case 'institutions':
           await onCreate.institution({ ...formData, slug });
+          break;
+        case 'fashion':
+          await onCreate.fashion({ ...formData, slug, brands: formData.brands?.split(',') || [] });
+          break;
+        case 'shopping':
+          await onCreate.shopping({ ...formData, slug, stores: formData.stores?.split(',') || [] });
+          break;
+        case 'places':
+          await onCreate.place({ ...formData, slug });
           break;
       }
       onSuccess();
@@ -422,6 +541,11 @@ const AddContentForm = ({ type, onSuccess, onCreate }: AddContentFormProps) => {
               <Label>विवरण</Label>
               <Textarea onChange={(e) => updateField('description', e.target.value)} />
             </div>
+            <ImageUploader
+              value={formData.image}
+              onChange={(v) => updateField('image', v)}
+              label="इमेज"
+            />
           </>
         );
 
@@ -466,6 +590,11 @@ const AddContentForm = ({ type, onSuccess, onCreate }: AddContentFormProps) => {
                 <Textarea onChange={(e) => updateField('description', e.target.value)} />
               </div>
             </div>
+            <ImageUploader
+              value={formData.image}
+              onChange={(v) => updateField('image', v)}
+              label="इमेज"
+            />
           </>
         );
 
@@ -523,14 +652,251 @@ const AddContentForm = ({ type, onSuccess, onCreate }: AddContentFormProps) => {
             </div>
             <div className="grid grid-cols-2 gap-4">
               <div className="space-y-2">
-                <Label>शहर</Label>
-                <Input defaultValue="रामपुर" onChange={(e) => updateField('city', e.target.value)} />
+                <Label>फोन</Label>
+                <Input onChange={(e) => updateField('phone', e.target.value)} />
               </div>
               <div className="space-y-2">
-                <Label>जिला</Label>
-                <Input defaultValue="रामपुर" onChange={(e) => updateField('district', e.target.value)} />
+                <Label>रेटिंग (1-5)</Label>
+                <Input type="number" min="1" max="5" step="0.1" onChange={(e) => updateField('rating', parseFloat(e.target.value))} />
               </div>
             </div>
+            <ImageUploader
+              value={formData.image}
+              onChange={(v) => updateField('image', v)}
+              label="मुख्य इमेज"
+            />
+            <ImageUploader
+              value={formData.gallery}
+              onChange={(v) => updateField('gallery', v)}
+              label="गैलरी"
+              multiple
+              maxImages={10}
+            />
+          </>
+        );
+
+      case 'fashion':
+        return (
+          <>
+            <div className="grid grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <Label>नाम (हिंदी)</Label>
+                <Input onChange={(e) => updateField('nameHindi', e.target.value)} required />
+              </div>
+              <div className="space-y-2">
+                <Label>Name (English)</Label>
+                <Input onChange={(e) => updateField('name', e.target.value)} required />
+              </div>
+            </div>
+            <div className="grid grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <Label>प्रकार</Label>
+                <Select onValueChange={(v) => updateField('type', v)}>
+                  <SelectTrigger><SelectValue placeholder="चुनें" /></SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="boutique">बुटीक</SelectItem>
+                    <SelectItem value="showroom">शोरूम</SelectItem>
+                    <SelectItem value="tailor">दर्जी</SelectItem>
+                    <SelectItem value="brand-store">ब्रांड स्टोर</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+              <div className="space-y-2">
+                <Label>श्रेणी</Label>
+                <Select onValueChange={(v) => updateField('category', v)}>
+                  <SelectTrigger><SelectValue placeholder="चुनें" /></SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="men">पुरुष</SelectItem>
+                    <SelectItem value="women">महिला</SelectItem>
+                    <SelectItem value="kids">बच्चे</SelectItem>
+                    <SelectItem value="all">सभी</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+            </div>
+            <div className="space-y-2">
+              <Label>ब्रांड्स (कॉमा से अलग)</Label>
+              <Input placeholder="Raymond, Peter England" onChange={(e) => updateField('brands', e.target.value)} />
+            </div>
+            <div className="grid grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <Label>पता (हिंदी)</Label>
+                <Input onChange={(e) => updateField('addressHindi', e.target.value)} />
+              </div>
+              <div className="space-y-2">
+                <Label>Address</Label>
+                <Input onChange={(e) => updateField('address', e.target.value)} />
+              </div>
+            </div>
+            <div className="grid grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <Label>फोन</Label>
+                <Input onChange={(e) => updateField('phone', e.target.value)} />
+              </div>
+              <div className="space-y-2">
+                <Label>रेटिंग (1-5)</Label>
+                <Input type="number" min="1" max="5" step="0.1" onChange={(e) => updateField('rating', parseFloat(e.target.value))} />
+              </div>
+            </div>
+            <ImageUploader
+              value={formData.image}
+              onChange={(v) => updateField('image', v)}
+              label="मुख्य इमेज"
+            />
+            <ImageUploader
+              value={formData.gallery}
+              onChange={(v) => updateField('gallery', v)}
+              label="गैलरी"
+              multiple
+              maxImages={10}
+            />
+          </>
+        );
+
+      case 'shopping':
+        return (
+          <>
+            <div className="grid grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <Label>नाम (हिंदी)</Label>
+                <Input onChange={(e) => updateField('nameHindi', e.target.value)} required />
+              </div>
+              <div className="space-y-2">
+                <Label>Name (English)</Label>
+                <Input onChange={(e) => updateField('name', e.target.value)} required />
+              </div>
+            </div>
+            <div className="grid grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <Label>प्रकार</Label>
+                <Select onValueChange={(v) => updateField('type', v)}>
+                  <SelectTrigger><SelectValue placeholder="चुनें" /></SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="mall">मॉल</SelectItem>
+                    <SelectItem value="market">बाज़ार</SelectItem>
+                    <SelectItem value="complex">कॉम्प्लेक्स</SelectItem>
+                    <SelectItem value="plaza">प्लाज़ा</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+              <div className="space-y-2">
+                <Label>दुकानों की संख्या</Label>
+                <Input type="number" onChange={(e) => updateField('storeCount', parseInt(e.target.value))} />
+              </div>
+            </div>
+            <div className="space-y-2">
+              <Label>दुकानें (कॉमा से अलग)</Label>
+              <Input placeholder="Big Bazaar, Reliance Fresh" onChange={(e) => updateField('stores', e.target.value)} />
+            </div>
+            <div className="grid grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <Label>पता (हिंदी)</Label>
+                <Input onChange={(e) => updateField('addressHindi', e.target.value)} />
+              </div>
+              <div className="space-y-2">
+                <Label>Address</Label>
+                <Input onChange={(e) => updateField('address', e.target.value)} />
+              </div>
+            </div>
+            <div className="grid grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <Label>फोन</Label>
+                <Input onChange={(e) => updateField('phone', e.target.value)} />
+              </div>
+              <div className="space-y-2">
+                <Label>रेटिंग (1-5)</Label>
+                <Input type="number" min="1" max="5" step="0.1" onChange={(e) => updateField('rating', parseFloat(e.target.value))} />
+              </div>
+            </div>
+            <ImageUploader
+              value={formData.image}
+              onChange={(v) => updateField('image', v)}
+              label="मुख्य इमेज"
+            />
+            <ImageUploader
+              value={formData.gallery}
+              onChange={(v) => updateField('gallery', v)}
+              label="गैलरी"
+              multiple
+              maxImages={10}
+            />
+          </>
+        );
+
+      case 'places':
+        return (
+          <>
+            <div className="grid grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <Label>नाम (हिंदी)</Label>
+                <Input onChange={(e) => updateField('nameHindi', e.target.value)} required />
+              </div>
+              <div className="space-y-2">
+                <Label>Name (English)</Label>
+                <Input onChange={(e) => updateField('name', e.target.value)} required />
+              </div>
+            </div>
+            <div className="grid grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <Label>प्रकार</Label>
+                <Select onValueChange={(v) => updateField('type', v)}>
+                  <SelectTrigger><SelectValue placeholder="चुनें" /></SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="historical">ऐतिहासिक</SelectItem>
+                    <SelectItem value="religious">धार्मिक</SelectItem>
+                    <SelectItem value="natural">प्राकृतिक</SelectItem>
+                    <SelectItem value="recreational">मनोरंजन</SelectItem>
+                    <SelectItem value="cultural">सांस्कृतिक</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+              <div className="space-y-2">
+                <Label>प्रवेश शुल्क</Label>
+                <Input placeholder="निःशुल्क या ₹50" onChange={(e) => updateField('entryFee', e.target.value)} />
+              </div>
+            </div>
+            <div className="grid grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <Label>पता (हिंदी)</Label>
+                <Input onChange={(e) => updateField('addressHindi', e.target.value)} />
+              </div>
+              <div className="space-y-2">
+                <Label>Address</Label>
+                <Input onChange={(e) => updateField('address', e.target.value)} />
+              </div>
+            </div>
+            <div className="grid grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <Label>समय</Label>
+                <Input placeholder="सुबह 6 - शाम 8" onChange={(e) => updateField('timings', e.target.value)} />
+              </div>
+              <div className="space-y-2">
+                <Label>रेटिंग (1-5)</Label>
+                <Input type="number" min="1" max="5" step="0.1" onChange={(e) => updateField('rating', parseFloat(e.target.value))} />
+              </div>
+            </div>
+            <div className="grid grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <Label>विवरण (हिंदी)</Label>
+                <Textarea onChange={(e) => updateField('descriptionHindi', e.target.value)} />
+              </div>
+              <div className="space-y-2">
+                <Label>Description</Label>
+                <Textarea onChange={(e) => updateField('description', e.target.value)} />
+              </div>
+            </div>
+            <ImageUploader
+              value={formData.image}
+              onChange={(v) => updateField('image', v)}
+              label="मुख्य इमेज"
+            />
+            <ImageUploader
+              value={formData.gallery}
+              onChange={(v) => updateField('gallery', v)}
+              label="गैलरी"
+              multiple
+              maxImages={10}
+            />
           </>
         );
 
@@ -597,6 +963,11 @@ const AddContentForm = ({ type, onSuccess, onCreate }: AddContentFormProps) => {
                 <Textarea onChange={(e) => updateField('description', e.target.value)} />
               </div>
             </div>
+            <ImageUploader
+              value={formData.image}
+              onChange={(v) => updateField('image', v)}
+              label="इमेज"
+            />
           </>
         );
 
@@ -665,6 +1036,18 @@ const AddContentForm = ({ type, onSuccess, onCreate }: AddContentFormProps) => {
                 <Textarea onChange={(e) => updateField('description', e.target.value)} />
               </div>
             </div>
+            <ImageUploader
+              value={formData.image}
+              onChange={(v) => updateField('image', v)}
+              label="इमेज"
+            />
+            <ImageUploader
+              value={formData.gallery}
+              onChange={(v) => updateField('gallery', v)}
+              label="गैलरी"
+              multiple
+              maxImages={10}
+            />
           </>
         );
 
