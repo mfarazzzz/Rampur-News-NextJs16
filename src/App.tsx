@@ -58,6 +58,19 @@ import MediaLibrary from "@/pages/admin/MediaLibrary";
 import SettingsPage from "@/pages/admin/SettingsPage";
 import ContentManagerPage from "@/pages/admin/ContentManager";
 
+// Legal & Compliance Pages
+import {
+  AboutUs,
+  EditorialPolicy,
+  CorrectionsPolicy,
+  OwnershipDisclosure,
+  PrivacyPolicy,
+  TermsConditions,
+  Disclaimer,
+  ContactUs,
+  GrievanceRedressal
+} from "@/pages/legal";
+
 const queryClient = new QueryClient();
 
 const App = () => (
@@ -106,6 +119,17 @@ const App = () => (
               <Route path="/food-lifestyle/places/:slug" element={<PlaceDetail />} />
               <Route path="/food-lifestyle/events" element={<EventsPage />} />
               <Route path="/food-lifestyle/events/:slug" element={<EventDetail />} />
+              
+              {/* Legal & Compliance Routes */}
+              <Route path="/about" element={<AboutUs />} />
+              <Route path="/editorial-policy" element={<EditorialPolicy />} />
+              <Route path="/corrections-policy" element={<CorrectionsPolicy />} />
+              <Route path="/ownership" element={<OwnershipDisclosure />} />
+              <Route path="/privacy" element={<PrivacyPolicy />} />
+              <Route path="/terms" element={<TermsConditions />} />
+              <Route path="/disclaimer" element={<Disclaimer />} />
+              <Route path="/contact" element={<ContactUs />} />
+              <Route path="/grievance" element={<GrievanceRedressal />} />
               
               {/* Admin routes */}
               <Route path="/admin/login" element={<AdminLogin />} />
