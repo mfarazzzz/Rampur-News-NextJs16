@@ -32,6 +32,7 @@ import {
 } from 'lucide-react';
 import ContentEditDialog from '@/components/admin/ContentEditDialog';
 import ImageUploader from '@/components/admin/ImageUploader';
+import BulkImportExport from '@/components/admin/BulkImportExport';
 
 // News categories for admin
 const newsCategories = [
@@ -116,6 +117,76 @@ const ContentManagerPage = () => {
     news.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
     news.excerpt.toLowerCase().includes(searchQuery.toLowerCase())
   );
+
+  // Helper functions for bulk import/export
+  const getBulkContentType = (): string => {
+    if (activeSection === 'news' || activeTab === 'edu-news' || activeTab === 'lifestyle-news') {
+      return 'news';
+    }
+    return activeTab;
+  };
+
+  const getBulkData = (): any[] => {
+    switch (activeTab) {
+      case 'exams': return exams;
+      case 'results': return results;
+      case 'institutions': return institutions;
+      case 'holidays': return holidays;
+      case 'restaurants': return restaurants;
+      case 'fashion': return fashionStores;
+      case 'shopping': return shoppingCentres;
+      case 'places': return famousPlaces;
+      case 'events': return events;
+      case 'edu-news': return mockNewsData['education-jobs'] || [];
+      case 'lifestyle-news': return mockNewsData['food-lifestyle'] || [];
+      default:
+        if (activeSection === 'news') {
+          return mockNewsData[activeTab] || [];
+        }
+        return [];
+    }
+  };
+
+  const handleBulkImport = async (items: any[]): Promise<void> => {
+    const type = getBulkContentType();
+    
+    for (const item of items) {
+      try {
+        switch (type) {
+          case 'exams':
+            await createExam.mutateAsync(item);
+            break;
+          case 'holidays':
+            await createHoliday.mutateAsync(item);
+            break;
+          case 'restaurants':
+            await createRestaurant.mutateAsync(item);
+            break;
+          case 'events':
+            await createEvent.mutateAsync(item);
+            break;
+          case 'institutions':
+            await createInstitution.mutateAsync(item);
+            break;
+          case 'fashion':
+            await createFashionStore.mutateAsync(item);
+            break;
+          case 'shopping':
+            await createShoppingCentre.mutateAsync(item);
+            break;
+          case 'places':
+            await createFamousPlace.mutateAsync(item);
+            break;
+          case 'news':
+            // For news, just log - actual implementation would need backend
+            console.log('News import (demo):', item);
+            break;
+        }
+      } catch (error) {
+        console.error('Failed to import item:', item, error);
+      }
+    }
+  };
 
   const handleDelete = async (type: string, id: string) => {
     if (!confirm('क्या आप वाकई इसे हटाना चाहते हैं?')) return;
@@ -285,7 +356,7 @@ const ContentManagerPage = () => {
             <h1 className="text-2xl font-bold">कंटेंट मैनेजर</h1>
             <p className="text-muted-foreground">सभी मॉड्यूल की सामग्री प्रबंधित करें</p>
           </div>
-          <div className="flex gap-2">
+          <div className="flex flex-wrap gap-2">
             <div className="relative">
               <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
               <Input
@@ -295,6 +366,11 @@ const ContentManagerPage = () => {
                 className="pl-10 w-64"
               />
             </div>
+            <BulkImportExport 
+              contentType={getBulkContentType()}
+              data={getBulkData()}
+              onImport={handleBulkImport}
+            />
             <Dialog open={isAddDialogOpen} onOpenChange={setIsAddDialogOpen}>
               <DialogTrigger asChild>
                 <Button className="gap-2">
