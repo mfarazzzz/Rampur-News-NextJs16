@@ -1,9 +1,11 @@
 // CMS Service - Main export with provider switching
 import type { CMSProvider, CMSConfig, CMSProviderType } from './provider';
 import { mockCMSProvider } from './mockProvider';
+import { createWordPressProvider } from './wordpressProvider';
 
 export * from './types';
 export * from './provider';
+export { createWordPressProvider } from './wordpressProvider';
 
 // Current CMS configuration
 let currentConfig: CMSConfig = {
@@ -29,11 +31,15 @@ export const getCMSProvider = (): CMSProvider => {
 export const configureCMS = (config: CMSConfig): void => {
   currentConfig = config;
   
-  // Here you would initialize other providers based on config
-  // Example for future WordPress integration:
-  // if (config.provider === 'wordpress' && config.baseUrl) {
-  //   providerInstances.wordpress = createWordPressProvider(config.baseUrl, config.apiKey);
-  // }
+  // Initialize WordPress provider if configured
+  if (config.provider === 'wordpress' && config.baseUrl) {
+    providerInstances.wordpress = createWordPressProvider({
+      baseUrl: config.baseUrl,
+      apiKey: config.apiKey,
+      username: config.options?.username as string,
+      password: config.options?.password as string,
+    });
+  }
 };
 
 // Get current configuration
