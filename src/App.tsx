@@ -20,6 +20,7 @@ import ReligionCulture from "./pages/ReligionCulture";
 import FoodLifestyle from "./pages/FoodLifestyle";
 import Nearby from "./pages/Nearby";
 import NotFound from "./pages/NotFound";
+import NewsDetail from "./pages/NewsDetail";
 
 // Education Module Pages
 import EducationHub from "./pages/education/EducationHub";
@@ -118,6 +119,9 @@ const App = () => (
                 <Route path="media" element={<MediaLibrary />} />
                 <Route path="settings" element={<SettingsPage />} />
               </Route>
+              
+              {/* Dynamic news article route - must be after all specific routes */}
+              <Route path="/:category/:slug" element={<NewsDetail />} />
               
               <Route path="*" element={<NotFound />} />
             </Routes>
