@@ -138,12 +138,12 @@ const Header = () => {
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
                   </svg>
                 </button>
-                <ul className="absolute top-full left-0 bg-card shadow-lg rounded-lg py-2 min-w-48 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all z-50 border border-border">
+                <ul className="absolute top-full left-0 bg-white dark:bg-gray-900 shadow-xl rounded-lg py-2 min-w-48 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-[100] border border-gray-200 dark:border-gray-700">
                   {moreNavItems.map((item) => (
                     <li key={item.id}>
                       <Link
                         to={item.path}
-                        className="block px-4 py-2 text-sm hover:bg-muted hover:text-primary transition-colors"
+                        className="block px-4 py-2 text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-800 hover:text-primary transition-colors"
                       >
                         {item.titleHindi}
                       </Link>
@@ -160,29 +160,29 @@ const Header = () => {
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
                 </svg>
               </button>
-              <ul className="absolute top-full right-0 bg-card shadow-lg rounded-lg py-2 min-w-48 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all z-50 border border-border">
+              <ul className="absolute top-full right-0 bg-white dark:bg-gray-900 shadow-xl rounded-lg py-2 min-w-48 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-[100] border border-gray-200 dark:border-gray-700">
                 <li>
-                  <Link to="/about" className="block px-4 py-2 text-sm hover:bg-muted hover:text-primary transition-colors">
+                  <Link to="/about" className="block px-4 py-2 text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-800 hover:text-primary transition-colors">
                     हमारे बारे में
                   </Link>
                 </li>
                 <li>
-                  <Link to="/contact" className="block px-4 py-2 text-sm hover:bg-muted hover:text-primary transition-colors">
+                  <Link to="/contact" className="block px-4 py-2 text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-800 hover:text-primary transition-colors">
                     संपर्क करें
                   </Link>
                 </li>
                 <li>
-                  <Link to="/editorial-policy" className="block px-4 py-2 text-sm hover:bg-muted hover:text-primary transition-colors">
+                  <Link to="/editorial-policy" className="block px-4 py-2 text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-800 hover:text-primary transition-colors">
                     संपादकीय नीति
                   </Link>
                 </li>
                 <li>
-                  <Link to="/ownership" className="block px-4 py-2 text-sm hover:bg-muted hover:text-primary transition-colors">
+                  <Link to="/ownership" className="block px-4 py-2 text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-800 hover:text-primary transition-colors">
                     स्वामित्व प्रकटीकरण
                   </Link>
                 </li>
                 <li>
-                  <Link to="/grievance" className="block px-4 py-2 text-sm hover:bg-muted hover:text-primary transition-colors">
+                  <Link to="/grievance" className="block px-4 py-2 text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-800 hover:text-primary transition-colors">
                     शिकायत निवारण
                   </Link>
                 </li>

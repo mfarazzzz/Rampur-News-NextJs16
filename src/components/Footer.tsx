@@ -100,21 +100,35 @@ const Footer = () => {
             </div>
           </div>
 
-          {/* Categories */}
+          {/* All Categories - Two Columns */}
           <div>
-            <h3 className="text-lg font-bold mb-4 border-b border-primary pb-2">श्रेणियां</h3>
-            <ul className="space-y-2">
-              {categories.slice(0, 7).map((cat) => (
-                <li key={cat.id}>
-                  <Link
-                    to={cat.path}
-                    className="text-sm text-gray-300 hover:text-primary transition-colors"
-                  >
-                    {cat.titleHindi}
-                  </Link>
-                </li>
-              ))}
-            </ul>
+            <h3 className="text-lg font-bold mb-4 border-b border-primary pb-2">सभी श्रेणियां</h3>
+            <div className="grid grid-cols-2 gap-x-4">
+              <ul className="space-y-2">
+                {categories.slice(0, 7).map((cat) => (
+                  <li key={cat.id}>
+                    <Link
+                      to={cat.path}
+                      className="text-sm text-gray-300 hover:text-primary transition-colors"
+                    >
+                      {cat.titleHindi}
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+              <ul className="space-y-2">
+                {categories.slice(7).map((cat) => (
+                  <li key={cat.id}>
+                    <Link
+                      to={cat.path}
+                      className="text-sm text-gray-300 hover:text-primary transition-colors"
+                    >
+                      {cat.titleHindi}
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+            </div>
           </div>
 
           {/* Quick Links */}
