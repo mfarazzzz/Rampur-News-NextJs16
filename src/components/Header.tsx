@@ -1,17 +1,26 @@
 import { Link, useLocation } from "react-router-dom";
 import { useState } from "react";
-import { Menu, X, Search, Facebook, Twitter, Youtube, Instagram } from "lucide-react";
+import { Menu, X, Search, Facebook, Twitter, Youtube, Instagram, ChevronDown } from "lucide-react";
 import { categories } from "@/data/categories";
+import { MegaMenu, DropdownMenu } from "./MegaMenu";
 
 const Header = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isSearchOpen, setIsSearchOpen] = useState(false);
+  const [isMegaMenuOpen, setIsMegaMenuOpen] = useState(false);
   const location = useLocation();
 
-  const mainNavItems = categories.slice(0, 8);
-  const moreNavItems = categories.slice(8);
+  const mainNavItems = categories.slice(0, 6);
 
   const isActive = (path: string) => location.pathname === path;
+
+  const aboutItems = [
+    { label: "हमारे बारे में", path: "/about" },
+    { label: "संपर्क करें", path: "/contact" },
+    { label: "संपादकीय नीति", path: "/editorial-policy" },
+    { label: "स्वामित्व प्रकटीकरण", path: "/ownership" },
+    { label: "शिकायत निवारण", path: "/grievance" },
+  ];
 
   return (
     <header className="sticky top-0 z-50 bg-card shadow-sm">
@@ -103,10 +112,10 @@ const Header = () => {
       </div>
 
       {/* Navigation */}
-      <nav className="border-t border-border bg-card">
+      <nav className="border-t border-border bg-card relative">
         <div className="container">
           {/* Desktop Navigation */}
-          <ul className="hidden lg:flex items-center gap-1 overflow-x-auto py-1">
+          <ul className="hidden lg:flex items-center gap-1 py-1">
             <li>
               <Link
                 to="/"
@@ -129,66 +138,39 @@ const Header = () => {
                 </Link>
               </li>
             ))}
-            {/* More Categories Dropdown */}
-            {moreNavItems.length > 0 && (
-              <li className="relative group">
-                <button className="px-4 py-2 text-sm font-medium text-foreground hover:text-primary flex items-center gap-1">
-                  अन्य
-                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-                  </svg>
-                </button>
-                <ul className="absolute top-full left-0 bg-white dark:bg-gray-900 shadow-xl rounded-lg py-2 min-w-48 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-[100] border border-gray-200 dark:border-gray-700">
-                  {moreNavItems.map((item) => (
-                    <li key={item.id}>
-                      <Link
-                        to={item.path}
-                        className="block px-4 py-2 text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-800 hover:text-primary transition-colors"
-                      >
-                        {item.titleHindi}
-                      </Link>
-                    </li>
-                  ))}
-                </ul>
-              </li>
-            )}
-            {/* About Dropdown */}
-            <li className="relative group">
+            
+            {/* Mega Menu Trigger */}
+            <li 
+              className="relative"
+              onMouseEnter={() => setIsMegaMenuOpen(true)}
+              onMouseLeave={() => setIsMegaMenuOpen(false)}
+            >
               <button className="px-4 py-2 text-sm font-medium text-foreground hover:text-primary flex items-center gap-1">
-                हमारे बारे में
-                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-                </svg>
+                सभी श्रेणियां
+                <ChevronDown className={`w-4 h-4 transition-transform duration-200 ${isMegaMenuOpen ? "rotate-180" : ""}`} />
               </button>
-              <ul className="absolute top-full right-0 bg-white dark:bg-gray-900 shadow-xl rounded-lg py-2 min-w-48 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-[100] border border-gray-200 dark:border-gray-700">
-                <li>
-                  <Link to="/about" className="block px-4 py-2 text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-800 hover:text-primary transition-colors">
-                    हमारे बारे में
-                  </Link>
-                </li>
-                <li>
-                  <Link to="/contact" className="block px-4 py-2 text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-800 hover:text-primary transition-colors">
-                    संपर्क करें
-                  </Link>
-                </li>
-                <li>
-                  <Link to="/editorial-policy" className="block px-4 py-2 text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-800 hover:text-primary transition-colors">
-                    संपादकीय नीति
-                  </Link>
-                </li>
-                <li>
-                  <Link to="/ownership" className="block px-4 py-2 text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-800 hover:text-primary transition-colors">
-                    स्वामित्व प्रकटीकरण
-                  </Link>
-                </li>
-                <li>
-                  <Link to="/grievance" className="block px-4 py-2 text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-800 hover:text-primary transition-colors">
-                    शिकायत निवारण
-                  </Link>
-                </li>
-              </ul>
+            </li>
+
+            {/* About Dropdown */}
+            <li>
+              <DropdownMenu 
+                trigger="हमारे बारे में"
+                items={aboutItems}
+                align="right"
+              />
             </li>
           </ul>
+
+          {/* Mega Menu */}
+          <div 
+            onMouseEnter={() => setIsMegaMenuOpen(true)}
+            onMouseLeave={() => setIsMegaMenuOpen(false)}
+          >
+            <MegaMenu 
+              isOpen={isMegaMenuOpen} 
+              onClose={() => setIsMegaMenuOpen(false)} 
+            />
+          </div>
 
           {/* Mobile Navigation */}
           {isMenuOpen && (
@@ -222,39 +204,19 @@ const Header = () => {
                 <li className="pt-4 border-t border-border mt-4">
                   <span className="px-4 text-xs font-semibold text-muted-foreground uppercase">हमारे बारे में</span>
                 </li>
-                <li>
-                  <Link
-                    to="/about"
-                    onClick={() => setIsMenuOpen(false)}
-                    className={`block px-4 py-3 text-base font-medium rounded-lg transition-colors ${
-                      isActive("/about") ? "bg-primary text-primary-foreground" : "hover:bg-muted"
-                    }`}
-                  >
-                    हमारे बारे में
-                  </Link>
-                </li>
-                <li>
-                  <Link
-                    to="/contact"
-                    onClick={() => setIsMenuOpen(false)}
-                    className={`block px-4 py-3 text-base font-medium rounded-lg transition-colors ${
-                      isActive("/contact") ? "bg-primary text-primary-foreground" : "hover:bg-muted"
-                    }`}
-                  >
-                    संपर्क करें
-                  </Link>
-                </li>
-                <li>
-                  <Link
-                    to="/editorial-policy"
-                    onClick={() => setIsMenuOpen(false)}
-                    className={`block px-4 py-3 text-base font-medium rounded-lg transition-colors ${
-                      isActive("/editorial-policy") ? "bg-primary text-primary-foreground" : "hover:bg-muted"
-                    }`}
-                  >
-                    संपादकीय नीति
-                  </Link>
-                </li>
+                {aboutItems.map((item, index) => (
+                  <li key={index}>
+                    <Link
+                      to={item.path}
+                      onClick={() => setIsMenuOpen(false)}
+                      className={`block px-4 py-3 text-base font-medium rounded-lg transition-colors ${
+                        isActive(item.path) ? "bg-primary text-primary-foreground" : "hover:bg-muted"
+                      }`}
+                    >
+                      {item.label}
+                    </Link>
+                  </li>
+                ))}
               </ul>
             </div>
           )}
