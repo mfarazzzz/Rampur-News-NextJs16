@@ -20,6 +20,12 @@ export interface CMSArticle {
   tags?: string[];
   seoTitle?: string;
   seoDescription?: string;
+  // Video fields
+  videoUrl?: string;
+  videoType?: 'youtube' | 'upload' | 'none';
+  videoTitle?: string;
+  // Scheduling field
+  scheduledAt?: string;
 }
 
 export interface CMSCategory {

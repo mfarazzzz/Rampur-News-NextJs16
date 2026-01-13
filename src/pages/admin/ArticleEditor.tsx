@@ -15,7 +15,7 @@ import {
 } from '@/components/ui/select';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { ArrowLeft, Save, Eye, Image as ImageIcon, Loader2 } from 'lucide-react';
+import { ArrowLeft, Save, Eye, Image as ImageIcon, Loader2, Youtube, X } from 'lucide-react';
 import { toast } from 'sonner';
 import type { CMSArticle } from '@/services/cms';
 
@@ -47,7 +47,35 @@ const ArticleEditor = () => {
     seoTitle: '',
     seoDescription: '',
     tags: [],
+    videoUrl: '',
+    videoType: 'none',
+    videoTitle: '',
   });
+
+  // Extract YouTube video ID from URL
+  const extractYouTubeId = (url: string): string | null => {
+    if (!url) return null;
+    const patterns = [
+      /(?:youtube\.com\/watch\?v=|youtu\.be\/|youtube\.com\/embed\/)([^&\n?#]+)/,
+      /youtube\.com\/shorts\/([^&\n?#]+)/,
+    ];
+    for (const pattern of patterns) {
+      const match = url.match(pattern);
+      if (match) return match[1];
+    }
+    return null;
+  };
+
+  const videoId = extractYouTubeId(formData.videoUrl || '');
+
+  const handleVideoUrlChange = (url: string) => {
+    const id = extractYouTubeId(url);
+    setFormData(prev => ({
+      ...prev,
+      videoUrl: url,
+      videoType: id ? 'youtube' : 'none',
+    }));
+  };
 
   const [isSaving, setIsSaving] = useState(false);
 
@@ -334,6 +362,60 @@ const ArticleEditor = () => {
                       onCheckedChange={(v) => setFormData(prev => ({ ...prev, isBreaking: v }))}
                     />
                   </div>
+                </CardContent>
+              </Card>
+
+              {/* YouTube Video */}
+              <Card>
+                <CardHeader className="pb-3">
+                  <CardTitle className="text-sm font-medium flex items-center gap-2">
+                    <Youtube className="w-4 h-4 text-red-500" />
+                    वीडियो
+                  </CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-3">
+                  <div className="space-y-2">
+                    <Label>YouTube URL</Label>
+                    <Input
+                      value={formData.videoUrl}
+                      onChange={(e) => handleVideoUrlChange(e.target.value)}
+                      placeholder="https://www.youtube.com/watch?v=..."
+                    />
+                  </div>
+
+                  {/* Video Preview */}
+                  {videoId && (
+                    <div className="aspect-video rounded-lg overflow-hidden bg-muted">
+                      <iframe
+                        src={`https://www.youtube.com/embed/${videoId}`}
+                        className="w-full h-full"
+                        allowFullScreen
+                        title={formData.videoTitle || 'Video Preview'}
+                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                      />
+                    </div>
+                  )}
+
+                  <div className="space-y-2">
+                    <Label>वीडियो शीर्षक (वैकल्पिक)</Label>
+                    <Input
+                      value={formData.videoTitle}
+                      onChange={(e) => setFormData(prev => ({ ...prev, videoTitle: e.target.value }))}
+                      placeholder="वीडियो का शीर्षक"
+                    />
+                  </div>
+
+                  {formData.videoUrl && (
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      type="button"
+                      onClick={() => setFormData(prev => ({ ...prev, videoUrl: '', videoTitle: '', videoType: 'none' }))}
+                      className="w-full"
+                    >
+                      <X className="w-4 h-4 mr-1" /> वीडियो हटाएं
+                    </Button>
+                  )}
                 </CardContent>
               </Card>
             </div>
