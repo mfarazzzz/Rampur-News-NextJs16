@@ -1,6 +1,6 @@
 import { Link, useLocation } from "react-router-dom";
-import { useState } from "react";
-import { Menu, X, Search, Facebook, Twitter, Youtube, Instagram, ChevronDown } from "lucide-react";
+import { useState, useEffect } from "react";
+import { Menu, X, Search, Facebook, Twitter, Youtube, Instagram, ChevronDown, Clock } from "lucide-react";
 import { categories } from "@/data/categories";
 import { MegaMenu, DropdownMenu } from "./MegaMenu";
 
@@ -8,7 +8,16 @@ const Header = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [isMegaMenuOpen, setIsMegaMenuOpen] = useState(false);
+  const [currentTime, setCurrentTime] = useState(new Date());
   const location = useLocation();
+
+  // Update time every second
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setCurrentTime(new Date());
+    }, 1000);
+    return () => clearInterval(timer);
+  }, []);
 
   const mainNavItems = categories.slice(0, 6);
 
@@ -28,12 +37,20 @@ const Header = () => {
       <div className="bg-news-dark text-primary-foreground">
         <div className="container flex items-center justify-between py-2 text-sm">
           <div className="flex items-center gap-4">
-            <span className="hidden md:inline">
-              {new Date().toLocaleDateString("hi-IN", {
+            <span className="hidden md:flex items-center gap-2">
+              <Clock size={14} />
+              {currentTime.toLocaleDateString("hi-IN", {
                 weekday: "long",
                 year: "numeric",
                 month: "long",
                 day: "numeric",
+              })}
+              {" | "}
+              {currentTime.toLocaleTimeString("hi-IN", {
+                hour: "2-digit",
+                minute: "2-digit",
+                second: "2-digit",
+                hour12: true,
               })}
             </span>
           </div>
