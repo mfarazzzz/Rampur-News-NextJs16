@@ -1,6 +1,7 @@
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import BreakingNewsTicker from "@/components/BreakingNewsTicker";
+import BreakingNewsSlider from "@/components/BreakingNewsSlider";
 import CategorySection from "@/components/CategorySection";
 import Sidebar from "@/components/Sidebar";
 import NewsCard from "@/components/NewsCard";
@@ -24,6 +25,9 @@ const Index = () => {
       <BreakingNewsTicker />
 
       <main className="container py-6">
+        {/* Breaking News Slider */}
+        <BreakingNewsSlider />
+
         {/* Featured Hero Section */}
         <section className="mb-8">
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
