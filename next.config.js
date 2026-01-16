@@ -9,8 +9,18 @@ const nextConfig = {
   reactStrictMode: true,
   experimental: {},
   images: {
-    domains: ["picsum.photos", "rampurnews.com"],
+    remotePatterns: [
+      {
+        protocol: "https",
+        hostname: "picsum.photos",
+      },
+      {
+        protocol: "https",
+        hostname: "rampurnews.com",
+      },
+    ],
   },
+  outputFileTracingRoot: path.join(__dirname, ".."),
 };
 
 export default nextConfig;

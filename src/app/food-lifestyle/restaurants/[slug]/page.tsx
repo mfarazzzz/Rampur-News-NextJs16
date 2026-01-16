@@ -18,9 +18,10 @@ type PageParams = {
 };
 
 export async function generateMetadata(
-  { params }: { params: PageParams }
+  props: { params: Promise<PageParams> }
 ): Promise<Metadata> {
-  const restaurant = await provider.getRestaurantBySlug(params.slug);
+  const { slug } = await props.params;
+  const restaurant = await provider.getRestaurantBySlug(slug);
 
   if (!restaurant) {
     const title = "रेस्तरां नहीं मिला | रामपुर";

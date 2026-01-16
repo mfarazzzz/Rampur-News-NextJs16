@@ -141,17 +141,7 @@ const ContentManagerPage = () => {
   );
 
   // Helper functions for bulk import/export
-  const getBulkContentType = ():
-    | 'exams'
-    | 'results'
-    | 'institutions'
-    | 'holidays'
-    | 'restaurants'
-    | 'fashion'
-    | 'shopping'
-    | 'places'
-    | 'events'
-    | 'news' => {
+  const getBulkContentType = () => {
     if (activeSection === 'news' || activeTab === 'edu-news' || activeTab === 'lifestyle-news') {
       return 'news';
     }
@@ -189,18 +179,7 @@ const ContentManagerPage = () => {
     }
   };
 
-  const handleBulkImport = async (
-    items:
-      | Omit<CMSExam, 'id'>[]
-      | Omit<CMSInstitution, 'id'>[]
-      | Omit<CMSHoliday, 'id'>[]
-      | Omit<CMSRestaurant, 'id'>[]
-      | Omit<CMSFashionStore, 'id'>[]
-      | Omit<CMSShoppingCentre, 'id'>[]
-      | Omit<CMSFamousPlace, 'id'>[]
-      | Omit<CMSEvent, 'id'>[]
-      | NewsArticle[]
-  ): Promise<void> => {
+  const handleBulkImport = async (items: any[]): Promise<void> => {
     const type = getBulkContentType();
     
     for (const item of items) {
@@ -310,17 +289,7 @@ const ContentManagerPage = () => {
     setNewsEditDialogOpen(true);
   };
 
-  const handleSaveEdit = async (
-    data:
-      | Partial<CMSExam>
-      | Partial<CMSInstitution>
-      | Partial<CMSHoliday>
-      | Partial<CMSRestaurant>
-      | Partial<CMSFashionStore>
-      | Partial<CMSShoppingCentre>
-      | Partial<CMSFamousPlace>
-      | Partial<CMSEvent>
-  ) => {
+  const handleSaveEdit = async (data: any) => {
     if (!editingItem?.id) return;
     
     try {
@@ -758,9 +727,9 @@ const ContentTable = ({ data, columns, columnLabels, onDelete, onEdit, isLoading
   const formatValue = (value: unknown, key: string) => {
     if (value === undefined || value === null) return '-';
     if (typeof value === 'boolean') return value ? 'हाँ' : 'नहीं';
-    if (key === 'slug') return <span className="font-mono text-xs text-muted-foreground">{value}</span>;
+    if (key === 'slug') return <span className="font-mono text-xs text-muted-foreground">{String(value)}</span>;
     if (key.includes('date') || key.includes('Date')) {
-      return new Date(value).toLocaleDateString('hi-IN');
+      return new Date(String(value)).toLocaleDateString('hi-IN');
     }
     return String(value);
   };
@@ -818,14 +787,15 @@ interface AddNewsFormProps {
   onSuccess: () => void;
 }
 
-type AddNewsFormState = Pick<
-  NewsArticle,
-  'category' | 'title' | 'excerpt' | 'content' | 'author' | 'publishedDate' | 'image' | 'metaDescription' | 'keywords'
+type AddNewsFormState = Partial<
+  Pick<NewsArticle, 'category' | 'title' | 'excerpt' | 'content' | 'author' | 'publishedDate' | 'image'>
 > & {
   slug?: string;
   slugManual?: boolean;
   isFeatured?: boolean;
   isBreaking?: boolean;
+  metaDescription?: string;
+  keywords?: string;
 };
 
 const AddNewsForm = ({ category, onSuccess }: AddNewsFormProps) => {
@@ -939,7 +909,7 @@ const AddNewsForm = ({ category, onSuccess }: AddNewsFormProps) => {
 
       <ImageUploader
         value={formData.image}
-        onChange={(v) => updateField('image', v)}
+        onChange={(v) => updateField('image', v as string)}
         label="फीचर्ड इमेज"
       />
 
@@ -1000,9 +970,11 @@ interface AddResultFormProps {
   onSuccess: () => void;
 }
 
-type AddResultFormState = Pick<
-  CMSResult,
-  'title' | 'titleHindi' | 'resultDate' | 'category' | 'organization' | 'organizationHindi' | 'resultLink' | 'description' | 'image'
+type AddResultFormState = Partial<
+  Pick<
+    CMSResult,
+    'title' | 'titleHindi' | 'resultDate' | 'category' | 'organization' | 'organizationHindi' | 'resultLink' | 'description' | 'image'
+  >
 > & {
   slug?: string;
   slugManual?: boolean;
@@ -1025,7 +997,7 @@ const AddResultForm = ({ onSuccess }: AddResultFormProps) => {
     setFormData(prev => {
       const updated = { ...prev, [key]: value };
       if ((key === 'title' || key === 'titleHindi') && !prev.slugManual) {
-        updated.slug = generateSlug(value);
+        updated.slug = generateSlug(String(value));
       }
       return updated;
     });
@@ -1092,7 +1064,7 @@ const AddResultForm = ({ onSuccess }: AddResultFormProps) => {
         </div>
         <div className="space-y-2">
           <Label>श्रेणी</Label>
-          <Select onValueChange={(v) => updateField('category', v)}>
+          <Select onValueChange={(v) => updateField('category', v as AddResultFormState['category'])}>
             <SelectTrigger><SelectValue placeholder="चुनें" /></SelectTrigger>
             <SelectContent>
               <SelectItem value="board">बोर्ड</SelectItem>
@@ -1135,7 +1107,7 @@ const AddResultForm = ({ onSuccess }: AddResultFormProps) => {
 
       <ImageUploader
         value={formData.image}
-        onChange={(v) => updateField('image', v)}
+        onChange={(v) => updateField('image', v as string)}
         label="इमेज"
       />
 
@@ -1154,8 +1126,17 @@ interface NewsEditDialogProps {
   onSave: (data: Partial<NewsArticle>) => Promise<void>;
 }
 
+type NewsEditFormState = Partial<NewsArticle> & {
+  metaTitle?: string;
+  metaDescription?: string;
+  keywords?: string;
+  ogImage?: string;
+  isFeatured?: boolean;
+  isBreaking?: boolean;
+};
+
 const NewsEditDialog = ({ open, onOpenChange, news, onSave }: NewsEditDialogProps) => {
-  const [formData, setFormData] = useState<Partial<NewsArticle>>({});
+  const [formData, setFormData] = useState<NewsEditFormState>({});
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [activeTab, setActiveTab] = useState('basic');
 
@@ -1165,7 +1146,7 @@ const NewsEditDialog = ({ open, onOpenChange, news, onSave }: NewsEditDialogProp
     }
   });
 
-  const updateField = <K extends keyof NewsArticle>(key: K, value: NewsArticle[K]) => {
+  const updateField = <K extends keyof NewsEditFormState>(key: K, value: NewsEditFormState[K]) => {
     setFormData(prev => ({ ...prev, [key]: value }));
   };
 
@@ -1258,7 +1239,7 @@ const NewsEditDialog = ({ open, onOpenChange, news, onSave }: NewsEditDialogProp
               </div>
               <ImageUploader
                 value={formData.image || news.image}
-                onChange={(v) => updateField('image', v)}
+                onChange={(v) => updateField('image', v as string)}
                 label="फीचर्ड इमेज"
               />
             </TabsContent>
@@ -1351,14 +1332,14 @@ interface AddContentFormProps {
   type: string;
   onSuccess: () => void;
   onCreate: {
-    exam: (data: Omit<CMSExam, 'id'>) => Promise<unknown>;
-    holiday: (data: Omit<CMSHoliday, 'id'>) => Promise<unknown>;
-    restaurant: (data: Omit<CMSRestaurant, 'id'>) => Promise<unknown>;
-    event: (data: Omit<CMSEvent, 'id'>) => Promise<unknown>;
-    institution: (data: Omit<CMSInstitution, 'id'>) => Promise<unknown>;
-    fashion: (data: Omit<CMSFashionStore, 'id'>) => Promise<unknown>;
-    shopping: (data: Omit<CMSShoppingCentre, 'id'> & { stores?: string[] }) => Promise<unknown>;
-    place: (data: Omit<CMSFamousPlace, 'id'>) => Promise<unknown>;
+    exam: (data: any) => Promise<unknown>;
+    holiday: (data: any) => Promise<unknown>;
+    restaurant: (data: any) => Promise<unknown>;
+    event: (data: any) => Promise<unknown>;
+    institution: (data: any) => Promise<unknown>;
+    fashion: (data: any) => Promise<unknown>;
+    shopping: (data: any) => Promise<unknown>;
+    place: (data: any) => Promise<unknown>;
   };
 }
 
@@ -1404,7 +1385,11 @@ const AddContentForm = ({ type, onSuccess, onCreate }: AddContentFormProps) => {
           await onCreate.holiday({ ...formData, slug, isRecurring: true });
           break;
         case 'restaurants':
-          await onCreate.restaurant({ ...formData, slug, cuisine: formData.cuisine?.split(',') || [] });
+          await onCreate.restaurant({
+            ...formData,
+            slug,
+            cuisine: (formData.cuisine as any)?.split(',') || [],
+          });
           break;
         case 'events':
           await onCreate.event({ ...formData, slug, status: 'upcoming' });
@@ -1430,36 +1415,7 @@ const AddContentForm = ({ type, onSuccess, onCreate }: AddContentFormProps) => {
     }
   };
 
-  const updateField = <
-    K extends keyof (CMSExam &
-      CMSInstitution &
-      CMSHoliday &
-      CMSRestaurant &
-      CMSFashionStore &
-      CMSShoppingCentre &
-      CMSFamousPlace &
-      CMSEvent & {
-        slug?: string;
-        slugManual?: boolean;
-        brands?: string;
-        stores?: string;
-      }),
-  >(
-    key: K,
-    value: (CMSExam &
-      CMSInstitution &
-      CMSHoliday &
-      CMSRestaurant &
-      CMSFashionStore &
-      CMSShoppingCentre &
-      CMSFamousPlace &
-      CMSEvent & {
-        slug?: string;
-        slugManual?: boolean;
-        brands?: string;
-        stores?: string;
-      })[K],
-  ) => {
+  const updateField = (key: string, value: any) => {
     setFormData(prev => {
       const updated = { ...prev, [key]: value };
       // Auto-generate slug from title or name
@@ -1536,7 +1492,7 @@ const AddContentForm = ({ type, onSuccess, onCreate }: AddContentFormProps) => {
             </div>
             <ImageUploader
               value={formData.image}
-              onChange={(v) => updateField('image', v)}
+              onChange={(v) => updateField('image', v as string)}
               label="इमेज"
             />
           </>
@@ -1608,7 +1564,7 @@ const AddContentForm = ({ type, onSuccess, onCreate }: AddContentFormProps) => {
             </div>
             <ImageUploader
               value={formData.image}
-              onChange={(v) => updateField('image', v)}
+              onChange={(v) => updateField('image', v as string)}
               label="इमेज"
             />
           </>
@@ -1658,7 +1614,7 @@ const AddContentForm = ({ type, onSuccess, onCreate }: AddContentFormProps) => {
             </div>
             <ImageUploader
               value={formData.image}
-              onChange={(v) => updateField('image', v)}
+              onChange={(v) => updateField('image', v as string)}
               label="इमेज"
             />
           </>
@@ -1729,13 +1685,13 @@ const AddContentForm = ({ type, onSuccess, onCreate }: AddContentFormProps) => {
             </div>
             <ImageUploader
               value={formData.image}
-              onChange={(v) => updateField('image', v)}
+              onChange={(v) => updateField('image', v as string)}
               label="मुख्य इमेज"
             />
             <ImageUploader
               value={formData.gallery}
-              onChange={(v) => updateField('gallery', v)}
-              label="गैलरी"
+              onChange={(v) => updateField('gallery', v as string[])}
+              label="গैलरी"
               multiple
               maxImages={10}
             />
@@ -1798,8 +1754,8 @@ const AddContentForm = ({ type, onSuccess, onCreate }: AddContentFormProps) => {
             </div>
             <ImageUploader
               value={formData.image}
-              onChange={(v) => updateField('image', v)}
-              label="मुख्य इमेज"
+              onChange={(v) => updateField('image', v as string)}
+              label="मुख्य इमেজ"
             />
           </>
         );
@@ -1852,7 +1808,7 @@ const AddContentForm = ({ type, onSuccess, onCreate }: AddContentFormProps) => {
             </div>
             <ImageUploader
               value={formData.image}
-              onChange={(v) => updateField('image', v)}
+              onChange={(v) => updateField('image', v as string)}
               label="मुख्य इमेज"
             />
           </>
@@ -1906,7 +1862,7 @@ const AddContentForm = ({ type, onSuccess, onCreate }: AddContentFormProps) => {
             </div>
             <ImageUploader
               value={formData.image}
-              onChange={(v) => updateField('image', v)}
+              onChange={(v) => updateField('image', v as string)}
               label="मुख्य इमेज"
             />
           </>
@@ -1952,7 +1908,7 @@ const AddContentForm = ({ type, onSuccess, onCreate }: AddContentFormProps) => {
             </div>
             <ImageUploader
               value={formData.image}
-              onChange={(v) => updateField('image', v)}
+              onChange={(v) => updateField('image', v as string)}
               label="इमेज"
             />
           </>

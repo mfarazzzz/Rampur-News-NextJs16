@@ -15,14 +15,11 @@ const categoryLabels: Record<string, string> = {
   fashion: "फैशन",
 };
 
-type PageParams = {
-  slug: string;
-};
-
 export async function generateMetadata(
-  { params }: { params: PageParams }
+  props: { params: Promise<{ slug: string }> }
 ): Promise<Metadata> {
-  const event = await provider.getEventBySlug(params.slug);
+  const { slug } = await props.params;
+  const event = await provider.getEventBySlug(slug);
 
   if (!event) {
     const title = "इवेंट नहीं मिला | कार्यक्रम रामपुर";
@@ -88,8 +85,8 @@ export async function generateMetadata(
   };
 }
 
-export default function Page() {
+export default function Page(
+  _props: { params: Promise<{ slug: string }> }
+) {
   return <EventDetail />;
 }
-
-
