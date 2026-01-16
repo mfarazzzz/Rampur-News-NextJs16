@@ -1,4 +1,4 @@
-import { Link } from "react-router-dom";
+import { Link } from "@/lib/router-compat";
 import { Clock } from "lucide-react";
 import { NewsArticle, getRelativeTimeHindi } from "@/data/mockNews";
 

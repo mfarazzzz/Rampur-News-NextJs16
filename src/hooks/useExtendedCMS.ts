@@ -1,4 +1,4 @@
-// Extended CMS Hooks for new content modules
+"use client";
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { getExtendedCMSProvider } from '@/services/cms/extendedProvider';
 import type { ExtendedQueryParams } from '@/services/cms/extendedTypes';

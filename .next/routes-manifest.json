@@ -1,0 +1,368 @@
+{
+  "version": 3,
+  "pages404": true,
+  "appType": "app",
+  "caseSensitive": false,
+  "basePath": "",
+  "redirects": [
+    {
+      "source": "/:path+/",
+      "destination": "/:path+",
+      "internal": true,
+      "priority": true,
+      "statusCode": 308,
+      "regex": "^(?:/((?:[^/]+?)(?:/(?:[^/]+?))*))/$"
+    }
+  ],
+  "headers": [],
+  "rewrites": {
+    "beforeFiles": [],
+    "afterFiles": [],
+    "fallback": []
+  },
+  "dynamicRoutes": [
+    {
+      "page": "/admin/articles/[id]",
+      "regex": "^/admin/articles/([^/]+?)(?:/)?$",
+      "routeKeys": {
+        "nxtPid": "nxtPid"
+      },
+      "namedRegex": "^/admin/articles/(?<nxtPid>[^/]+?)(?:/)?$"
+    },
+    {
+      "page": "/education-jobs/institutions/[slug]",
+      "regex": "^/education\\-jobs/institutions/([^/]+?)(?:/)?$",
+      "routeKeys": {
+        "nxtPslug": "nxtPslug"
+      },
+      "namedRegex": "^/education\\-jobs/institutions/(?<nxtPslug>[^/]+?)(?:/)?$"
+    },
+    {
+      "page": "/food-lifestyle/events/[slug]",
+      "regex": "^/food\\-lifestyle/events/([^/]+?)(?:/)?$",
+      "routeKeys": {
+        "nxtPslug": "nxtPslug"
+      },
+      "namedRegex": "^/food\\-lifestyle/events/(?<nxtPslug>[^/]+?)(?:/)?$"
+    },
+    {
+      "page": "/food-lifestyle/fashion/[slug]",
+      "regex": "^/food\\-lifestyle/fashion/([^/]+?)(?:/)?$",
+      "routeKeys": {
+        "nxtPslug": "nxtPslug"
+      },
+      "namedRegex": "^/food\\-lifestyle/fashion/(?<nxtPslug>[^/]+?)(?:/)?$"
+    },
+    {
+      "page": "/food-lifestyle/places/[slug]",
+      "regex": "^/food\\-lifestyle/places/([^/]+?)(?:/)?$",
+      "routeKeys": {
+        "nxtPslug": "nxtPslug"
+      },
+      "namedRegex": "^/food\\-lifestyle/places/(?<nxtPslug>[^/]+?)(?:/)?$"
+    },
+    {
+      "page": "/food-lifestyle/restaurants/[slug]",
+      "regex": "^/food\\-lifestyle/restaurants/([^/]+?)(?:/)?$",
+      "routeKeys": {
+        "nxtPslug": "nxtPslug"
+      },
+      "namedRegex": "^/food\\-lifestyle/restaurants/(?<nxtPslug>[^/]+?)(?:/)?$"
+    },
+    {
+      "page": "/food-lifestyle/shopping/[slug]",
+      "regex": "^/food\\-lifestyle/shopping/([^/]+?)(?:/)?$",
+      "routeKeys": {
+        "nxtPslug": "nxtPslug"
+      },
+      "namedRegex": "^/food\\-lifestyle/shopping/(?<nxtPslug>[^/]+?)(?:/)?$"
+    },
+    {
+      "page": "/[category]/[slug]",
+      "regex": "^/([^/]+?)/([^/]+?)(?:/)?$",
+      "routeKeys": {
+        "nxtPcategory": "nxtPcategory",
+        "nxtPslug": "nxtPslug"
+      },
+      "namedRegex": "^/(?<nxtPcategory>[^/]+?)/(?<nxtPslug>[^/]+?)(?:/)?$"
+    }
+  ],
+  "staticRoutes": [
+    {
+      "page": "/",
+      "regex": "^/(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/(?:/)?$"
+    },
+    {
+      "page": "/_global-error",
+      "regex": "^/_global\\-error(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/_global\\-error(?:/)?$"
+    },
+    {
+      "page": "/_not-found",
+      "regex": "^/_not\\-found(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/_not\\-found(?:/)?$"
+    },
+    {
+      "page": "/about",
+      "regex": "^/about(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/about(?:/)?$"
+    },
+    {
+      "page": "/admin",
+      "regex": "^/admin(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/admin(?:/)?$"
+    },
+    {
+      "page": "/admin/articles",
+      "regex": "^/admin/articles(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/admin/articles(?:/)?$"
+    },
+    {
+      "page": "/admin/authors",
+      "regex": "^/admin/authors(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/admin/authors(?:/)?$"
+    },
+    {
+      "page": "/admin/categories",
+      "regex": "^/admin/categories(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/admin/categories(?:/)?$"
+    },
+    {
+      "page": "/admin/content",
+      "regex": "^/admin/content(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/admin/content(?:/)?$"
+    },
+    {
+      "page": "/admin/login",
+      "regex": "^/admin/login(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/admin/login(?:/)?$"
+    },
+    {
+      "page": "/admin/media",
+      "regex": "^/admin/media(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/admin/media(?:/)?$"
+    },
+    {
+      "page": "/admin/settings",
+      "regex": "^/admin/settings(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/admin/settings(?:/)?$"
+    },
+    {
+      "page": "/business",
+      "regex": "^/business(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/business(?:/)?$"
+    },
+    {
+      "page": "/contact",
+      "regex": "^/contact(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/contact(?:/)?$"
+    },
+    {
+      "page": "/corrections-policy",
+      "regex": "^/corrections\\-policy(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/corrections\\-policy(?:/)?$"
+    },
+    {
+      "page": "/crime",
+      "regex": "^/crime(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/crime(?:/)?$"
+    },
+    {
+      "page": "/disclaimer",
+      "regex": "^/disclaimer(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/disclaimer(?:/)?$"
+    },
+    {
+      "page": "/editorial-policy",
+      "regex": "^/editorial\\-policy(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/editorial\\-policy(?:/)?$"
+    },
+    {
+      "page": "/education-jobs",
+      "regex": "^/education\\-jobs(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/education\\-jobs(?:/)?$"
+    },
+    {
+      "page": "/education-jobs/exams",
+      "regex": "^/education\\-jobs/exams(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/education\\-jobs/exams(?:/)?$"
+    },
+    {
+      "page": "/education-jobs/institutions",
+      "regex": "^/education\\-jobs/institutions(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/education\\-jobs/institutions(?:/)?$"
+    },
+    {
+      "page": "/education-jobs/news",
+      "regex": "^/education\\-jobs/news(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/education\\-jobs/news(?:/)?$"
+    },
+    {
+      "page": "/education-jobs/results",
+      "regex": "^/education\\-jobs/results(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/education\\-jobs/results(?:/)?$"
+    },
+    {
+      "page": "/entertainment",
+      "regex": "^/entertainment(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/entertainment(?:/)?$"
+    },
+    {
+      "page": "/food-lifestyle",
+      "regex": "^/food\\-lifestyle(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/food\\-lifestyle(?:/)?$"
+    },
+    {
+      "page": "/food-lifestyle/events",
+      "regex": "^/food\\-lifestyle/events(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/food\\-lifestyle/events(?:/)?$"
+    },
+    {
+      "page": "/food-lifestyle/fashion",
+      "regex": "^/food\\-lifestyle/fashion(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/food\\-lifestyle/fashion(?:/)?$"
+    },
+    {
+      "page": "/food-lifestyle/places",
+      "regex": "^/food\\-lifestyle/places(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/food\\-lifestyle/places(?:/)?$"
+    },
+    {
+      "page": "/food-lifestyle/restaurants",
+      "regex": "^/food\\-lifestyle/restaurants(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/food\\-lifestyle/restaurants(?:/)?$"
+    },
+    {
+      "page": "/food-lifestyle/shopping",
+      "regex": "^/food\\-lifestyle/shopping(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/food\\-lifestyle/shopping(?:/)?$"
+    },
+    {
+      "page": "/grievance",
+      "regex": "^/grievance(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/grievance(?:/)?$"
+    },
+    {
+      "page": "/health",
+      "regex": "^/health(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/health(?:/)?$"
+    },
+    {
+      "page": "/national",
+      "regex": "^/national(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/national(?:/)?$"
+    },
+    {
+      "page": "/nearby",
+      "regex": "^/nearby(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/nearby(?:/)?$"
+    },
+    {
+      "page": "/ownership",
+      "regex": "^/ownership(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/ownership(?:/)?$"
+    },
+    {
+      "page": "/politics",
+      "regex": "^/politics(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/politics(?:/)?$"
+    },
+    {
+      "page": "/privacy",
+      "regex": "^/privacy(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/privacy(?:/)?$"
+    },
+    {
+      "page": "/rampur",
+      "regex": "^/rampur(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/rampur(?:/)?$"
+    },
+    {
+      "page": "/religion-culture",
+      "regex": "^/religion\\-culture(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/religion\\-culture(?:/)?$"
+    },
+    {
+      "page": "/religion-culture/holidays",
+      "regex": "^/religion\\-culture/holidays(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/religion\\-culture/holidays(?:/)?$"
+    },
+    {
+      "page": "/sports",
+      "regex": "^/sports(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/sports(?:/)?$"
+    },
+    {
+      "page": "/terms",
+      "regex": "^/terms(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/terms(?:/)?$"
+    },
+    {
+      "page": "/up",
+      "regex": "^/up(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/up(?:/)?$"
+    }
+  ],
+  "dataRoutes": [],
+  "rsc": {
+    "header": "rsc",
+    "varyHeader": "rsc, next-router-state-tree, next-router-prefetch, next-router-segment-prefetch",
+    "prefetchHeader": "next-router-prefetch",
+    "didPostponeHeader": "x-nextjs-postponed",
+    "contentTypeHeader": "text/x-component",
+    "suffix": ".rsc",
+    "prefetchSegmentHeader": "next-router-segment-prefetch",
+    "prefetchSegmentSuffix": ".segment.rsc",
+    "prefetchSegmentDirSuffix": ".segments",
+    "clientParamParsing": false,
+    "dynamicRSCPrerender": false
+  },
+  "rewriteHeaders": {
+    "pathHeader": "x-nextjs-rewritten-path",
+    "queryHeader": "x-nextjs-rewritten-query"
+  }
+}

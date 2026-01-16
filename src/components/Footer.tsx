@@ -1,4 +1,4 @@
-import { Link } from "react-router-dom";
+import { Link } from "@/lib/router-compat";
 import { Facebook, Twitter, Youtube, Instagram, Mail, Phone, MapPin, Settings, MessageCircle, Send } from "lucide-react";
 import { categories } from "@/data/categories";
 

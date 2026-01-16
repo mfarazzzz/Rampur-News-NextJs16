@@ -1,0 +1,16 @@
+{
+  "headers": {
+    "x-nextjs-stale-time": "300",
+    "x-nextjs-prerender": "1",
+    "x-next-cache-tags": "_N_T_/layout,_N_T_/education-jobs/layout,_N_T_/education-jobs/institutions/layout,_N_T_/education-jobs/institutions/page,_N_T_/education-jobs/institutions"
+  },
+  "segmentPaths": [
+    "/_tree",
+    "/_full",
+    "/education-jobs/institutions/__PAGE__",
+    "/education-jobs/institutions",
+    "/education-jobs",
+    "/_index",
+    "/_head"
+  ]
+}

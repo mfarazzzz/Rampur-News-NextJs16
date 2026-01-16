@@ -1,12 +1,12 @@
 // CMS Provider Interface - Abstract layer for easy CMS swap
-import type { 
-  CMSArticle, 
-  CMSCategory, 
-  CMSAuthor, 
-  CMSMedia, 
+import type {
+  CMSArticle,
+  CMSCategory,
+  CMSAuthor,
+  CMSMedia,
   CMSSettings,
   ArticleQueryParams,
-  PaginatedResponse 
+  PaginatedResponse
 } from './types';
 
 export interface CMSProvider {
@@ -50,8 +50,7 @@ export interface CMSProvider {
   searchArticles(query: string, limit?: number): Promise<CMSArticle[]>;
 }
 
-// Provider type for configuration
-export type CMSProviderType = 'mock' | 'wordpress' | 'strapi' | 'sanity' | 'custom';
+export type CMSProviderType = 'mock' | 'wordpress' | 'strapi' | 'django' | 'sanity' | 'custom';
 
 export interface CMSConfig {
   provider: CMSProviderType;

@@ -1,4 +1,7 @@
-import { Link, useLocation, useNavigate } from 'react-router-dom';
+"use client";
+
+import Link from 'next/link';
+import { usePathname, useRouter } from 'next/navigation';
 import { useAdminAuth } from '@/contexts/AdminAuthContext';
 import { Button } from '@/components/ui/button';
 import { ScrollArea } from '@/components/ui/scroll-area';
@@ -37,15 +40,18 @@ const navItems: NavItem[] = [
 ];
 
 const AdminSidebar = () => {
-  const location = useLocation();
-  const navigate = useNavigate();
+  const pathname = usePathname();
+  const router = useRouter();
   const { user, logout } = useAdminAuth();
   const [collapsed, setCollapsed] = useState(false);
 
   const handleLogout = () => {
     logout();
-    navigate('/admin/login');
+    router.push('/admin/login');
   };
+
+  const isActive = (path: string) => pathname === path;
+
 
   return (
     <aside className={cn(
@@ -58,7 +64,7 @@ const AdminSidebar = () => {
         collapsed ? "justify-center" : "justify-between"
       )}>
         {!collapsed && (
-          <Link to="/admin" className="flex items-center gap-2">
+          <Link href="/admin" className="flex items-center gap-2">
             <Newspaper className="w-6 h-6 text-primary" />
             <span className="font-bold text-lg">CMS</span>
           </Link>
@@ -81,7 +87,7 @@ const AdminSidebar = () => {
         <div className="p-4">
           <Button 
             className="w-full gap-2" 
-            onClick={() => navigate('/admin/articles/new')}
+            onClick={() => router.push('/admin/articles/new')}
           >
             <Plus className="w-4 h-4" />
             नया लेख
@@ -93,7 +99,7 @@ const AdminSidebar = () => {
           <Button 
             size="icon"
             className="w-full" 
-            onClick={() => navigate('/admin/articles/new')}
+            onClick={() => router.push('/admin/articles/new')}
           >
             <Plus className="w-4 h-4" />
           </Button>
@@ -104,16 +110,16 @@ const AdminSidebar = () => {
       <ScrollArea className="flex-1 px-2">
         <nav className="space-y-1 py-2">
           {navItems.map((item) => {
-            const isActive = location.pathname === item.href || 
-              (item.href !== '/admin' && location.pathname.startsWith(item.href));
+            const active = pathname === item.href || 
+              (item.href !== '/admin' && pathname?.startsWith(item.href));
             
             return (
               <Link
                 key={item.href}
-                to={item.href}
+                href={item.href}
                 className={cn(
                   "flex items-center gap-3 px-3 py-2.5 rounded-lg transition-colors",
-                  isActive 
+                  active 
                     ? "bg-primary text-primary-foreground" 
                     : "hover:bg-muted text-muted-foreground hover:text-foreground",
                   collapsed && "justify-center"
@@ -146,7 +152,7 @@ const AdminSidebar = () => {
             variant="outline"
             size={collapsed ? "icon" : "default"}
             className={cn("gap-2", !collapsed && "w-full")}
-            onClick={() => navigate('/')}
+            onClick={() => router.push('/')}
             title="साइट देखें"
           >
             <Newspaper className="w-4 h-4" />

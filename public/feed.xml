@@ -19,8 +19,8 @@
       <url>https://rampurnews.com/logo.png</url>
       <title>रामपुर न्यूज़</title>
       <link>https://rampurnews.com</link>
-      <width>144</width>
-      <height>40</height>
+      <width>768</width>
+      <height>768</height>
     </image>
     <atom:link href="https://rampurnews.com/feed.xml" rel="self" type="application/rss+xml" />
 

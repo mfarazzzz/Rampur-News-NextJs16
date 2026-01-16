@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { useCalendarEvents } from "@/hooks/useExtendedCMS";
-import { Link } from "react-router-dom";
+import { Link } from "@/lib/router-compat";
 import type { CalendarEvent } from "@/services/cms/extendedTypes";
 
 interface MonthlyCalendarProps {

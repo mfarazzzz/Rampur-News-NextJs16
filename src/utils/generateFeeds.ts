@@ -77,8 +77,8 @@ export const generateRSSFeed = (): string => {
       <url>${SITE_URL}/logo.png</url>
       <title>${SITE_NAME}</title>
       <link>${SITE_URL}</link>
-      <width>144</width>
-      <height>40</height>
+      <width>768</width>
+      <height>768</height>
     </image>
     <atom:link href="${SITE_URL}/feed.xml" rel="self" type="application/rss+xml" />
     ${items}

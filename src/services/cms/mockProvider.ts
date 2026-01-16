@@ -25,6 +25,9 @@ const generateId = () => `${Date.now()}-${Math.random().toString(36).substr(2, 9
 
 // Initialize storage with mock data if empty
 const initializeStorage = () => {
+  if (typeof window === 'undefined') {
+    return;
+  }
   if (!localStorage.getItem(STORAGE_KEYS.ARTICLES)) {
     const articles: CMSArticle[] = [];
     Object.entries(mockNewsData).forEach(([category, newsItems]) => {
@@ -70,6 +73,7 @@ const initializeStorage = () => {
       },
       contactEmail: 'contact@rampurnews.com',
       contactPhone: '+919876543210',
+      defaultAuthorRole: 'author',
     };
     localStorage.setItem(STORAGE_KEYS.SETTINGS, JSON.stringify(settings));
   }
@@ -81,6 +85,9 @@ const initializeStorage = () => {
 
 // Helper to get/set localStorage
 const getStorage = <T>(key: string): T[] => {
+  if (typeof window === 'undefined') {
+    return [];
+  }
   try {
     return JSON.parse(localStorage.getItem(key) || '[]');
   } catch {
@@ -89,10 +96,16 @@ const getStorage = <T>(key: string): T[] => {
 };
 
 const setStorage = <T>(key: string, data: T[]) => {
+  if (typeof window === 'undefined') {
+    return;
+  }
   localStorage.setItem(key, JSON.stringify(data));
 };
 
 const getStorageObject = <T>(key: string, defaultValue: T): T => {
+  if (typeof window === 'undefined') {
+    return defaultValue;
+  }
   try {
     const stored = localStorage.getItem(key);
     return stored ? JSON.parse(stored) : defaultValue;
@@ -102,6 +115,9 @@ const getStorageObject = <T>(key: string, defaultValue: T): T => {
 };
 
 const setStorageObject = <T>(key: string, data: T) => {
+  if (typeof window === 'undefined') {
+    return;
+  }
   localStorage.setItem(key, JSON.stringify(data));
 };
 
@@ -301,6 +317,7 @@ export const mockCMSProvider: CMSProvider = {
       siteNameHindi: 'रामपुर न्यूज़',
       tagline: '',
       socialLinks: {},
+      defaultAuthorRole: 'author',
     });
   },
   

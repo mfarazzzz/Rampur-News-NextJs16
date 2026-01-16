@@ -78,6 +78,7 @@ export interface CMSSettings {
   contactEmail?: string;
   contactPhone?: string;
   address?: string;
+  defaultAuthorRole?: CMSAuthor['role'];
 }
 
 // Query parameters for fetching articles

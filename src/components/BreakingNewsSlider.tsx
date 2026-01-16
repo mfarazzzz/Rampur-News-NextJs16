@@ -1,5 +1,6 @@
+"use client";
 import { useState, useEffect, useCallback } from "react";
-import { Link } from "react-router-dom";
+import { Link } from "@/lib/router-compat";
 import { Zap, ChevronLeft, ChevronRight } from "lucide-react";
 import { getBreakingNews } from "@/data/mockNews";
 import { Button } from "@/components/ui/button";
@@ -27,7 +28,7 @@ const BreakingNewsSlider = () => {
   if (breakingNews.length === 0) return null;
 
   return (
-    <section className="py-6">
+    <section className="py-4 md:py-5">
       <div className="flex items-center gap-3 mb-4">
         <div className="flex items-center gap-2 px-4 py-2 bg-destructive text-destructive-foreground rounded-lg">
           <Zap size={18} className="animate-pulse" />
@@ -71,7 +72,7 @@ const BreakingNewsSlider = () => {
               className="w-full flex-shrink-0"
             >
               <Link to={`/news/${news.slug}`} className="block group">
-                <div className="relative aspect-[21/9] overflow-hidden rounded-xl">
+                <div className="relative h-56 md:h-72 lg:h-80 overflow-hidden rounded-xl">
                   <img
                     src={news.image}
                     alt={news.title}

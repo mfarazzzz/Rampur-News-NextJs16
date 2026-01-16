@@ -1,4 +1,4 @@
-import { Link } from "react-router-dom";
+import { Link } from "@/lib/router-compat";
 import { GraduationCap, FileText, Building2, Trophy, ArrowRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 

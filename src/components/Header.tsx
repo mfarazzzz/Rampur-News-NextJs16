@@ -1,4 +1,6 @@
-import { Link, useLocation } from "react-router-dom";
+"use client";
+import { Link } from "@/lib/router-compat";
+import { usePathname } from "next/navigation";
 import { useState, useEffect } from "react";
 import { Menu, X, Search, Facebook, Twitter, Youtube, Instagram, ChevronDown, Clock } from "lucide-react";
 import { categories } from "@/data/categories";
@@ -9,7 +11,7 @@ const Header = () => {
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [isMegaMenuOpen, setIsMegaMenuOpen] = useState(false);
   const [currentTime, setCurrentTime] = useState(new Date());
-  const location = useLocation();
+  const pathname = usePathname();
 
   // Update time every second
   useEffect(() => {
@@ -21,7 +23,7 @@ const Header = () => {
 
   const mainNavItems = categories.slice(0, 6);
 
-  const isActive = (path: string) => location.pathname === path;
+  const isActive = (path: string) => pathname === path;
 
   const aboutItems = [
     { label: "हमारे बारे में", path: "/about" },

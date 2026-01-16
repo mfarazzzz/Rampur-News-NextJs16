@@ -1,4 +1,4 @@
-import { Helmet } from "react-helmet-async";
+import Head from "next/head";
 
 interface ArticleData {
   publishedTime?: string;
@@ -17,6 +17,17 @@ interface NewsArticleSchema {
   section?: string;
 }
 
+interface JobPostingSchema {
+  title: string;
+  description: string;
+  datePosted: string;
+  validThrough?: string;
+  employmentType?: string;
+  hiringOrganizationName: string;
+  hiringOrganizationUrl?: string;
+  jobLocation?: string;
+}
+
 interface SEOProps {
   title: string;
   description: string;
@@ -25,6 +36,7 @@ interface SEOProps {
   ogType?: "website" | "article";
   article?: ArticleData;
   newsArticle?: NewsArticleSchema;
+  jobPosting?: JobPostingSchema;
   isHomepage?: boolean;
   keywords?: string[];
   isAMP?: boolean;
@@ -39,6 +51,7 @@ const SEO = ({
   ogType = "website",
   article,
   newsArticle,
+  jobPosting,
   isHomepage = false,
   keywords = [],
   isAMP = false,
@@ -51,11 +64,16 @@ const SEO = ({
 
   // Default keywords for Hindi news
   const defaultKeywords = [
-    "रामपुर", "रामपुर न्यूज़", "Rampur News", "उत्तर प्रदेश", 
+    "रामपुर", "रामपुर न्यूज़", "Rampur News", "उत्तर प्रदेश",
     "हिंदी समाचार", "ताज़ा खबरें", "Hindi News", "UP News",
     "रामपुर समाचार", "लोकल न्यूज़", "ब्रेकिंग न्यूज़"
   ];
-  const allKeywords = [...new Set([...defaultKeywords, ...keywords])];
+  const allKeywords = defaultKeywords.slice();
+  keywords.forEach((keyword) => {
+    if (!allKeywords.includes(keyword)) {
+      allKeywords.push(keyword);
+    }
+  });
 
   // Website Schema (for homepage) - Enhanced for Google Discover
   const websiteSchema = {
@@ -81,8 +99,8 @@ const SEO = ({
       logo: {
         "@type": "ImageObject",
         url: `${siteUrl}/logo.png`,
-        width: 600,
-        height: 60,
+        width: 768,
+        height: 768,
       },
     },
   };
@@ -98,8 +116,8 @@ const SEO = ({
     logo: {
       "@type": "ImageObject",
       url: `${siteUrl}/logo.png`,
-      width: 600,
-      height: 60,
+      width: 768,
+      height: 768,
     },
     sameAs: [
       "https://facebook.com/RampurNews",
@@ -160,8 +178,8 @@ const SEO = ({
           logo: {
             "@type": "ImageObject",
             url: `${siteUrl}/logo.png`,
-            width: 600,
-            height: 60,
+            width: 768,
+            height: 768,
           },
         },
         articleSection: newsArticle.section || "समाचार",
@@ -178,6 +196,34 @@ const SEO = ({
           "@type": "Organization",
           name: siteName,
         },
+      }
+    : null;
+
+  const jobPostingSchema = jobPosting
+    ? {
+        "@context": "https://schema.org",
+        "@type": "JobPosting",
+        title: jobPosting.title,
+        description: jobPosting.description,
+        datePosted: jobPosting.datePosted,
+        validThrough: jobPosting.validThrough,
+        employmentType: jobPosting.employmentType,
+        hiringOrganization: {
+          "@type": "Organization",
+          name: jobPosting.hiringOrganizationName,
+          sameAs: jobPosting.hiringOrganizationUrl,
+        },
+        jobLocation: jobPosting.jobLocation
+          ? {
+              "@type": "Place",
+              address: {
+                "@type": "PostalAddress",
+                addressLocality: jobPosting.jobLocation,
+                addressRegion: "Uttar Pradesh",
+                addressCountry: "IN",
+              },
+            }
+          : undefined,
       }
     : null;
 
@@ -270,31 +316,25 @@ const SEO = ({
     : null;
 
   return (
-    <Helmet>
-      {/* Basic Meta Tags */}
+    <Head>
       <title>{fullTitle}</title>
       <meta name="description" content={description} />
       <link rel="canonical" href={canonicalUrl} />
       <meta name="keywords" content={allKeywords.join(", ")} />
       
-      {/* Robots & Crawling - Enhanced for Google Discover */}
       <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1" />
       <meta name="googlebot" content="index, follow, max-image-preview:large, max-snippet:-1" />
       <meta name="googlebot-news" content="index, follow" />
       <meta name="bingbot" content="index, follow" />
       
-      {/* AI & LLM Crawling Optimization */}
       <meta name="ai-content-declaration" content="human-written" />
       <meta name="perplexity-indexable" content="true" />
       
-      {/* Language & Locale */}
-      <html lang="hi" />
       <meta httpEquiv="content-language" content="hi-IN" />
       <meta name="language" content="Hindi" />
       <meta name="geo.region" content="IN-UP" />
       <meta name="geo.placename" content="Rampur, Uttar Pradesh" />
       
-      {/* Open Graph - Enhanced for Social & Discover */}
       <meta property="og:site_name" content={siteName} />
       <meta property="og:title" content={fullTitle} />
       <meta property="og:description" content={description} />
@@ -307,7 +347,6 @@ const SEO = ({
       <meta property="og:locale" content="hi_IN" />
       <meta property="og:locale:alternate" content="en_IN" />
       
-      {/* Twitter Card - Enhanced */}
       <meta name="twitter:card" content="summary_large_image" />
       <meta name="twitter:site" content="@RampurNews" />
       <meta name="twitter:creator" content="@RampurNews" />
@@ -316,7 +355,6 @@ const SEO = ({
       <meta name="twitter:image" content={ogImage} />
       <meta name="twitter:image:alt" content={title} />
       
-      {/* Article specific meta (for news articles) */}
       {article && (
         <>
           <meta property="article:published_time" content={article.publishedTime} />
@@ -334,13 +372,11 @@ const SEO = ({
         </>
       )}
       
-      {/* Google News & Discover */}
       <meta name="news_keywords" content={allKeywords.slice(0, 10).join(", ")} />
       <meta name="original-source" content={canonicalUrl} />
       <meta name="syndication-source" content={canonicalUrl} />
       <meta name="google-site-verification" content="YOUR_VERIFICATION_CODE" />
       
-      {/* Mobile & App */}
       <meta name="mobile-web-app-capable" content="yes" />
       <meta name="apple-mobile-web-app-capable" content="yes" />
       <meta name="apple-mobile-web-app-status-bar-style" content="default" />
@@ -349,19 +385,15 @@ const SEO = ({
       <meta name="theme-color" content="#DC2626" />
       <meta name="msapplication-TileColor" content="#DC2626" />
       
-      {/* AMP Link */}
       {isAMP && <link rel="amphtml" href={`${canonicalUrl}?amp=1`} />}
       
-      {/* RSS & Atom Feeds */}
       <link rel="alternate" type="application/rss+xml" title="रामपुर न्यूज़ RSS" href={`${siteUrl}/feed.xml`} />
       <link rel="alternate" type="application/atom+xml" title="रामपुर न्यूज़ Atom" href={`${siteUrl}/atom.xml`} />
       
-      {/* Preconnect for performance */}
       <link rel="preconnect" href="https://fonts.googleapis.com" />
       <link rel="preconnect" href="https://picsum.photos" />
       <link rel="dns-prefetch" href="https://www.google-analytics.com" />
       
-      {/* JSON-LD Structured Data */}
       {isHomepage && (
         <script type="application/ld+json">
           {JSON.stringify(websiteSchema)}
@@ -401,7 +433,7 @@ const SEO = ({
           {JSON.stringify(faqSchema)}
         </script>
       )}
-    </Helmet>
+    </Head>
   );
 };
 

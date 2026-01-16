@@ -1,4 +1,4 @@
-import { Link } from "react-router-dom";
+import { Link } from "@/lib/router-compat";
 import { categories } from "@/data/categories";
 import { mockNewsData, NewsArticle } from "@/data/mockNews";
 import { ChevronDown } from "lucide-react";
