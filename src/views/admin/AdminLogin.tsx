@@ -62,7 +62,7 @@ const AdminLogin = () => {
                 <Input
                   id="email"
                   type="email"
-                  placeholder="admin@rampurnews.com"
+                  placeholder="आपका ईमेल"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   className="pl-10"
@@ -104,16 +104,6 @@ const AdminLogin = () => {
               {isLoading ? 'लॉगिन हो रहा है...' : 'लॉगिन करें'}
             </Button>
           </form>
-          
-          <div className="mt-6 p-4 bg-muted/50 rounded-lg">
-            <p className="text-xs text-muted-foreground text-center mb-2">
-              डेमो क्रेडेंशियल्स:
-            </p>
-            <div className="text-xs text-center space-y-1">
-              <p><strong>Admin:</strong> admin@rampurnews.com / admin123</p>
-              <p><strong>Editor:</strong> editor@rampurnews.com / editor123</p>
-            </div>
-          </div>
         </CardContent>
       </Card>
     </div>

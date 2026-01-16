@@ -26,6 +26,17 @@ import {
   useCreateFamousPlace, useDeleteFamousPlace, useUpdateFamousPlace,
 } from '@/hooks/useExtendedCMS';
 import { mockNewsData, NewsArticle } from '@/data/mockNews';
+import type {
+  CMSExam,
+  CMSResult,
+  CMSInstitution,
+  CMSHoliday,
+  CMSRestaurant,
+  CMSFashionStore,
+  CMSShoppingCentre,
+  CMSFamousPlace,
+  CMSEvent,
+} from '@/services/cms/extendedTypes';
 import { 
   Plus, Trash2, Search, Calendar, GraduationCap, Utensils, 
   Shirt, Store, Landmark, PartyPopper, Moon, Pencil, Newspaper,
@@ -57,7 +68,18 @@ const ContentManagerPage = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);
   const [editDialogOpen, setEditDialogOpen] = useState(false);
-  const [editingItem, setEditingItem] = useState<Record<string, any> | null>(null);
+  const [editingItem, setEditingItem] = useState<
+    | CMSExam
+    | CMSResult
+    | CMSInstitution
+    | CMSHoliday
+    | CMSRestaurant
+    | CMSFashionStore
+    | CMSShoppingCentre
+    | CMSFamousPlace
+    | CMSEvent
+    | null
+  >(null);
   const [newsEditDialogOpen, setNewsEditDialogOpen] = useState(false);
   const [editingNews, setEditingNews] = useState<NewsArticle | null>(null);
 
@@ -120,14 +142,34 @@ const ContentManagerPage = () => {
   );
 
   // Helper functions for bulk import/export
-  const getBulkContentType = (): string => {
+  const getBulkContentType = ():
+    | 'exams'
+    | 'results'
+    | 'institutions'
+    | 'holidays'
+    | 'restaurants'
+    | 'fashion'
+    | 'shopping'
+    | 'places'
+    | 'events'
+    | 'news' => {
     if (activeSection === 'news' || activeTab === 'edu-news' || activeTab === 'lifestyle-news') {
       return 'news';
     }
     return activeTab;
   };
 
-  const getBulkData = (): any[] => {
+  const getBulkData = ():
+    | CMSExam[]
+    | CMSResult[]
+    | CMSInstitution[]
+    | CMSHoliday[]
+    | CMSRestaurant[]
+    | CMSFashionStore[]
+    | CMSShoppingCentre[]
+    | CMSFamousPlace[]
+    | CMSEvent[]
+    | NewsArticle[] => {
     switch (activeTab) {
       case 'exams': return exams;
       case 'results': return results;
@@ -148,7 +190,18 @@ const ContentManagerPage = () => {
     }
   };
 
-  const handleBulkImport = async (items: any[]): Promise<void> => {
+  const handleBulkImport = async (
+    items:
+      | Omit<CMSExam, 'id'>[]
+      | Omit<CMSInstitution, 'id'>[]
+      | Omit<CMSHoliday, 'id'>[]
+      | Omit<CMSRestaurant, 'id'>[]
+      | Omit<CMSFashionStore, 'id'>[]
+      | Omit<CMSShoppingCentre, 'id'>[]
+      | Omit<CMSFamousPlace, 'id'>[]
+      | Omit<CMSEvent, 'id'>[]
+      | NewsArticle[]
+  ): Promise<void> => {
     const type = getBulkContentType();
     
     for (const item of items) {
@@ -189,7 +242,19 @@ const ContentManagerPage = () => {
     }
   };
 
-  const handleDelete = async (type: string, id: string) => {
+  const handleDelete = async (
+    type:
+      | 'exams'
+      | 'results'
+      | 'institutions'
+      | 'holidays'
+      | 'restaurants'
+      | 'events'
+      | 'fashion'
+      | 'shopping'
+      | 'places',
+    id: string
+  ) => {
     if (!confirm('क्या आप वाकई इसे हटाना चाहते हैं?')) return;
     
     try {
@@ -225,7 +290,18 @@ const ContentManagerPage = () => {
     }
   };
 
-  const handleEdit = (item: Record<string, any>) => {
+  const handleEdit = (
+    item:
+      | CMSExam
+      | CMSResult
+      | CMSInstitution
+      | CMSHoliday
+      | CMSRestaurant
+      | CMSFashionStore
+      | CMSShoppingCentre
+      | CMSFamousPlace
+      | CMSEvent
+  ) => {
     setEditingItem(item);
     setEditDialogOpen(true);
   };
@@ -235,7 +311,17 @@ const ContentManagerPage = () => {
     setNewsEditDialogOpen(true);
   };
 
-  const handleSaveEdit = async (data: Record<string, any>) => {
+  const handleSaveEdit = async (
+    data:
+      | Partial<CMSExam>
+      | Partial<CMSInstitution>
+      | Partial<CMSHoliday>
+      | Partial<CMSRestaurant>
+      | Partial<CMSFashionStore>
+      | Partial<CMSShoppingCentre>
+      | Partial<CMSFamousPlace>
+      | Partial<CMSEvent>
+  ) => {
     if (!editingItem?.id) return;
     
     try {
@@ -645,12 +731,23 @@ const ContentManagerPage = () => {
 };
 
 // Content Table Component
+type ContentItem =
+  | CMSExam
+  | CMSResult
+  | CMSInstitution
+  | CMSHoliday
+  | CMSRestaurant
+  | CMSFashionStore
+  | CMSShoppingCentre
+  | CMSFamousPlace
+  | CMSEvent;
+
 interface ContentTableProps {
-  data: any[];
+  data: ContentItem[];
   columns: string[];
   columnLabels: Record<string, string>;
   onDelete: (id: string) => void;
-  onEdit: (item: any) => void;
+  onEdit: (item: ContentItem) => void;
   isLoading: boolean;
 }
 
@@ -663,7 +760,7 @@ const ContentTable = ({ data, columns, columnLabels, onDelete, onEdit, isLoading
     return <div className="text-center py-8 text-muted-foreground">कोई डेटा नहीं मिला</div>;
   }
 
-  const formatValue = (value: any, key: string) => {
+  const formatValue = (value: unknown, key: string) => {
     if (value === undefined || value === null) return '-';
     if (typeof value === 'boolean') return value ? 'हाँ' : 'नहीं';
     if (key === 'slug') return <span className="font-mono text-xs text-muted-foreground">{value}</span>;
@@ -726,8 +823,18 @@ interface AddNewsFormProps {
   onSuccess: () => void;
 }
 
+type AddNewsFormState = Pick<
+  NewsArticle,
+  'category' | 'title' | 'excerpt' | 'content' | 'author' | 'publishedDate' | 'image' | 'metaDescription' | 'keywords'
+> & {
+  slug?: string;
+  slugManual?: boolean;
+  isFeatured?: boolean;
+  isBreaking?: boolean;
+};
+
 const AddNewsForm = ({ category, onSuccess }: AddNewsFormProps) => {
-  const [formData, setFormData] = useState<Record<string, any>>({
+  const [formData, setFormData] = useState<AddNewsFormState>({
     category,
     isFeatured: false,
     isBreaking: false,
@@ -759,10 +866,10 @@ const AddNewsForm = ({ category, onSuccess }: AddNewsFormProps) => {
     }
   };
 
-  const updateField = (key: string, value: any) => {
+  const updateField = <K extends keyof AddNewsFormState>(key: K, value: AddNewsFormState[K]) => {
     setFormData(prev => {
-      const updated = { ...prev, [key]: value };
-      if (key === 'title' && !prev.slugManual) {
+      const updated: AddNewsFormState = { ...prev, [key]: value };
+      if (key === 'title' && !prev.slugManual && typeof value === 'string') {
         updated.slug = generateSlug(value);
       }
       return updated;
@@ -898,8 +1005,16 @@ interface AddResultFormProps {
   onSuccess: () => void;
 }
 
+type AddResultFormState = Pick<
+  CMSResult,
+  'title' | 'titleHindi' | 'resultDate' | 'category' | 'organization' | 'organizationHindi' | 'resultLink' | 'description' | 'image'
+> & {
+  slug?: string;
+  slugManual?: boolean;
+};
+
 const AddResultForm = ({ onSuccess }: AddResultFormProps) => {
-  const [formData, setFormData] = useState<Record<string, any>>({});
+  const [formData, setFormData] = useState<AddResultFormState>({});
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const generateSlug = (text: string) => {
@@ -911,7 +1026,7 @@ const AddResultForm = ({ onSuccess }: AddResultFormProps) => {
       .trim() || `result-${Date.now()}`;
   };
 
-  const updateField = (key: string, value: any) => {
+  const updateField = <K extends keyof AddResultFormState>(key: K, value: AddResultFormState[K]) => {
     setFormData(prev => {
       const updated = { ...prev, [key]: value };
       if ((key === 'title' || key === 'titleHindi') && !prev.slugManual) {
@@ -1041,11 +1156,11 @@ interface NewsEditDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   news: NewsArticle | null;
-  onSave: (data: Record<string, any>) => Promise<void>;
+  onSave: (data: Partial<NewsArticle>) => Promise<void>;
 }
 
 const NewsEditDialog = ({ open, onOpenChange, news, onSave }: NewsEditDialogProps) => {
-  const [formData, setFormData] = useState<Record<string, any>>({});
+  const [formData, setFormData] = useState<Partial<NewsArticle>>({});
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [activeTab, setActiveTab] = useState('basic');
 
@@ -1055,7 +1170,7 @@ const NewsEditDialog = ({ open, onOpenChange, news, onSave }: NewsEditDialogProp
     }
   });
 
-  const updateField = (key: string, value: any) => {
+  const updateField = <K extends keyof NewsArticle>(key: K, value: NewsArticle[K]) => {
     setFormData(prev => ({ ...prev, [key]: value }));
   };
 
@@ -1240,11 +1355,34 @@ const NewsEditDialog = ({ open, onOpenChange, news, onSave }: NewsEditDialogProp
 interface AddContentFormProps {
   type: string;
   onSuccess: () => void;
-  onCreate: Record<string, (data: any) => Promise<any>>;
+  onCreate: {
+    exam: (data: Omit<CMSExam, 'id'>) => Promise<unknown>;
+    holiday: (data: Omit<CMSHoliday, 'id'>) => Promise<unknown>;
+    restaurant: (data: Omit<CMSRestaurant, 'id'>) => Promise<unknown>;
+    event: (data: Omit<CMSEvent, 'id'>) => Promise<unknown>;
+    institution: (data: Omit<CMSInstitution, 'id'>) => Promise<unknown>;
+    fashion: (data: Omit<CMSFashionStore, 'id'>) => Promise<unknown>;
+    shopping: (data: Omit<CMSShoppingCentre, 'id'> & { stores?: string[] }) => Promise<unknown>;
+    place: (data: Omit<CMSFamousPlace, 'id'>) => Promise<unknown>;
+  };
 }
 
 const AddContentForm = ({ type, onSuccess, onCreate }: AddContentFormProps) => {
-  const [formData, setFormData] = useState<Record<string, any>>({});
+  const [formData, setFormData] = useState<
+    Partial<CMSExam> &
+      Partial<CMSInstitution> &
+      Partial<CMSHoliday> &
+      Partial<CMSRestaurant> &
+      Partial<CMSFashionStore> &
+      Partial<CMSShoppingCentre> &
+      Partial<CMSFamousPlace> &
+      Partial<CMSEvent> & {
+        slug?: string;
+        slugManual?: boolean;
+        brands?: string;
+        stores?: string;
+      }
+  >({});
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const generateSlug = (text: string) => {
@@ -1297,7 +1435,36 @@ const AddContentForm = ({ type, onSuccess, onCreate }: AddContentFormProps) => {
     }
   };
 
-  const updateField = (key: string, value: any) => {
+  const updateField = <
+    K extends keyof (CMSExam &
+      CMSInstitution &
+      CMSHoliday &
+      CMSRestaurant &
+      CMSFashionStore &
+      CMSShoppingCentre &
+      CMSFamousPlace &
+      CMSEvent & {
+        slug?: string;
+        slugManual?: boolean;
+        brands?: string;
+        stores?: string;
+      }),
+  >(
+    key: K,
+    value: (CMSExam &
+      CMSInstitution &
+      CMSHoliday &
+      CMSRestaurant &
+      CMSFashionStore &
+      CMSShoppingCentre &
+      CMSFamousPlace &
+      CMSEvent & {
+        slug?: string;
+        slugManual?: boolean;
+        brands?: string;
+        stores?: string;
+      })[K],
+  ) => {
     setFormData(prev => {
       const updated = { ...prev, [key]: value };
       // Auto-generate slug from title or name

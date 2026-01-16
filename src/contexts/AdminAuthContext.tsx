@@ -1,5 +1,5 @@
 // Simple admin auth context using localStorage (demo purposes only)
-import React, { createContext, useContext, useState, useEffect, useCallback } from 'react';
+import React, { createContext, useContext, useState, useCallback } from 'react';
 
 interface AdminUser {
   id: string;
@@ -20,55 +20,59 @@ const AdminAuthContext = createContext<AdminAuthContextType | undefined>(undefin
 
 const STORAGE_KEY = 'admin_auth';
 
-// Demo credentials (in production, this would be a real auth system)
-const DEMO_USERS: Record<string, { password: string; user: AdminUser }> = {
-  'admin@rampurnews.com': {
-    password: 'admin123',
-    user: { id: '1', name: 'Admin', email: 'admin@rampurnews.com', role: 'admin' },
-  },
-  'editor@rampurnews.com': {
-    password: 'editor123',
-    user: { id: '2', name: 'संपादक', email: 'editor@rampurnews.com', role: 'editor' },
-  },
-};
-
 export const AdminAuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const [user, setUser] = useState<AdminUser | null>(null);
-  const [isLoading, setIsLoading] = useState(true);
-
-  useEffect(() => {
-    // Check for existing session
+  const [user, setUser] = useState<AdminUser | null>(() => {
+    if (typeof window === 'undefined') {
+      return null;
+    }
     try {
       const stored = localStorage.getItem(STORAGE_KEY);
-      if (stored) {
-        const parsed = JSON.parse(stored);
-        if (parsed.user && parsed.expiresAt > Date.now()) {
-          setUser(parsed.user);
-        } else {
-          localStorage.removeItem(STORAGE_KEY);
-        }
+      if (!stored) {
+        return null;
       }
+      const parsed = JSON.parse(stored);
+      if (parsed.user && parsed.expiresAt > Date.now()) {
+        return parsed.user as AdminUser;
+      }
+      localStorage.removeItem(STORAGE_KEY);
+      return null;
     } catch (error) {
       console.error('Error loading auth state:', error);
+      return null;
     }
-    setIsLoading(false);
-  }, []);
+  });
+  const [isLoading, setIsLoading] = useState(false);
 
   const login = useCallback(async (email: string, password: string): Promise<boolean> => {
-    // Simulate API delay
-    await new Promise(resolve => setTimeout(resolve, 500));
-    
-    const demoUser = DEMO_USERS[email.toLowerCase()];
-    if (demoUser && demoUser.password === password) {
+    setIsLoading(true);
+    try {
+      const response = await fetch('/api/admin/login', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ email, password }),
+      });
+
+      if (!response.ok) {
+        return false;
+      }
+
+      const data = await response.json();
       const session = {
-        user: demoUser.user,
-        expiresAt: Date.now() + 24 * 60 * 60 * 1000, // 24 hours
+        user: data.user as AdminUser,
+        expiresAt: Date.now() + 24 * 60 * 60 * 1000,
       };
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(session));
-      setUser(demoUser.user);
+      if (typeof window !== 'undefined') {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(session));
+      }
+      setUser(data.user as AdminUser);
       return true;
+    } catch {
+      return false;
+    } finally {
+      setIsLoading(false);
     }
-    return false;
   }, []);
 
   const logout = useCallback(() => {

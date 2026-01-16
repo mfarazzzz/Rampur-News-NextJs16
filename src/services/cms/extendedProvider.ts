@@ -31,7 +31,7 @@ const applyFiltersAndPagination = <T extends { id: string }>(
   params: ExtendedQueryParams,
   filterFn?: (item: T) => boolean
 ): PaginatedResponse<T> => {
-  let filtered = filterFn ? items.filter(filterFn) : [...items];
+  const filtered = filterFn ? items.filter(filterFn) : [...items];
   
   const limit = params.limit || 10;
   const offset = params.offset || 0;
