@@ -1,6 +1,5 @@
-"use client";
+ "use client";
 import { useState } from "react";
-import { Helmet } from "react-helmet-async";
 import { Link } from "@/lib/router-compat";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
@@ -51,32 +50,24 @@ const EducationNewsSection = () => {
 
   return (
     <>
-      <Helmet>
-        <title>शिक्षा समाचार - परीक्षा अपडेट, छात्रवृत्ति, एडमिशन | रामपुर न्यूज़</title>
-        <meta 
-          name="description" 
-          content="ताज़ा शिक्षा समाचार - यूपी बोर्ड, परीक्षा अपडेट, रिजल्ट न्यूज़, छात्रवृत्ति और एडमिशन की सभी जानकारी एक जगह।" 
-        />
-        <script type="application/ld+json">
-          {JSON.stringify({
-            "@context": "https://schema.org",
-            "@type": "CollectionPage",
-            "name": "शिक्षा समाचार",
-            "description": "शिक्षा से जुड़े सभी समाचार और अपडेट",
-            "mainEntity": {
-              "@type": "ItemList",
-              "itemListElement": filteredNews.slice(0, 10).map((news, index) => ({
-                "@type": "NewsArticle",
-                "position": index + 1,
-                "headline": news.titleHindi,
-                "datePublished": news.publishedAt,
-                "articleSection": news.category,
-              })),
-            },
-          })}
-        </script>
-      </Helmet>
-
+      <script type="application/ld+json">
+        {JSON.stringify({
+          "@context": "https://schema.org",
+          "@type": "CollectionPage",
+          "name": "शिक्षा समाचार",
+          "description": "शिक्षा से जुड़े सभी समाचार और अपडेट",
+          "mainEntity": {
+            "@type": "ItemList",
+            "itemListElement": filteredNews.slice(0, 10).map((news, index) => ({
+              "@type": "NewsArticle",
+              "position": index + 1,
+              "headline": news.titleHindi,
+              "datePublished": news.publishedAt,
+              "articleSection": news.category,
+            })),
+          },
+        })}
+      </script>
       <div className="min-h-screen flex flex-col bg-background">
         <Header />
 

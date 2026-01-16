@@ -1,6 +1,5 @@
 "use client";
 import { useState } from "react";
-import { Helmet } from "react-helmet-async";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import BreadcrumbNav from "@/components/BreadcrumbNav";
@@ -99,30 +98,22 @@ const HolidaysCalendarPage = () => {
 
   return (
     <>
-      <Helmet>
-        <title>छुट्टियों का कैलेंडर 2026 | धार्मिक त्योहार और राष्ट्रीय अवकाश - रामपुर न्यूज़</title>
-        <meta 
-          name="description" 
-          content="2026 के सभी धार्मिक त्योहार, राष्ट्रीय अवकाश और सार्वजनिक छुट्टियों की पूरी सूची। होली, दिवाली, ईद, क्रिसमस और अन्य महत्वपूर्ण त्योहारों की तारीखें।" 
-        />
-        <script type="application/ld+json">
-          {JSON.stringify({
-            "@context": "https://schema.org",
-            "@type": "ItemList",
-            "name": "भारतीय छुट्टियों का कैलेंडर 2026",
-            "description": "2026 के सभी धार्मिक और राष्ट्रीय छुट्टियों की सूची",
-            "itemListElement": upcomingHolidays.map((holiday, index) => ({
-              "@type": "Event",
-              "position": index + 1,
-              "name": holiday.nameHindi,
-              "startDate": holiday.date,
-              "endDate": holiday.endDate || holiday.date,
-              "description": holiday.descriptionHindi,
-            })),
-          })}
-        </script>
-      </Helmet>
-
+      <script type="application/ld+json">
+        {JSON.stringify({
+          "@context": "https://schema.org",
+          "@type": "ItemList",
+          "name": "भारतीय छुट्टियों का कैलेंडर 2026",
+          "description": "2026 के सभी धार्मिक और राष्ट्रीय छुट्टियों की सूची",
+          "itemListElement": upcomingHolidays.map((holiday, index) => ({
+            "@type": "Event",
+            "position": index + 1,
+            "name": holiday.nameHindi,
+            "startDate": holiday.date,
+            "endDate": holiday.endDate || holiday.date,
+            "description": holiday.descriptionHindi,
+          })),
+        })}
+      </script>
       <div className="min-h-screen flex flex-col bg-background">
         <Header />
         

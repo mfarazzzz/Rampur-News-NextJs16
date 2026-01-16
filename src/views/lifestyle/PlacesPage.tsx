@@ -161,7 +161,6 @@ const PlacesPage = () => {
 
         <Footer />
       </div>
-    </>
   );
 };
 

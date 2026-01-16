@@ -183,7 +183,6 @@ const RestaurantsPage = () => {
 
         <Footer />
       </div>
-    </>
   );
 };
 

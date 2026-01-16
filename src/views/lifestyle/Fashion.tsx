@@ -163,7 +163,6 @@ const FashionPage = () => {
 
         <Footer />
       </div>
-    </>
   );
 };
 

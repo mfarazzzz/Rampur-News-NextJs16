@@ -379,7 +379,6 @@ const LifestyleHub = () => {
 
         <Footer />
       </div>
-    </>
   );
 };
 

@@ -211,7 +211,6 @@ const ShoppingPage = () => {
 
         <Footer />
       </div>
-    </>
   );
 };
 

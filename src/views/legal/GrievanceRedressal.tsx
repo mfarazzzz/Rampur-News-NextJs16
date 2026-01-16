@@ -1,5 +1,4 @@
 "use client";
-import { Helmet } from "react-helmet-async";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import { Shield, User, Clock, FileText, AlertCircle, ArrowRight } from "lucide-react";
@@ -7,16 +6,6 @@ import { Shield, User, Clock, FileText, AlertCircle, ArrowRight } from "lucide-r
 const GrievanceRedressal = () => {
   return (
     <>
-      <Helmet>
-        <title>शिकायत निवारण नीति | रामपुर न्यूज़ - Grievance Redressal</title>
-        <meta name="description" content="रामपुर न्यूज़ की शिकायत निवारण नीति - शिकायत अधिकारी, शिकायत प्रक्रिया, प्रतिक्रिया समयसीमा। भारतीय IT नियम 2021 के अनुसार।" />
-        <link rel="canonical" href="https://rampurnews.com/grievance" />
-        <meta property="og:title" content="शिकायत निवारण नीति | रामपुर न्यूज़" />
-        <meta property="og:description" content="रामपुर न्यूज़ की शिकायत निवारण तंत्र और प्रक्रिया।" />
-        <meta property="og:type" content="website" />
-        <meta property="og:url" content="https://rampurnews.com/grievance" />
-      </Helmet>
-      
       <div className="min-h-screen bg-background">
         <Header />
         
