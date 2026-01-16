@@ -1,6 +1,5 @@
 "use client";
 import { useState } from "react";
-import { Helmet } from "react-helmet-async";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import BreadcrumbNav from "@/components/BreadcrumbNav";
@@ -62,15 +61,6 @@ const ShoppingPage = () => {
   const isLoading = loadingCentres || loadingPlaces;
 
   return (
-    <>
-      <Helmet>
-        <title>रामपुर के शॉपिंग सेंटर, मॉल और प्रसिद्ध स्थान | रामपुर न्यूज़</title>
-        <meta 
-          name="description" 
-          content="रामपुर के सभी शॉपिंग मॉल, बाजार, मार्केट और प्रसिद्ध ऐतिहासिक स्थानों की जानकारी। पते, समय और सुविधाएं।" 
-        />
-      </Helmet>
-
       <div className="min-h-screen flex flex-col bg-background">
         <Header />
         

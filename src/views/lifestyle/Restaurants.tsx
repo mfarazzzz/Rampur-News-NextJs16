@@ -1,6 +1,5 @@
 "use client";
 import { useState } from "react";
-import { Helmet } from "react-helmet-async";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import BreadcrumbNav from "@/components/BreadcrumbNav";
@@ -53,36 +52,29 @@ const RestaurantsPage = () => {
   ];
 
   return (
-    <>
-      <Helmet>
-        <title>रामपुर के बेहतरीन रेस्तरां और खाने की जगहें | रामपुर न्यूज़</title>
-        <meta 
-          name="description" 
-          content="रामपुर के सभी प्रसिद्ध रेस्तरां, ढाबे, मिठाई की दुकानें और स्ट्रीट फूड की पूरी जानकारी। पते, फोन नंबर, रेटिंग और विशेषताएं।" 
-        />
+      <div className="min-h-screen flex flex-col bg-background">
         <script type="application/ld+json">
           {JSON.stringify({
             "@context": "https://schema.org",
             "@type": "ItemList",
-            "name": "रामपुर के रेस्तरां",
-            "itemListElement": filteredRestaurants.map((restaurant, index) => ({
+            name: "रामपुर के रेस्तरां",
+            itemListElement: filteredRestaurants.map((restaurant, index) => ({
               "@type": "Restaurant",
-              "position": index + 1,
-              "name": restaurant.nameHindi,
-              "address": restaurant.addressHindi,
-              "servesCuisine": restaurant.cuisine,
-              "priceRange": PRICE_LABELS[restaurant.priceRange],
-              "aggregateRating": restaurant.rating ? {
-                "@type": "AggregateRating",
-                "ratingValue": restaurant.rating,
-                "reviewCount": restaurant.reviews || 0,
-              } : undefined,
+              position: index + 1,
+              name: restaurant.nameHindi,
+              address: restaurant.addressHindi,
+              servesCuisine: restaurant.cuisine,
+              priceRange: PRICE_LABELS[restaurant.priceRange],
+              aggregateRating: restaurant.rating
+                ? {
+                    "@type": "AggregateRating",
+                    ratingValue: restaurant.rating,
+                    reviewCount: restaurant.reviews || 0,
+                  }
+                : undefined,
             })),
           })}
         </script>
-      </Helmet>
-
-      <div className="min-h-screen flex flex-col bg-background">
         <Header />
         
         <main className="flex-1 container mx-auto px-4 py-6">

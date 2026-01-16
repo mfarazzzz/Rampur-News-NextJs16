@@ -1,6 +1,5 @@
 "use client";
 import { useState } from "react";
-import { Helmet } from "react-helmet-async";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import BreadcrumbNav from "@/components/BreadcrumbNav";
@@ -58,15 +57,6 @@ const FashionPage = () => {
   ];
 
   return (
-    <>
-      <Helmet>
-        <title>रामपुर की बेहतरीन कपड़े और फैशन की दुकानें | रामपुर न्यूज़</title>
-        <meta 
-          name="description" 
-          content="रामपुर की सभी प्रसिद्ध कपड़े की दुकानें, साड़ी एम्पोरियम, ब्रांडेड शोरूम और फैशन बुटीक की जानकारी। पते, फोन नंबर और विशेषताएं।" 
-        />
-      </Helmet>
-
       <div className="min-h-screen flex flex-col bg-background">
         <Header />
         

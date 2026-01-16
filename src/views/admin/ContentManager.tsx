@@ -1,6 +1,5 @@
 "use client";
 import { useState } from 'react';
-import { Helmet } from 'react-helmet-async';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -433,10 +432,6 @@ const ContentManagerPage = () => {
 
   return (
     <>
-      <Helmet>
-        <title>कंटेंट मैनेजर - CMS</title>
-      </Helmet>
-
       <div className="space-y-6">
         <div className="flex flex-col sm:flex-row justify-between gap-4">
           <div>

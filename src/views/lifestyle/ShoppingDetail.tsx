@@ -1,6 +1,5 @@
 "use client";
 import { useParams } from '@/lib/router-compat';
-import { Helmet } from 'react-helmet-async';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import BreadcrumbNav from '@/components/BreadcrumbNav';
@@ -86,12 +85,9 @@ const ShoppingDetail = () => {
 
   return (
     <div className="min-h-screen bg-background">
-      <Helmet>
-        <title>{centre.nameHindi} | {typeLabels[centre.type]} रामपुर - बेस्ट शॉपिंग डेस्टिनेशन</title>
-        <meta name="description" content={centre.descriptionHindi} />
-        <link rel="canonical" href={`/food-lifestyle/shopping/${slug}`} />
-        <script type="application/ld+json">{JSON.stringify(schemaData)}</script>
-      </Helmet>
+      <script type="application/ld+json">
+        {JSON.stringify(schemaData)}
+      </script>
       
       <Header />
       

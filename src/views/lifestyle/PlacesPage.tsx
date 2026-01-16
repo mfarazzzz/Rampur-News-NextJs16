@@ -1,6 +1,5 @@
 "use client";
 import { useState } from "react";
-import { Helmet } from "react-helmet-async";
 import { Link } from "@/lib/router-compat";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
@@ -41,30 +40,21 @@ const PlacesPage = () => {
   ];
 
   return (
-    <>
-      <Helmet>
-        <title>रामपुर के प्रसिद्ध स्थान - ऐतिहासिक, धार्मिक और दर्शनीय स्थल | रामपुर न्यूज़</title>
-        <meta 
-          name="description" 
-          content="रामपुर के सभी प्रसिद्ध स्थान - रज़ा पुस्तकालय, जामा मस्जिद, ऐतिहासिक इमारतें और दर्शनीय स्थलों की पूरी जानकारी।" 
-        />
+      <div className="min-h-screen flex flex-col bg-background">
         <script type="application/ld+json">
           {JSON.stringify({
             "@context": "https://schema.org",
             "@type": "ItemList",
-            "name": "रामपुर के प्रसिद्ध स्थान",
-            "itemListElement": filteredPlaces.map((place, index) => ({
+            name: "रामपुर के प्रसिद्ध स्थान",
+            itemListElement: filteredPlaces.map((place, index) => ({
               "@type": "TouristAttraction",
-              "position": index + 1,
-              "name": place.nameHindi,
-              "address": place.addressHindi,
-              "description": place.descriptionHindi,
+              position: index + 1,
+              name: place.nameHindi,
+              address: place.addressHindi,
+              description: place.descriptionHindi,
             })),
           })}
         </script>
-      </Helmet>
-
-      <div className="min-h-screen flex flex-col bg-background">
         <Header />
 
         <main className="flex-1 container mx-auto px-4 py-6">

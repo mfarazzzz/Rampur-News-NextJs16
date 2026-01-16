@@ -1,26 +1,14 @@
 "use client";
-import { Helmet } from "react-helmet-async";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import { FileText, Search, Shield, Users, Tag, CheckCircle } from "lucide-react";
 
 const EditorialPolicy = () => {
   return (
-    <>
-      <Helmet>
-        <title>संपादकीय नीति | रामपुर न्यूज़ - Editorial Policy</title>
-        <meta name="description" content="रामपुर न्यूज़ की संपादकीय नीति - समाचार स्रोत मानक, तथ्य-जांच प्रक्रिया, संपादकीय स्वतंत्रता और सामग्री वर्गीकरण के बारे में जानें।" />
-        <link rel="canonical" href="https://rampurnews.com/editorial-policy" />
-        <meta property="og:title" content="संपादकीय नीति | रामपुर न्यूज़" />
-        <meta property="og:description" content="रामपुर न्यूज़ की संपादकीय नीति और पत्रकारिता मानकों के बारे में जानकारी।" />
-        <meta property="og:type" content="website" />
-        <meta property="og:url" content="https://rampurnews.com/editorial-policy" />
-      </Helmet>
-      
-      <div className="min-h-screen bg-background">
-        <Header />
+    <div className="min-h-screen bg-background">
+      <Header />
         
-        <main className="container mx-auto px-4 py-8">
+      <main className="container mx-auto px-4 py-8">
           {/* Breadcrumb */}
           <nav className="text-sm text-muted-foreground mb-6">
             <a href="/" className="hover:text-primary">होम</a>
@@ -287,7 +275,6 @@ const EditorialPolicy = () => {
         
         <Footer />
       </div>
-    </>
   );
 };
 

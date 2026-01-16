@@ -1,5 +1,4 @@
 "use client";
-import { Helmet } from "react-helmet-async";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import { Building, Users, Wallet, Shield, AlertTriangle } from "lucide-react";
@@ -7,16 +6,6 @@ import { Building, Users, Wallet, Shield, AlertTriangle } from "lucide-react";
 const OwnershipDisclosure = () => {
   return (
     <>
-      <Helmet>
-        <title>स्वामित्व और वित्तीय प्रकटीकरण | रामपुर न्यूज़</title>
-        <meta name="description" content="रामपुर न्यूज़ का स्वामित्व और वित्तीय प्रकटीकरण - स्वामित्व विवरण, राजस्व स्रोत, और संपादकीय स्वतंत्रता के बारे में पूरी जानकारी।" />
-        <link rel="canonical" href="https://rampurnews.com/ownership" />
-        <meta property="og:title" content="स्वामित्व और वित्तीय प्रकटीकरण | रामपुर न्यूज़" />
-        <meta property="og:description" content="रामपुर न्यूज़ की स्वामित्व संरचना और वित्तीय पारदर्शिता।" />
-        <meta property="og:type" content="website" />
-        <meta property="og:url" content="https://rampurnews.com/ownership" />
-      </Helmet>
-      
       <div className="min-h-screen bg-background">
         <Header />
         

@@ -1,26 +1,14 @@
 "use client";
-import { Helmet } from "react-helmet-async";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import { Shield, Database, Cookie, Share2, UserCheck, Mail } from "lucide-react";
 
 const PrivacyPolicy = () => {
   return (
-    <>
-      <Helmet>
-        <title>गोपनीयता नीति | रामपुर न्यूज़ - Privacy Policy</title>
-        <meta name="description" content="रामपुर न्यूज़ की गोपनीयता नीति - डेटा संग्रह, कुकीज़, तृतीय-पक्ष सेवाएं और उपयोगकर्ता अधिकारों के बारे में जानकारी।" />
-        <link rel="canonical" href="https://rampurnews.com/privacy" />
-        <meta property="og:title" content="गोपनीयता नीति | रामपुर न्यूज़" />
-        <meta property="og:description" content="रामपुर न्यूज़ आपकी गोपनीयता का सम्मान करता है। जानें हम आपके डेटा को कैसे संभालते हैं।" />
-        <meta property="og:type" content="website" />
-        <meta property="og:url" content="https://rampurnews.com/privacy" />
-      </Helmet>
-      
-      <div className="min-h-screen bg-background">
-        <Header />
+    <div className="min-h-screen bg-background">
+      <Header />
         
-        <main className="container mx-auto px-4 py-8">
+      <main className="container mx-auto px-4 py-8">
           {/* Breadcrumb */}
           <nav className="text-sm text-muted-foreground mb-6">
             <a href="/" className="hover:text-primary">होम</a>
@@ -361,7 +349,6 @@ const PrivacyPolicy = () => {
         
         <Footer />
       </div>
-    </>
   );
 };
 

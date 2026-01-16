@@ -1,6 +1,5 @@
 "use client";
 import { useState } from "react";
-import { Helmet } from "react-helmet-async";
 import { Link } from "@/lib/router-compat";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
@@ -156,15 +155,6 @@ const LifestyleHub = () => {
   );
 
   return (
-    <>
-      <Helmet>
-        <title>खान-पान और लाइफस्टाइल - रेस्तरां, शॉपिंग, इवेंट्स | रामपुर न्यूज़</title>
-        <meta 
-          name="description" 
-          content="रामपुर के बेहतरीन रेस्तरां, फैशन स्टोर, शॉपिंग मॉल, प्रसिद्ध स्थान और आगामी इवेंट्स की पूरी जानकारी।" 
-        />
-      </Helmet>
-
       <div className="min-h-screen flex flex-col bg-background">
         <Header />
 

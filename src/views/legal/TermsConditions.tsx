@@ -1,26 +1,14 @@
 "use client";
-import { Helmet } from "react-helmet-async";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import { FileText, Users, AlertTriangle, Scale, Copyright, Ban } from "lucide-react";
 
 const TermsConditions = () => {
   return (
-    <>
-      <Helmet>
-        <title>नियम और शर्तें | रामपुर न्यूज़ - Terms & Conditions</title>
-        <meta name="description" content="रामपुर न्यूज़ की उपयोग की शर्तें - सामग्री उपयोग, उपयोगकर्ता जिम्मेदारियां, दायित्व सीमाएं और शासी कानून।" />
-        <link rel="canonical" href="https://rampurnews.com/terms" />
-        <meta property="og:title" content="नियम और शर्तें | रामपुर न्यूज़" />
-        <meta property="og:description" content="रामपुर न्यूज़ वेबसाइट के उपयोग की शर्तें और नियम।" />
-        <meta property="og:type" content="website" />
-        <meta property="og:url" content="https://rampurnews.com/terms" />
-      </Helmet>
-      
-      <div className="min-h-screen bg-background">
-        <Header />
+    <div className="min-h-screen bg-background">
+      <Header />
         
-        <main className="container mx-auto px-4 py-8">
+      <main className="container mx-auto px-4 py-8">
           {/* Breadcrumb */}
           <nav className="text-sm text-muted-foreground mb-6">
             <a href="/" className="hover:text-primary">होम</a>
@@ -342,7 +330,6 @@ const TermsConditions = () => {
         
         <Footer />
       </div>
-    </>
   );
 };
 

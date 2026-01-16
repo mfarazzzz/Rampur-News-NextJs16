@@ -1,26 +1,14 @@
 "use client";
-import { Helmet } from "react-helmet-async";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import { AlertTriangle, ExternalLink, MessageSquare, Briefcase, Scale } from "lucide-react";
 
 const Disclaimer = () => {
   return (
-    <>
-      <Helmet>
-        <title>अस्वीकरण | रामपुर न्यूज़ - Disclaimer</title>
-        <meta name="description" content="रामपुर न्यूज़ का अस्वीकरण - समाचार सटीकता, बाहरी लिंक, राय और विचार, तथा पेशेवर सलाह के बारे में महत्वपूर्ण जानकारी।" />
-        <link rel="canonical" href="https://rampurnews.com/disclaimer" />
-        <meta property="og:title" content="अस्वीकरण | रामपुर न्यूज़" />
-        <meta property="og:description" content="रामपुर न्यूज़ की सामग्री के बारे में महत्वपूर्ण अस्वीकरण।" />
-        <meta property="og:type" content="website" />
-        <meta property="og:url" content="https://rampurnews.com/disclaimer" />
-      </Helmet>
-      
-      <div className="min-h-screen bg-background">
-        <Header />
+    <div className="min-h-screen bg-background">
+      <Header />
         
-        <main className="container mx-auto px-4 py-8">
+      <main className="container mx-auto px-4 py-8">
           {/* Breadcrumb */}
           <nav className="text-sm text-muted-foreground mb-6">
             <a href="/" className="hover:text-primary">होम</a>
@@ -308,7 +296,6 @@ const Disclaimer = () => {
         
         <Footer />
       </div>
-    </>
   );
 };
 

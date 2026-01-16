@@ -1,26 +1,14 @@
 "use client";
-import { Helmet } from "react-helmet-async";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import { AlertCircle, Mail, Phone, Clock, FileEdit, Eye } from "lucide-react";
 
 const CorrectionsPolicy = () => {
   return (
-    <>
-      <Helmet>
-        <title>सुधार नीति | रामपुर न्यूज़ - Corrections Policy</title>
-        <meta name="description" content="रामपुर न्यूज़ की सुधार नीति - त्रुटियों की रिपोर्टिंग, सुधार प्रकाशन प्रक्रिया और पारदर्शिता प्रतिबद्धता के बारे में जानें।" />
-        <link rel="canonical" href="https://rampurnews.com/corrections-policy" />
-        <meta property="og:title" content="सुधार नीति | रामपुर न्यूज़" />
-        <meta property="og:description" content="रामपुर न्यूज़ गलतियों को स्वीकार करता है और उन्हें पारदर्शी तरीके से सुधारता है।" />
-        <meta property="og:type" content="website" />
-        <meta property="og:url" content="https://rampurnews.com/corrections-policy" />
-      </Helmet>
-      
-      <div className="min-h-screen bg-background">
-        <Header />
+    <div className="min-h-screen bg-background">
+      <Header />
         
-        <main className="container mx-auto px-4 py-8">
+      <main className="container mx-auto px-4 py-8">
           {/* Breadcrumb */}
           <nav className="text-sm text-muted-foreground mb-6">
             <a href="/" className="hover:text-primary">होम</a>
@@ -287,7 +275,6 @@ const CorrectionsPolicy = () => {
         
         <Footer />
       </div>
-    </>
   );
 };
 

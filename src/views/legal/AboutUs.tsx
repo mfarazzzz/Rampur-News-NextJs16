@@ -1,26 +1,14 @@
 "use client";
-import { Helmet } from "react-helmet-async";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import { Users, Target, Heart, Shield, Phone, Mail, MapPin } from "lucide-react";
 
 const AboutUs = () => {
   return (
-    <>
-      <Helmet>
-        <title>हमारे बारे में | रामपुर न्यूज़ - Rampur News</title>
-        <meta name="description" content="रामपुर न्यूज़ उत्तर प्रदेश के रामपुर जिले का प्रमुख डिजिटल समाचार पोर्टल है। हमारी टीम, मिशन और विज़न के बारे में जानें।" />
-        <link rel="canonical" href="https://rampurnews.com/about" />
-        <meta property="og:title" content="हमारे बारे में | रामपुर न्यूज़" />
-        <meta property="og:description" content="रामपुर न्यूज़ - रामपुर जिले का विश्वसनीय डिजिटल समाचार पोर्टल। स्थानीय पत्रकारिता के प्रति प्रतिबद्ध।" />
-        <meta property="og:type" content="website" />
-        <meta property="og:url" content="https://rampurnews.com/about" />
-      </Helmet>
-      
-      <div className="min-h-screen bg-background">
-        <Header />
+    <div className="min-h-screen bg-background">
+      <Header />
         
-        <main className="container mx-auto px-4 py-8">
+      <main className="container mx-auto px-4 py-8">
           {/* Breadcrumb */}
           <nav className="text-sm text-muted-foreground mb-6">
             <a href="/" className="hover:text-primary">होम</a>
@@ -254,7 +242,6 @@ const AboutUs = () => {
         
         <Footer />
       </div>
-    </>
   );
 };
 

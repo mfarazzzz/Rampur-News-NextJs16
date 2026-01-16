@@ -1,5 +1,4 @@
 "use client";
-import { Helmet } from "react-helmet-async";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import { MapPin, Phone, Mail, Clock, Send, MessageSquare } from "lucide-react";
@@ -42,17 +41,6 @@ const ContactUs = () => {
   };
 
   return (
-    <>
-      <Helmet>
-        <title>संपर्क करें | रामपुर न्यूज़ - Contact Us</title>
-        <meta name="description" content="रामपुर न्यूज़ से संपर्क करें - कार्यालय पता, फ़ोन नंबर, ईमेल और संपर्क फ़ॉर्म। हम आपकी सहायता के लिए उपलब्ध हैं।" />
-        <link rel="canonical" href="https://rampurnews.com/contact" />
-        <meta property="og:title" content="संपर्क करें | रामपुर न्यूज़" />
-        <meta property="og:description" content="रामपुर न्यूज़ से संपर्क करें। हम आपकी सहायता के लिए उपलब्ध हैं।" />
-        <meta property="og:type" content="website" />
-        <meta property="og:url" content="https://rampurnews.com/contact" />
-      </Helmet>
-      
       <div className="min-h-screen bg-background">
         <Header />
         

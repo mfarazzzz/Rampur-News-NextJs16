@@ -1,6 +1,5 @@
 "use client";
 import { useState } from "react";
-import { Helmet } from "react-helmet-async";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import BreadcrumbNav from "@/components/BreadcrumbNav";
@@ -121,40 +120,33 @@ const EventsPage = () => {
   ];
 
   return (
-    <>
-      <Helmet>
-        <title>रामपुर के आगामी कार्यक्रम और इवेंट्स | रामपुर न्यूज़</title>
-        <meta 
-          name="description" 
-          content="रामपुर के सभी आगामी सांस्कृतिक, धार्मिक, खेल और मनोरंजन कार्यक्रमों की जानकारी। तारीख, समय, स्थान और टिकट की जानकारी।" 
-        />
+      <div className="min-h-screen flex flex-col bg-background">
         <script type="application/ld+json">
           {JSON.stringify({
             "@context": "https://schema.org",
             "@type": "ItemList",
-            "name": "रामपुर के आगामी कार्यक्रम",
-            "itemListElement": upcomingEvents.map((event, index) => ({
+            name: "रामपुर के आगामी कार्यक्रम",
+            itemListElement: upcomingEvents.map((event, index) => ({
               "@type": "Event",
-              "position": index + 1,
-              "name": event.titleHindi,
-              "startDate": event.date,
-              "endDate": event.endDate || event.date,
-              "location": {
+              position: index + 1,
+              name: event.titleHindi,
+              startDate: event.date,
+              endDate: event.endDate || event.date,
+              location: {
                 "@type": "Place",
-                "name": event.venueHindi,
-                "address": event.address,
+                name: event.venueHindi,
+                address: event.address,
               },
-              "organizer": event.organizerHindi,
-              "offers": event.ticketPrice ? {
-                "@type": "Offer",
-                "price": event.ticketPrice,
-              } : undefined,
+              organizer: event.organizerHindi,
+              offers: event.ticketPrice
+                ? {
+                    "@type": "Offer",
+                    price: event.ticketPrice,
+                  }
+                : undefined,
             })),
           })}
         </script>
-      </Helmet>
-
-      <div className="min-h-screen flex flex-col bg-background">
         <Header />
         
         <main className="flex-1 container mx-auto px-4 py-6">
