@@ -76,25 +76,25 @@ const SettingsPage = () => {
     
     // Load saved WordPress config
     const savedConfig = localStorage.getItem(STORAGE_KEY_WP_CONFIG);
+    let hasSavedWordPress = false;
     if (savedConfig) {
       try {
         const parsed = JSON.parse(savedConfig);
         setWpConfig(parsed);
-        if (parsed.baseUrl) {
-          setCmsProvider('wordpress');
-        }
+        hasSavedWordPress = true;
       } catch {
         // Ignore parse errors
       }
     }
 
     const savedStrapi = localStorage.getItem(STORAGE_KEY_STRAPI_CONFIG);
+    let hasSavedStrapi = false;
     if (savedStrapi) {
       try {
         const parsed = JSON.parse(savedStrapi);
         setStrapiConfig(parsed);
         if (parsed.baseUrl) {
-          setCmsProvider('strapi');
+          hasSavedStrapi = true;
         }
       } catch {
         // Ignore parse errors
@@ -103,7 +103,23 @@ const SettingsPage = () => {
     
     // Check current CMS config
     const currentConfig = getCMSConfig();
-    setCmsProvider(currentConfig.provider);
+    if (currentConfig.provider !== 'mock') {
+      setCmsProvider(currentConfig.provider);
+      return;
+    }
+
+    if (hasSavedStrapi) {
+      setCmsProvider('strapi');
+      return;
+    }
+
+    if (hasSavedWordPress) {
+      setCmsProvider('wordpress');
+      configureCMS({
+        provider: 'wordpress',
+        baseUrl: '/api/cms/wordpress',
+      });
+    }
   }, [settings]);
 
   const handleSubmit = async () => {
@@ -129,19 +145,12 @@ const SettingsPage = () => {
   };
 
   const testWordPressConnection = async () => {
-    if (!wpConfig.baseUrl) {
-      toast.error('कृपया WordPress साइट URL दर्ज करें');
-      return;
-    }
-
     setIsTestingConnection(true);
     setConnectionStatus('idle');
     setConnectionMessage('');
 
     try {
-      // Test basic connection
-      const baseUrl = wpConfig.baseUrl.replace(/\/$/, '');
-      const response = await fetch(`${baseUrl}/wp-json/wp/v2/posts?per_page=1`);
+      const response = await fetch(`/api/cms/wordpress/wp-json/wp/v2/posts?per_page=1`);
       
       if (response.ok) {
         const posts = await response.json();
@@ -159,7 +168,7 @@ const SettingsPage = () => {
       }
     } catch (error) {
       setConnectionStatus('error');
-      setConnectionMessage('कनेक्ट करने में असमर्थ। URL जांचें और CORS सक्षम करें।');
+      setConnectionMessage('कनेक्ट करने में असमर्थ। WordPress और सर्वर कॉन्फ़िगरेशन जांचें।');
       toast.error('कनेक्शन त्रुटि');
     } finally {
       setIsTestingConnection(false);
@@ -213,15 +222,10 @@ const SettingsPage = () => {
     localStorage.setItem(STORAGE_KEY_WP_CONFIG, JSON.stringify(wpConfig));
     
     // Configure CMS
-    if (cmsProvider === 'wordpress' && wpConfig.baseUrl) {
+    if (cmsProvider === 'wordpress') {
       configureCMS({
         provider: 'wordpress',
-        baseUrl: wpConfig.baseUrl.replace(/\/$/, ''),
-        apiKey: wpConfig.authMethod === 'jwt' ? wpConfig.apiKey : undefined,
-        options: wpConfig.authMethod === 'application-password' ? {
-          username: wpConfig.username,
-          password: wpConfig.password,
-        } : undefined,
+        baseUrl: '/api/cms/wordpress',
       });
       toast.success('WordPress कॉन्फ़िगरेशन सहेजा गया');
     } else if (cmsProvider === 'mock') {
@@ -234,6 +238,14 @@ const SettingsPage = () => {
     setCmsProvider(provider);
     if (provider === 'mock') {
       configureCMS({ provider: 'mock' });
+      setConnectionStatus('idle');
+      setConnectionMessage('');
+    }
+    if (provider === 'wordpress') {
+      configureCMS({
+        provider: 'wordpress',
+        baseUrl: '/api/cms/wordpress',
+      });
       setConnectionStatus('idle');
       setConnectionMessage('');
     }

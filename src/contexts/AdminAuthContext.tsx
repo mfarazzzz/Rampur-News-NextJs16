@@ -77,6 +77,7 @@ export const AdminAuthProvider: React.FC<{ children: React.ReactNode }> = ({ chi
 
   const logout = useCallback(() => {
     localStorage.removeItem(STORAGE_KEY);
+    fetch('/api/admin/logout', { method: 'POST' }).catch(() => {});
     setUser(null);
   }, []);
 
