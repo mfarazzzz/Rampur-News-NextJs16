@@ -1,20 +1,52 @@
 import { NextResponse } from "next/server";
-import { mockNewsData } from "@/data/mockNews";
 
 const BASE_URL = "https://rampurnews.com";
 
+type WPPost = {
+  slug: string;
+  date: string;
+  title?: { rendered?: string };
+  excerpt?: { rendered?: string };
+  _embedded?: {
+    "wp:term"?: Array<Array<{ slug: string; name: string }>>;
+  };
+};
+
+const stripHtml = (html: string): string => html.replace(/<[^>]*>/g, "").trim();
+
+const getWordPressBaseUrl = () => {
+  const baseUrl = process.env.WORDPRESS_BASE_URL;
+  if (!baseUrl) return null;
+  return baseUrl.replace(/\/+$/, "");
+};
+
+const fetchLatestPosts = async (): Promise<WPPost[]> => {
+  const baseUrl = getWordPressBaseUrl();
+  if (!baseUrl) return [];
+  const response = await fetch(`${baseUrl}/wp-json/wp/v2/posts?per_page=50&_embed=true`, {
+    next: { revalidate: 300 },
+  });
+  if (!response.ok) return [];
+  return (await response.json()) as WPPost[];
+};
+
 export async function GET() {
-  const items = Object.entries(mockNewsData)
-    .flatMap(([category, articles]) =>
-      articles.map((article) => ({
+  const posts = await fetchLatestPosts();
+  const items = posts
+    .map((post) => {
+      const categories = post._embedded?.["wp:term"]?.[0] || [];
+      const category = categories[0]?.slug || "uncategorized";
+      const categoryHindi = categories[0]?.name || "अवर्गीकृत";
+      return {
         category,
-        ...article,
-      }))
-    )
-    .sort(
-      (a, b) =>
-        new Date(b.publishedDate).getTime() - new Date(a.publishedDate).getTime()
-    )
+        categoryHindi,
+        slug: post.slug,
+        title: post.title?.rendered || "",
+        excerpt: stripHtml(post.excerpt?.rendered || ""),
+        publishedDate: post.date,
+      };
+    })
+    .sort((a, b) => new Date(b.publishedDate).getTime() - new Date(a.publishedDate).getTime())
     .slice(0, 50);
 
   const lastBuildDate =
@@ -54,4 +86,3 @@ export async function GET() {
     },
   });
 }
-

@@ -2,12 +2,15 @@ import { useState, useRef } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Upload, X, Image as ImageIcon, Link } from 'lucide-react';
+import { Upload, X, Image as ImageIcon, Link, Loader2 } from 'lucide-react';
 import { toast } from 'sonner';
+import { useUploadMedia } from '@/hooks/useCMS';
+import type { CMSMedia } from '@/services/cms';
 
 interface ImageUploaderProps {
   value?: string | string[];
   onChange: (value: string | string[]) => void;
+  onMediaChange?: (media: CMSMedia | CMSMedia[] | null) => void;
   multiple?: boolean;
   label?: string;
   maxImages?: number;
@@ -16,6 +19,7 @@ interface ImageUploaderProps {
 const ImageUploader = ({
   value,
   onChange,
+  onMediaChange,
   multiple = false,
   label = 'इमेज अपलोड करें',
   maxImages = 10,
@@ -23,7 +27,10 @@ const ImageUploader = ({
   const [dragActive, setDragActive] = useState(false);
   const [urlInput, setUrlInput] = useState('');
   const [showUrlInput, setShowUrlInput] = useState(false);
+  const [isUploading, setIsUploading] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
+  const uploadMedia = useUploadMedia();
+  const [uploadedMediaByUrl, setUploadedMediaByUrl] = useState<Record<string, CMSMedia>>({});
   
   const images = Array.isArray(value) ? value : value ? [value] : [];
   
@@ -54,39 +61,60 @@ const ImageUploader = ({
     }
   };
   
-  const handleFiles = (files: FileList) => {
-    const newImages: string[] = [];
-    
-    Array.from(files).forEach((file) => {
-      if (!file.type.startsWith('image/')) {
-        toast.error('केवल इमेज फाइलें अपलोड करें');
-        return;
-      }
-      
-      if (file.size > 5 * 1024 * 1024) {
-        toast.error('फाइल 5MB से छोटी होनी चाहिए');
-        return;
-      }
-      
-      const reader = new FileReader();
-      reader.onload = () => {
-        const base64 = reader.result as string;
-        newImages.push(base64);
-        
-        if (newImages.length === files.length) {
-          updateImages(newImages);
-        }
-      };
-      reader.readAsDataURL(file);
-    });
-  };
-  
-  const updateImages = (newImages: string[]) => {
+  const applyValue = (nextImages: string[], mediaByUrl: Record<string, CMSMedia> = uploadedMediaByUrl) => {
     if (multiple) {
-      const combined = [...images, ...newImages].slice(0, maxImages);
+      const combined = nextImages.slice(0, maxImages);
       onChange(combined);
+      const media = combined.map((url) => mediaByUrl[url]).filter(Boolean);
+      onMediaChange?.(media.length > 0 ? media : null);
     } else {
-      onChange(newImages[0]);
+      const next = nextImages[0] || '';
+      onChange(next);
+      const media = next ? mediaByUrl[next] : undefined;
+      onMediaChange?.(media || null);
+    }
+  };
+
+  const handleFiles = async (files: FileList) => {
+    const remainingSlots = multiple ? Math.max(0, maxImages - images.length) : 1;
+    if (remainingSlots === 0) return;
+
+    const selected = Array.from(files).slice(0, remainingSlots);
+    const uploadedUrls: string[] = [];
+    const mediaMapUpdates: Record<string, CMSMedia> = {};
+
+    setIsUploading(true);
+    try {
+      for (const file of selected) {
+        if (!file.type.startsWith('image/')) {
+          toast.error('केवल इमेज फाइलें अपलोड करें');
+          continue;
+        }
+
+        if (file.size > 5 * 1024 * 1024) {
+          toast.error('फाइल 5MB से छोटी होनी चाहिए');
+          continue;
+        }
+
+        const media = await uploadMedia.mutateAsync(file);
+        uploadedUrls.push(media.url);
+        mediaMapUpdates[media.url] = media;
+      }
+
+      if (uploadedUrls.length > 0) {
+        const nextMediaByUrl = { ...uploadedMediaByUrl, ...mediaMapUpdates };
+        setUploadedMediaByUrl(nextMediaByUrl);
+        const next = multiple ? [...images, ...uploadedUrls] : [uploadedUrls[0]];
+        applyValue(next, nextMediaByUrl);
+        toast.success('इमेज अपलोड हुई');
+      }
+    } catch {
+      toast.error('अपलोड में त्रुटि');
+    } finally {
+      setIsUploading(false);
+      if (inputRef.current) {
+        inputRef.current.value = '';
+      }
     }
   };
   
@@ -98,11 +126,8 @@ const ImageUploader = ({
       return;
     }
     
-    if (multiple) {
-      onChange([...images, urlInput].slice(0, maxImages));
-    } else {
-      onChange(urlInput);
-    }
+    const next = multiple ? [...images, urlInput].slice(0, maxImages) : [urlInput];
+    applyValue(next);
     
     setUrlInput('');
     setShowUrlInput(false);
@@ -112,15 +137,15 @@ const ImageUploader = ({
   const handleRemove = (index: number) => {
     if (multiple) {
       const newImages = images.filter((_, i) => i !== index);
-      onChange(newImages);
+      applyValue(newImages);
     } else {
-      onChange('');
+      applyValue([]);
     }
   };
   
   return (
     <div className="space-y-3">
-      <Label>{label}</Label>
+      {label ? <Label>{label}</Label> : null}
       
       {/* Image Preview Grid */}
       {images.length > 0 && (
@@ -180,8 +205,13 @@ const ImageUploader = ({
                 variant="outline"
                 size="sm"
                 onClick={() => inputRef.current?.click()}
+                disabled={isUploading}
               >
-                <ImageIcon size={16} className="mr-2" />
+                {isUploading ? (
+                  <Loader2 size={16} className="mr-2 animate-spin" />
+                ) : (
+                  <ImageIcon size={16} className="mr-2" />
+                )}
                 फाइल चुनें
               </Button>
               <Button
@@ -189,6 +219,7 @@ const ImageUploader = ({
                 variant="outline"
                 size="sm"
                 onClick={() => setShowUrlInput(!showUrlInput)}
+                disabled={isUploading}
               >
                 <Link size={16} className="mr-2" />
                 URL से जोड़ें

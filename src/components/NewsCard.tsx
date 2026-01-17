@@ -1,11 +1,31 @@
 import { Link } from "@/lib/router-compat";
 import { Clock } from "lucide-react";
-import { NewsArticle, getRelativeTimeHindi } from "@/data/mockNews";
+import type { CMSArticle } from "@/services/cms";
 
 interface NewsCardProps {
-  article: NewsArticle;
+  article: CMSArticle;
   variant?: "default" | "featured" | "horizontal" | "compact";
 }
+
+const formatRelativeTimeHindi = (dateString: string) => {
+  const timestamp = new Date(dateString).getTime();
+  if (Number.isNaN(timestamp)) return "";
+  const diffSeconds = Math.max(0, Math.floor((Date.now() - timestamp) / 1000));
+
+  if (diffSeconds < 60) return "अभी";
+  const diffMinutes = Math.floor(diffSeconds / 60);
+  if (diffMinutes < 60) return `${diffMinutes} मिनट पहले`;
+  const diffHours = Math.floor(diffMinutes / 60);
+  if (diffHours < 24) return `${diffHours} घंटे पहले`;
+  const diffDays = Math.floor(diffHours / 24);
+  if (diffDays < 7) return `${diffDays} दिन पहले`;
+  const diffWeeks = Math.floor(diffDays / 7);
+  if (diffWeeks < 4) return `${diffWeeks} हफ्ते पहले`;
+  const diffMonths = Math.floor(diffDays / 30);
+  if (diffMonths < 12) return `${diffMonths} महीने पहले`;
+  const diffYears = Math.floor(diffDays / 365);
+  return `${diffYears} साल पहले`;
+};
 
 const NewsCard = ({ article, variant = "default" }: NewsCardProps) => {
   const articleUrl = `/${article.category}/${article.slug}`;
@@ -37,7 +57,7 @@ const NewsCard = ({ article, variant = "default" }: NewsCardProps) => {
                 <span>{article.author}</span>
                 <span className="flex items-center gap-1">
                   <Clock size={12} />
-                  {getRelativeTimeHindi(article.publishedDate)}
+                  {formatRelativeTimeHindi(article.publishedDate)}
                 </span>
               </div>
             </div>
@@ -68,7 +88,7 @@ const NewsCard = ({ article, variant = "default" }: NewsCardProps) => {
             </h3>
             <div className="flex items-center gap-2 mt-2 text-xs text-muted-foreground">
               <Clock size={12} />
-              <span>{getRelativeTimeHindi(article.publishedDate)}</span>
+              <span>{formatRelativeTimeHindi(article.publishedDate)}</span>
             </div>
           </Link>
         </div>
@@ -93,7 +113,7 @@ const NewsCard = ({ article, variant = "default" }: NewsCardProps) => {
               {article.title}
             </h4>
             <span className="text-xs text-muted-foreground mt-1 block">
-              {getRelativeTimeHindi(article.publishedDate)}
+              {formatRelativeTimeHindi(article.publishedDate)}
             </span>
           </div>
         </Link>
@@ -135,7 +155,7 @@ const NewsCard = ({ article, variant = "default" }: NewsCardProps) => {
           <span className="text-xs text-muted-foreground">{article.author}</span>
           <span className="flex items-center gap-1 text-xs text-muted-foreground">
             <Clock size={12} />
-            {getRelativeTimeHindi(article.publishedDate)}
+            {formatRelativeTimeHindi(article.publishedDate)}
           </span>
         </div>
       </div>

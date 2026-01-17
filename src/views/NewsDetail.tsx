@@ -1,3 +1,4 @@
+"use client";
 import { useParams, Link } from "@/lib/router-compat";
 import Image from "next/image";
 import { ArrowLeft, Clock, Share2, User } from "lucide-react";
@@ -8,7 +9,7 @@ import ShareButtons from "@/components/ShareButtons";
 import NewsCard from "@/components/NewsCard";
 import SEO from "@/components/SEO";
 import { Button } from "@/components/ui/button";
-import { mockNewsData, formatDateHindi, NewsArticle } from "@/data/mockNews";
+import { useArticleBySlug, useArticlesByCategory } from "@/hooks/useCMS";
 
 // Valid news categories
 const validCategories = [
@@ -34,6 +35,16 @@ const getCategoryHindi = (category: string): string => {
     "nearby": "आस-पास"
   };
   return categoryMap[category] || category;
+};
+
+const formatDateHindi = (dateString: string): string => {
+  const date = new Date(dateString);
+  if (Number.isNaN(date.getTime())) return dateString;
+  return date.toLocaleDateString("hi-IN", {
+    day: "numeric",
+    month: "long",
+    year: "numeric",
+  });
 };
 
 // Calculate reading time in Hindi
@@ -77,11 +88,24 @@ const NewsDetail = ({ nextParams }: { nextParams?: NextParams }) => {
     );
   }
 
-  // Find the article
-  const categoryNews = mockNewsData[category] || [];
-  const article = categoryNews.find((a) => a.slug === slug);
+  const { data: article, isLoading: isArticleLoading } = useArticleBySlug(slug || "");
+  const { data: categoryNews = [] } = useArticlesByCategory(category, 20);
 
-  if (!article) {
+  if (isArticleLoading) {
+    return (
+      <div className="min-h-screen bg-background">
+        <Header />
+        <main className="container mx-auto px-4 py-8">
+          <div className="text-center py-16">
+            <h1 className="text-2xl font-bold text-foreground mb-4">लोड हो रहा है...</h1>
+          </div>
+        </main>
+        <Footer />
+      </div>
+    );
+  }
+
+  if (!article || article.category !== category) {
     return (
       <div className="min-h-screen bg-background">
         <Header />
@@ -103,12 +127,11 @@ const NewsDetail = ({ nextParams }: { nextParams?: NextParams }) => {
   }
 
   // Get related news from same category
-  const relatedNews = categoryNews
-    .filter((a) => a.id !== article.id)
-    .slice(0, 4);
+  const relatedNews = categoryNews.filter((a) => a.id !== article.id).slice(0, 4);
 
   const articleUrl = `/${category}/${slug}`;
   const readingTime = article.readTime || getReadingTime(article.content, article.excerpt);
+  const shareUrl = typeof window !== "undefined" ? `${window.location.origin}${articleUrl}` : articleUrl;
 
   // Keywords for SEO
   const keywords = [
@@ -225,7 +248,7 @@ const NewsDetail = ({ nextParams }: { nextParams?: NextParams }) => {
                 <Share2 size={16} />
                 शेयर करें:
               </span>
-              <ShareButtons url={`${window.location.origin}${articleUrl}`} title={article.title} />
+              <ShareButtons url={shareUrl} title={article.title} />
             </div>
 
             {/* Article Content */}

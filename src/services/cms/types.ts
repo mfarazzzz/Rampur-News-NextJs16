@@ -7,6 +7,7 @@ export interface CMSArticle {
   excerpt: string;
   content: string;
   image: string;
+  featuredMediaId?: string;
   category: string;
   categoryHindi: string;
   author: string;

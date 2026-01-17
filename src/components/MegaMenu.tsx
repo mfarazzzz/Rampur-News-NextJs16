@@ -1,8 +1,8 @@
 import { Link } from "@/lib/router-compat";
 import { categories } from "@/data/categories";
-import { mockNewsData, NewsArticle } from "@/data/mockNews";
 import { ChevronDown } from "lucide-react";
 import { useState } from "react";
+import { useFeaturedArticles } from "@/hooks/useCMS";
 
 interface MegaMenuProps {
   isOpen: boolean;
@@ -29,17 +29,8 @@ const categoryGroups = [
   }
 ];
 
-// Get featured articles for mega menu
-const getFeaturedArticles = (): NewsArticle[] => {
-  const allArticles: NewsArticle[] = [];
-  Object.values(mockNewsData).forEach(articles => {
-    allArticles.push(...articles.filter(a => a.isFeatured));
-  });
-  return allArticles.slice(0, 3);
-};
-
 export const MegaMenu = ({ isOpen, onClose }: MegaMenuProps) => {
-  const featuredArticles = getFeaturedArticles();
+  const { data: featuredArticles = [] } = useFeaturedArticles(3);
 
   if (!isOpen) return null;
 
@@ -85,7 +76,7 @@ export const MegaMenu = ({ isOpen, onClose }: MegaMenuProps) => {
               {featuredArticles.map((article) => (
                 <Link
                   key={article.id}
-                  to={`/news/${article.slug}`}
+                  to={`/${article.category}/${article.slug}`}
                   onClick={onClose}
                   className="flex gap-3 group"
                 >

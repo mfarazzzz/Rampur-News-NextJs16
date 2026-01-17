@@ -19,6 +19,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { ArrowLeft, Save, Eye, Image as ImageIcon, Loader2, Youtube, X } from 'lucide-react';
 import { toast } from 'sonner';
 import { type CMSArticle, getCMSProvider } from '@/services/cms';
+import ImageUploader from '@/components/admin/ImageUploader';
 
 const ArticleEditor = () => {
   const params = useParams();
@@ -38,6 +39,7 @@ const ArticleEditor = () => {
     excerpt: '',
     content: '',
     image: '',
+    featuredMediaId: '',
     category: '',
     categoryHindi: '',
     author: '',
@@ -299,9 +301,9 @@ const ArticleEditor = () => {
                 <CardContent className="space-y-3">
                   {formData.image ? (
                     <div className="relative aspect-video rounded-lg overflow-hidden bg-muted">
-                      <img 
-                        src={formData.image} 
-                        alt="Preview" 
+                      <img
+                        src={formData.image}
+                        alt="Preview"
                         className="w-full h-full object-cover"
                       />
                     </div>
@@ -310,10 +312,17 @@ const ArticleEditor = () => {
                       <ImageIcon className="w-8 h-8 text-muted-foreground/50" />
                     </div>
                   )}
-                  <Input
+                  <ImageUploader
                     value={formData.image}
-                    onChange={(e) => setFormData(prev => ({ ...prev, image: e.target.value }))}
-                    placeholder="छवि URL दर्ज करें"
+                    onChange={(v) => setFormData((prev) => ({ ...prev, image: v as string }))}
+                    onMediaChange={(media) =>
+                      setFormData((prev) => ({
+                        ...prev,
+                        featuredMediaId: Array.isArray(media) ? media[0]?.id || '' : media?.id || '',
+                        image: Array.isArray(media) ? media[0]?.url || prev.image : media?.url || prev.image,
+                      }))
+                    }
+                    label=""
                   />
                 </CardContent>
               </Card>

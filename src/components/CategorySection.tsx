@@ -1,13 +1,13 @@
 import { Link } from "@/lib/router-compat";
 import { ChevronRight } from "lucide-react";
 import NewsCard from "./NewsCard";
-import { NewsArticle } from "@/data/mockNews";
+import type { CMSArticle } from "@/services/cms";
 
 interface CategorySectionProps {
   title: string;
   titleEnglish?: string;
   description?: string;
-  articles: NewsArticle[];
+  articles: CMSArticle[];
   viewAllLink: string;
   variant?: "default" | "featured" | "grid";
 }

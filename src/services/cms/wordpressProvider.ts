@@ -132,6 +132,7 @@ export const createWordPressProvider = (config: WordPressConfig): CMSProvider =>
       excerpt: stripHtml(post.excerpt.rendered),
       content: post.content.rendered,
       image: featuredImage,
+      featuredMediaId: post.featured_media ? String(post.featured_media) : undefined,
       category: category?.slug || 'uncategorized',
       categoryHindi: category?.name || 'अवर्गीकृत',
       author: authorData?.name || 'अज्ञात',
@@ -154,6 +155,12 @@ export const createWordPressProvider = (config: WordPressConfig): CMSProvider =>
     if (article.content) wpPost.content = article.content;
     if (article.excerpt) wpPost.excerpt = article.excerpt;
     if (article.slug) wpPost.slug = article.slug;
+    if (article.featuredMediaId) {
+      const id = parseInt(article.featuredMediaId, 10);
+      if (!Number.isNaN(id)) {
+        wpPost.featured_media = id;
+      }
+    }
     if (article.status) {
       wpPost.status = article.status === 'published' ? 'publish' : article.status === 'scheduled' ? 'future' : 'draft';
     }

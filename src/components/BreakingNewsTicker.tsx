@@ -1,8 +1,10 @@
+"use client";
 import { Zap } from "lucide-react";
-import { getBreakingNews } from "@/data/mockNews";
+import { useBreakingNews } from "@/hooks/useCMS";
+import { Link } from "@/lib/router-compat";
 
 const BreakingNewsTicker = () => {
-  const breakingNews = getBreakingNews();
+  const { data: breakingNews = [] } = useBreakingNews(10);
 
   if (breakingNews.length === 0) return null;
 
@@ -16,12 +18,16 @@ const BreakingNewsTicker = () => {
         <div className="breaking-ticker flex-1">
           <div className="breaking-ticker-content">
             {breakingNews.map((news, index) => (
-              <span key={news.id} className="inline-block">
+              <Link
+                key={news.id}
+                to={`/${news.category}/${news.slug}`}
+                className="inline-block hover:underline"
+              >
                 {news.title}
                 {index < breakingNews.length - 1 && (
                   <span className="mx-4 text-primary-foreground/50">•</span>
                 )}
-              </span>
+              </Link>
             ))}
           </div>
         </div>

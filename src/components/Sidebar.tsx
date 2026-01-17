@@ -1,9 +1,30 @@
+"use client";
 import { Link } from "@/lib/router-compat";
 import { TrendingUp, Eye } from "lucide-react";
-import { getTrendingNews, getRelativeTimeHindi } from "@/data/mockNews";
+import { useTrendingArticles } from "@/hooks/useCMS";
 
 const Sidebar = () => {
-  const trendingNews = getTrendingNews();
+  const { data: trendingNews = [] } = useTrendingArticles(10);
+
+  const formatRelativeTimeHindi = (dateString: string) => {
+    const timestamp = new Date(dateString).getTime();
+    if (Number.isNaN(timestamp)) return "";
+    const diffSeconds = Math.max(0, Math.floor((Date.now() - timestamp) / 1000));
+
+    if (diffSeconds < 60) return "अभी";
+    const diffMinutes = Math.floor(diffSeconds / 60);
+    if (diffMinutes < 60) return `${diffMinutes} मिनट पहले`;
+    const diffHours = Math.floor(diffMinutes / 60);
+    if (diffHours < 24) return `${diffHours} घंटे पहले`;
+    const diffDays = Math.floor(diffHours / 24);
+    if (diffDays < 7) return `${diffDays} दिन पहले`;
+    const diffWeeks = Math.floor(diffDays / 7);
+    if (diffWeeks < 4) return `${diffWeeks} हफ्ते पहले`;
+    const diffMonths = Math.floor(diffDays / 30);
+    if (diffMonths < 12) return `${diffMonths} महीने पहले`;
+    const diffYears = Math.floor(diffDays / 365);
+    return `${diffYears} साल पहले`;
+  };
 
   return (
     <aside className="space-y-6">
@@ -26,7 +47,7 @@ const Sidebar = () => {
                   {article.title}
                 </h4>
                 <span className="text-xs text-muted-foreground mt-1 block">
-                  {getRelativeTimeHindi(article.publishedDate)}
+                  {formatRelativeTimeHindi(article.publishedDate)}
                 </span>
               </div>
             </Link>

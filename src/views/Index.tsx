@@ -1,3 +1,4 @@
+"use client";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import BreakingNewsTicker from "@/components/BreakingNewsTicker";
@@ -6,10 +7,36 @@ import CategorySection from "@/components/CategorySection";
 import Sidebar from "@/components/Sidebar";
 import NewsCard from "@/components/NewsCard";
 import SEO from "@/components/SEO";
-import { mockNewsData, getFeaturedNews } from "@/data/mockNews";
+import { useArticlesByCategory, useFeaturedArticles } from "@/hooks/useCMS";
+
+type CMSCategorySectionProps = {
+  slug: string;
+  title: string;
+  viewAllLink: string;
+  variant?: "default" | "featured" | "grid";
+  limit?: number;
+};
+
+const CMSCategorySection = ({
+  slug,
+  title,
+  viewAllLink,
+  variant = "default",
+  limit = 9,
+}: CMSCategorySectionProps) => {
+  const { data: articles = [] } = useArticlesByCategory(slug, limit);
+  return (
+    <CategorySection
+      title={title}
+      articles={articles}
+      viewAllLink={viewAllLink}
+      variant={variant}
+    />
+  );
+};
 
 const Index = () => {
-  const featuredNews = getFeaturedNews().slice(0, 3);
+  const { data: featuredNews = [] } = useFeaturedArticles(3);
 
   return (
     <div className="min-h-screen bg-background">
@@ -51,108 +78,43 @@ const Index = () => {
           {/* Main Content */}
           <div className="lg:col-span-8 space-y-8">
             {/* Rampur News */}
-            <CategorySection
-              title="रामपुर"
-              articles={mockNewsData.rampur || []}
-              viewAllLink="/rampur"
-              variant="featured"
-            />
+            <CMSCategorySection slug="rampur" title="रामपुर" viewAllLink="/rampur" variant="featured" limit={6} />
 
             {/* UP News */}
-            <CategorySection
-              title="उत्तर प्रदेश"
-              articles={mockNewsData.up || []}
-              viewAllLink="/up"
-              variant="default"
-            />
+            <CMSCategorySection slug="up" title="उत्तर प्रदेश" viewAllLink="/up" variant="default" />
 
             {/* National News */}
-            <CategorySection
-              title="देश"
-              articles={mockNewsData.national || []}
-              viewAllLink="/national"
-              variant="default"
-            />
+            <CMSCategorySection slug="national" title="देश" viewAllLink="/national" variant="default" />
 
             {/* Politics */}
-            <CategorySection
-              title="राजनीति"
-              articles={mockNewsData.politics || []}
-              viewAllLink="/politics"
-              variant="default"
-            />
+            <CMSCategorySection slug="politics" title="राजनीति" viewAllLink="/politics" variant="default" />
 
             {/* Crime */}
-            <CategorySection
-              title="अपराध"
-              articles={mockNewsData.crime || []}
-              viewAllLink="/crime"
-              variant="default"
-            />
+            <CMSCategorySection slug="crime" title="अपराध" viewAllLink="/crime" variant="default" />
 
             {/* Education & Jobs */}
-            <CategorySection
-              title="शिक्षा और नौकरियां"
-              articles={mockNewsData["education-jobs"] || []}
-              viewAllLink="/education-jobs"
-              variant="default"
-            />
+            <CMSCategorySection slug="education-jobs" title="शिक्षा और नौकरियां" viewAllLink="/education-jobs" variant="default" />
 
             {/* Business */}
-            <CategorySection
-              title="व्यापार"
-              articles={mockNewsData.business || []}
-              viewAllLink="/business"
-              variant="default"
-            />
+            <CMSCategorySection slug="business" title="व्यापार" viewAllLink="/business" variant="default" />
 
             {/* Entertainment */}
-            <CategorySection
-              title="मनोरंजन"
-              articles={mockNewsData.entertainment || []}
-              viewAllLink="/entertainment"
-              variant="default"
-            />
+            <CMSCategorySection slug="entertainment" title="मनोरंजन" viewAllLink="/entertainment" variant="default" />
 
             {/* Sports */}
-            <CategorySection
-              title="खेल"
-              articles={mockNewsData.sports || []}
-              viewAllLink="/sports"
-              variant="default"
-            />
+            <CMSCategorySection slug="sports" title="खेल" viewAllLink="/sports" variant="default" />
 
             {/* Health */}
-            <CategorySection
-              title="स्वास्थ्य"
-              articles={mockNewsData.health || []}
-              viewAllLink="/health"
-              variant="default"
-            />
+            <CMSCategorySection slug="health" title="स्वास्थ्य" viewAllLink="/health" variant="default" />
 
             {/* Religion & Culture */}
-            <CategorySection
-              title="धर्म और संस्कृति"
-              articles={mockNewsData["religion-culture"] || []}
-              viewAllLink="/religion-culture"
-              variant="default"
-            />
+            <CMSCategorySection slug="religion-culture" title="धर्म और संस्कृति" viewAllLink="/religion-culture" variant="default" />
 
             {/* Food & Lifestyle */}
-            <CategorySection
-              title="खान-पान और लाइफस्टाइल"
-              articles={mockNewsData["food-lifestyle"] || []}
-              viewAllLink="/food-lifestyle"
-              variant="default"
-            />
+            <CMSCategorySection slug="food-lifestyle" title="खान-पान और लाइफस्टाइल" viewAllLink="/food-lifestyle" variant="default" />
 
             {/* Nearby */}
-            <CategorySection
-              title="आस-पास"
-              articles={mockNewsData.nearby || []}
-              viewAllLink="/nearby"
-              variant="default"
-            />
+            <CMSCategorySection slug="nearby" title="आस-पास" viewAllLink="/nearby" variant="default" />
           </div>
 
           {/* Sidebar */}

@@ -1,3 +1,4 @@
+"use client";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import CategoryHeader from "@/components/CategoryHeader";
@@ -5,11 +6,11 @@ import NewsCard from "@/components/NewsCard";
 import Sidebar from "@/components/Sidebar";
 import SEO from "@/components/SEO";
 import { getCategoryBySlug } from "@/data/categories";
-import { getNewsByCategory } from "@/data/mockNews";
+import { useArticlesByCategory } from "@/hooks/useCMS";
 
 const PoliticsPage = () => {
   const category = getCategoryBySlug("politics")!;
-  const news = getNewsByCategory("politics");
+  const { data: news = [], isLoading } = useArticlesByCategory("politics", 30);
 
   return (
     <div className="min-h-screen bg-background">
@@ -27,11 +28,15 @@ const PoliticsPage = () => {
         
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
           <div className="lg:col-span-8">
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-              {news.map((article) => (
-                <NewsCard key={article.id} article={article} />
-              ))}
-            </div>
+            {isLoading ? (
+              <div className="text-center py-12">लोड हो रहा है...</div>
+            ) : (
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                {news.map((article) => (
+                  <NewsCard key={article.id} article={article} />
+                ))}
+              </div>
+            )}
             
             <div className="flex justify-center mt-8">
               <button className="px-6 py-3 bg-primary text-primary-foreground font-medium rounded-lg hover:bg-news-red-dark transition-colors">

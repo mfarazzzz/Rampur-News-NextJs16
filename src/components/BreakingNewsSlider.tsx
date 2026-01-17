@@ -2,11 +2,11 @@
 import { useState, useEffect, useCallback } from "react";
 import { Link } from "@/lib/router-compat";
 import { Zap, ChevronLeft, ChevronRight } from "lucide-react";
-import { getBreakingNews } from "@/data/mockNews";
 import { Button } from "@/components/ui/button";
+import { useBreakingNews } from "@/hooks/useCMS";
 
 const BreakingNewsSlider = () => {
-  const breakingNews = getBreakingNews();
+  const { data: breakingNews = [] } = useBreakingNews(6);
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isPaused, setIsPaused] = useState(false);
 
@@ -19,11 +19,14 @@ const BreakingNewsSlider = () => {
   }, [breakingNews.length]);
 
   useEffect(() => {
+    if (currentIndex >= breakingNews.length) {
+      setCurrentIndex(0);
+    }
     if (isPaused || breakingNews.length <= 1) return;
     
     const interval = setInterval(nextSlide, 4000);
     return () => clearInterval(interval);
-  }, [isPaused, nextSlide, breakingNews.length]);
+  }, [currentIndex, isPaused, nextSlide, breakingNews.length]);
 
   if (breakingNews.length === 0) return null;
 
