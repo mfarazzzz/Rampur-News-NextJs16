@@ -1,6 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createAdminSessionToken } from "@/lib/adminSession";
 
+export const runtime = "nodejs";
+
 export async function POST(request: NextRequest) {
   const { email, password } = await request.json();
 

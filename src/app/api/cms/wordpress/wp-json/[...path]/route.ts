@@ -1,6 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
 import { verifyAdminSessionToken } from "@/lib/adminSession";
 
+export const runtime = "nodejs";
+
 const getTargetBaseUrl = () => {
   const baseUrl = process.env.WORDPRESS_BASE_URL;
   if (!baseUrl) {
@@ -155,4 +157,3 @@ export async function DELETE(request: NextRequest, context: { params: Promise<{ 
     );
   }
 }
-
