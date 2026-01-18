@@ -19,7 +19,12 @@ export async function POST(request: NextRequest) {
     );
   }
 
-  if (email !== adminEmail || password !== adminPassword) {
+  const inputEmail = typeof email === "string" ? email.trim().toLowerCase() : "";
+  const expectedEmail = typeof adminEmail === "string" ? adminEmail.trim().toLowerCase() : "";
+  const inputPassword = typeof password === "string" ? password.trim() : "";
+  const expectedPassword = typeof adminPassword === "string" ? adminPassword.trim() : "";
+
+  if (inputEmail !== expectedEmail || inputPassword !== expectedPassword) {
     return NextResponse.json(
       { error: "Invalid credentials" },
       { status: 401 },

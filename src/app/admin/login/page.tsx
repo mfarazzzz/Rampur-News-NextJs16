@@ -30,7 +30,7 @@ export default function AdminLogin() {
         toast.error('गलत ईमेल या पासवर्ड');
       }
     } catch (error) {
-      toast.error('लॉगिन में त्रुटि हुई');
+      toast.error(error instanceof Error ? error.message : 'लॉगिन में त्रुटि हुई');
     } finally {
       setIsLoading(false);
     }
