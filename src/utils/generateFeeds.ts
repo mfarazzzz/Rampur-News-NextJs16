@@ -1,24 +1,32 @@
-import { mockNewsData, NewsArticle } from "@/data/mockNews";
+import type { CMSArticle } from "@/services/cms";
 
 const SITE_URL = "https://rampurnews.com";
 const SITE_NAME = "रामपुर न्यूज़";
 const SITE_DESCRIPTION = "रामपुर न्यूज़ - रामपुर जिले और उत्तर प्रदेश की ताज़ा, विश्वसनीय खबरें। Breaking News, Local Updates, Education, Sports, Entertainment.";
 
-// Get all news articles sorted by date
-export const getAllNewsSorted = (): NewsArticle[] => {
-  const allNews: NewsArticle[] = [];
-  Object.values(mockNewsData).forEach((categoryNews) => {
-    allNews.push(...categoryNews);
-  });
-  return allNews.sort(
+type FeedArticle = Pick<
+  CMSArticle,
+  | "title"
+  | "slug"
+  | "excerpt"
+  | "author"
+  | "category"
+  | "categoryHindi"
+  | "publishedDate"
+  | "image"
+  | "isBreaking"
+>;
+
+export const getAllNewsSorted = (articles: FeedArticle[]): FeedArticle[] => {
+  return [...articles].sort(
     (a, b) => new Date(b.publishedDate).getTime() - new Date(a.publishedDate).getTime()
   );
 };
 
 // Get news from last 48 hours for Google News sitemap
-export const getRecentNews = (hours: number = 48): NewsArticle[] => {
+export const getRecentNews = (articles: FeedArticle[], hours: number = 48): FeedArticle[] => {
   const cutoffTime = new Date(Date.now() - hours * 60 * 60 * 1000);
-  return getAllNewsSorted().filter(
+  return getAllNewsSorted(articles).filter(
     (article) => new Date(article.publishedDate) > cutoffTime
   );
 };
@@ -34,14 +42,14 @@ const escapeXml = (str: string): string => {
 };
 
 // Generate RSS 2.0 feed
-export const generateRSSFeed = (): string => {
-  const articles = getAllNewsSorted().slice(0, 50);
+export const generateRSSFeed = (articles: FeedArticle[]): string => {
+  const recentArticles = getAllNewsSorted(articles).slice(0, 50);
   const lastBuildDate = new Date().toUTCString();
-  const pubDate = articles[0]?.publishedDate 
-    ? new Date(articles[0].publishedDate).toUTCString() 
+  const pubDate = recentArticles[0]?.publishedDate 
+    ? new Date(recentArticles[0].publishedDate).toUTCString() 
     : lastBuildDate;
 
-  const items = articles.map((article) => `
+  const items = recentArticles.map((article) => `
     <item>
       <title>${escapeXml(article.title)}</title>
       <link>${SITE_URL}/${article.category}/${article.slug}</link>
@@ -87,11 +95,11 @@ export const generateRSSFeed = (): string => {
 };
 
 // Generate Atom 1.0 feed
-export const generateAtomFeed = (): string => {
-  const articles = getAllNewsSorted().slice(0, 50);
+export const generateAtomFeed = (articles: FeedArticle[]): string => {
+  const recentArticles = getAllNewsSorted(articles).slice(0, 50);
   const updatedTime = new Date().toISOString();
 
-  const entries = articles.map((article) => `
+  const entries = recentArticles.map((article) => `
   <entry>
     <id>${SITE_URL}/${article.category}/${article.slug}</id>
     <title type="text">${escapeXml(article.title)}</title>
@@ -130,8 +138,8 @@ export const generateAtomFeed = (): string => {
 };
 
 // Generate Google News Sitemap
-export const generateNewsSitemap = (): string => {
-  const recentArticles = getRecentNews(48);
+export const generateNewsSitemap = (articles: FeedArticle[], hours: number = 48): string => {
+  const recentArticles = getRecentNews(articles, hours);
   
   const urlEntries = recentArticles.map((article) => {
     const keywords = [article.categoryHindi, "रामपुर", "उत्तर प्रदेश", "ताज़ा खबर"].join(", ");

@@ -85,6 +85,28 @@ const calculateReadTime = (content: string): string => {
   return `${minutes} मिनट`;
 };
 
+const parseBooleanMeta = (value: unknown): boolean => {
+  if (value === true) return true;
+  if (value === false) return false;
+  if (value === 1 || value === '1') return true;
+  if (value === 0 || value === '0') return false;
+  if (typeof value === 'string') {
+    const normalized = value.trim().toLowerCase();
+    if (normalized === 'true') return true;
+    if (normalized === 'false') return false;
+  }
+  return Boolean(value);
+};
+
+const parseNumberMeta = (value: unknown): number => {
+  if (typeof value === 'number' && Number.isFinite(value)) return value;
+  if (typeof value === 'string' && value.trim().length > 0) {
+    const parsed = Number(value);
+    if (Number.isFinite(parsed)) return parsed;
+  }
+  return 0;
+};
+
 // Create WordPress provider
 export const createWordPressProvider = (config: WordPressConfig): CMSProvider => {
   const { baseUrl, apiKey, username, password } = config;
@@ -139,9 +161,9 @@ export const createWordPressProvider = (config: WordPressConfig): CMSProvider =>
       publishedDate: post.date,
       modifiedDate: post.modified,
       readTime: calculateReadTime(post.content.rendered),
-      isFeatured: post.meta?.featured === true || false,
-      isBreaking: post.meta?.breaking === true || false,
-      views: (post.meta?.views as number) || 0,
+      isFeatured: parseBooleanMeta(post.meta?.featured),
+      isBreaking: parseBooleanMeta(post.meta?.breaking),
+      views: parseNumberMeta(post.meta?.views),
       status: post.status === 'publish' ? 'published' : post.status === 'future' ? 'scheduled' : 'draft',
       tags: post._embedded?.['wp:term']?.[1]?.map(t => t.name) || [],
     };
@@ -214,6 +236,32 @@ export const createWordPressProvider = (config: WordPressConfig): CMSProvider =>
       categoryCache = await response.json();
     }
     return categoryCache?.find(c => c.slug === slug)?.id || null;
+  };
+
+  const buildWpPostPayload = async (article: Partial<CMSArticle>): Promise<Record<string, unknown>> => {
+    const payload = transformToWPPost(article);
+
+    if (article.category) {
+      const catId = await getCategoryId(article.category);
+      if (catId) {
+        payload.categories = [catId];
+      }
+    }
+
+    const meta: Record<string, unknown> = {};
+    if (article.isFeatured !== undefined) meta.featured = article.isFeatured;
+    if (article.isBreaking !== undefined) meta.breaking = article.isBreaking;
+    if (article.views !== undefined) meta.views = article.views;
+    if (article.seoTitle !== undefined) meta.seoTitle = article.seoTitle;
+    if (article.seoDescription !== undefined) meta.seoDescription = article.seoDescription;
+    if (article.videoUrl !== undefined) meta.videoUrl = article.videoUrl;
+    if (article.videoType !== undefined) meta.videoType = article.videoType;
+    if (article.videoTitle !== undefined) meta.videoTitle = article.videoTitle;
+    if (Object.keys(meta).length > 0) {
+      payload.meta = meta;
+    }
+
+    return payload;
   };
 
   return {
@@ -295,7 +343,7 @@ export const createWordPressProvider = (config: WordPressConfig): CMSProvider =>
       const response = await fetch(apiUrl('posts'), {
         method: 'POST',
         headers: getAuthHeaders(),
-        body: JSON.stringify(transformToWPPost(article)),
+        body: JSON.stringify(await buildWpPostPayload(article)),
       });
       
       if (!response.ok) {
@@ -310,7 +358,7 @@ export const createWordPressProvider = (config: WordPressConfig): CMSProvider =>
       const response = await fetch(apiUrl(`posts/${id}`), {
         method: 'PUT',
         headers: getAuthHeaders(),
-        body: JSON.stringify(transformToWPPost(updates)),
+        body: JSON.stringify(await buildWpPostPayload(updates)),
       });
       
       if (!response.ok) {

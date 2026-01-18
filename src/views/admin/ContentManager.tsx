@@ -1,5 +1,5 @@
 "use client";
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -24,7 +24,8 @@ import {
   useCreateShoppingCentre, useDeleteShoppingCentre, useUpdateShoppingCentre,
   useCreateFamousPlace, useDeleteFamousPlace, useUpdateFamousPlace,
 } from '@/hooks/useExtendedCMS';
-import { mockNewsData, NewsArticle } from '@/data/mockNews';
+import { useArticles, useCreateArticle, useDeleteArticle, useUpdateArticle } from '@/hooks/useCMS';
+import type { CMSArticle } from '@/services/cms';
 import type {
   CMSExam,
   CMSResult,
@@ -80,7 +81,7 @@ const ContentManagerPage = () => {
     | null
   >(null);
   const [newsEditDialogOpen, setNewsEditDialogOpen] = useState(false);
-  const [editingNews, setEditingNews] = useState<NewsArticle | null>(null);
+  const [editingNews, setEditingNews] = useState<CMSArticle | null>(null);
 
   // Data hooks
   const { data: examsData, isLoading: loadingExams } = useExams({ limit: 100 });
@@ -92,6 +93,15 @@ const ContentManagerPage = () => {
   const { data: shoppingData, isLoading: loadingShopping } = useShoppingCentres({ limit: 100 });
   const { data: placesData, isLoading: loadingPlaces } = useFamousPlaces({ limit: 100 });
   const { data: eventsData, isLoading: loadingEvents } = useEvents({ limit: 100 });
+  const { data: newsData, isLoading: loadingNews } = useArticles(
+    activeSection === 'news'
+      ? {
+          limit: 100,
+          category: activeTab,
+          search: searchQuery.length > 2 ? searchQuery : undefined,
+        }
+      : { limit: 1 },
+  );
 
   // Create Mutations
   const createExam = useCreateExam();
@@ -122,6 +132,8 @@ const ContentManagerPage = () => {
   const deleteFashionStore = useDeleteFashionStore();
   const deleteShoppingCentre = useDeleteShoppingCentre();
   const deleteFamousPlace = useDeleteFamousPlace();
+  const updateNewsArticle = useUpdateArticle();
+  const deleteNewsArticle = useDeleteArticle();
 
   const exams = examsData?.data || [];
   const results = resultsData?.data || [];
@@ -133,18 +145,21 @@ const ContentManagerPage = () => {
   const famousPlaces = placesData?.data || [];
   const events = eventsData?.data || [];
 
-  // Get news for current category
-  const currentNews = mockNewsData[activeTab] || [];
-  const filteredNews = currentNews.filter(news => 
-    news.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    news.excerpt.toLowerCase().includes(searchQuery.toLowerCase())
-  );
+  const currentNews = activeSection === 'news' ? (newsData?.data || []) : [];
+  const filteredNews =
+    searchQuery.trim().length === 0
+      ? currentNews
+      : currentNews.filter((news) => {
+          const q = searchQuery.toLowerCase();
+          return (
+            news.title.toLowerCase().includes(q) ||
+            news.excerpt.toLowerCase().includes(q)
+          );
+        });
 
   // Helper functions for bulk import/export
   const getBulkContentType = () => {
-    if (activeSection === 'news' || activeTab === 'edu-news' || activeTab === 'lifestyle-news') {
-      return 'news';
-    }
+    if (activeSection === 'news') return 'news';
     return activeTab;
   };
 
@@ -158,7 +173,7 @@ const ContentManagerPage = () => {
     | CMSShoppingCentre[]
     | CMSFamousPlace[]
     | CMSEvent[]
-    | NewsArticle[] => {
+    | CMSArticle[] => {
     switch (activeTab) {
       case 'exams': return exams;
       case 'results': return results;
@@ -169,13 +184,8 @@ const ContentManagerPage = () => {
       case 'shopping': return shoppingCentres;
       case 'places': return famousPlaces;
       case 'events': return events;
-      case 'edu-news': return mockNewsData['education-jobs'] || [];
-      case 'lifestyle-news': return mockNewsData['food-lifestyle'] || [];
       default:
-        if (activeSection === 'news') {
-          return mockNewsData[activeTab] || [];
-        }
-        return [];
+        return activeSection === 'news' ? filteredNews : [];
     }
   };
 
@@ -284,9 +294,21 @@ const ContentManagerPage = () => {
     setEditDialogOpen(true);
   };
 
-  const handleEditNews = (news: NewsArticle) => {
+  const handleEditNews = (news: CMSArticle) => {
     setEditingNews(news);
     setNewsEditDialogOpen(true);
+  };
+
+  const handleDeleteNews = async (news: CMSArticle) => {
+    if (!confirm(`क्या आप "${news.title}" को हटाना चाहते हैं?`)) {
+      return;
+    }
+    try {
+      await deleteNewsArticle.mutateAsync(news.id);
+      toast.success('समाचार हटाया गया');
+    } catch {
+      toast.error('हटाने में त्रुटि');
+    }
   };
 
   const handleSaveEdit = async (data: any) => {
@@ -327,7 +349,6 @@ const ContentManagerPage = () => {
   };
 
   const educationTabs = [
-    { id: 'edu-news', label: 'समाचार', icon: Newspaper, count: mockNewsData['education-jobs']?.length || 0 },
     { id: 'exams', label: 'परीक्षाएं', icon: GraduationCap, count: exams.length },
     { id: 'results', label: 'परिणाम', icon: Calendar, count: results.length },
     { id: 'institutions', label: 'संस्थान', icon: GraduationCap, count: institutions.length },
@@ -335,7 +356,6 @@ const ContentManagerPage = () => {
   ];
 
   const lifestyleTabs = [
-    { id: 'lifestyle-news', label: 'समाचार', icon: Newspaper, count: mockNewsData['food-lifestyle']?.length || 0 },
     { id: 'restaurants', label: 'रेस्तरां', icon: Utensils, count: restaurants.length },
     { id: 'fashion', label: 'फैशन', icon: Shirt, count: fashionStores.length },
     { id: 'shopping', label: 'शॉपिंग', icon: Store, count: shoppingCentres.length },
@@ -343,7 +363,7 @@ const ContentManagerPage = () => {
     { id: 'events', label: 'कार्यक्रम', icon: PartyPopper, count: events.length },
   ];
 
-  const renderNewsTable = (news: NewsArticle[]) => (
+  const renderNewsTable = (news: CMSArticle[]) => (
     <Card>
       <CardContent className="p-0">
         <Table>
@@ -385,7 +405,7 @@ const ContentManagerPage = () => {
                       variant="ghost"
                       size="icon"
                       className="text-destructive hover:text-destructive"
-                      onClick={() => toast.info('डेमो मोड में डिलीट नहीं हो सकता')}
+                      onClick={() => handleDeleteNews(item)}
                     >
                       <Trash2 className="h-4 w-4" />
                     </Button>
@@ -484,7 +504,7 @@ const ContentManagerPage = () => {
           </Button>
           <Button
             variant={activeSection === 'education' ? 'default' : 'ghost'}
-            onClick={() => { setActiveSection('education'); setActiveTab('edu-news'); }}
+            onClick={() => { setActiveSection('education'); setActiveTab('exams'); }}
             className="gap-2"
           >
             <GraduationCap className="h-4 w-4" />
@@ -492,7 +512,7 @@ const ContentManagerPage = () => {
           </Button>
           <Button
             variant={activeSection === 'lifestyle' ? 'default' : 'ghost'}
-            onClick={() => { setActiveSection('lifestyle'); setActiveTab('lifestyle-news'); }}
+            onClick={() => { setActiveSection('lifestyle'); setActiveTab('restaurants'); }}
             className="gap-2"
           >
             <Utensils className="h-4 w-4" />
@@ -512,16 +532,17 @@ const ContentManagerPage = () => {
                 >
                   <cat.icon className="h-4 w-4" />
                   {cat.label}
-                  <Badge variant="secondary" className="ml-1">{mockNewsData[cat.id]?.length || 0}</Badge>
                 </TabsTrigger>
               ))}
             </TabsList>
 
-            {newsCategories.map(cat => (
-              <TabsContent key={cat.id} value={cat.id} className="mt-4">
-                {renderNewsTable(filteredNews.length > 0 ? filteredNews : (mockNewsData[cat.id] || []))}
-              </TabsContent>
-            ))}
+            <TabsContent value={activeTab} className="mt-4">
+              {loadingNews ? (
+                <div className="text-center py-8 text-muted-foreground">लोड हो रहा है...</div>
+              ) : (
+                renderNewsTable(filteredNews)
+              )}
+            </TabsContent>
           </Tabs>
         )}
 
@@ -541,10 +562,6 @@ const ContentManagerPage = () => {
                 </TabsTrigger>
               ))}
             </TabsList>
-
-            <TabsContent value="edu-news" className="mt-4">
-              {renderNewsTable(mockNewsData['education-jobs'] || [])}
-            </TabsContent>
 
             <TabsContent value="exams" className="mt-4">
               <ContentTable 
@@ -608,10 +625,6 @@ const ContentManagerPage = () => {
                 </TabsTrigger>
               ))}
             </TabsList>
-
-            <TabsContent value="lifestyle-news" className="mt-4">
-              {renderNewsTable(mockNewsData['food-lifestyle'] || [])}
-            </TabsContent>
 
             <TabsContent value="restaurants" className="mt-4">
               <ContentTable 
@@ -686,8 +699,14 @@ const ContentManagerPage = () => {
         onOpenChange={setNewsEditDialogOpen}
         news={editingNews}
         onSave={async (data) => {
-          toast.success('समाचार अपडेट किया गया (डेमो)');
-          setNewsEditDialogOpen(false);
+          if (!editingNews) return;
+          try {
+            await updateNewsArticle.mutateAsync({ id: editingNews.id, updates: data });
+            toast.success('समाचार अपडेट किया गया');
+            setNewsEditDialogOpen(false);
+          } catch {
+            toast.error('अपडेट में त्रुटि');
+          }
         }}
       />
     </>
@@ -788,7 +807,7 @@ interface AddNewsFormProps {
 }
 
 type AddNewsFormState = Partial<
-  Pick<NewsArticle, 'category' | 'title' | 'excerpt' | 'content' | 'author' | 'publishedDate' | 'image'>
+  Pick<CMSArticle, 'category' | 'title' | 'excerpt' | 'content' | 'author' | 'publishedDate' | 'image' | 'featuredMediaId'>
 > & {
   slug?: string;
   slugManual?: boolean;
@@ -805,6 +824,7 @@ const AddNewsForm = ({ category, onSuccess }: AddNewsFormProps) => {
     isBreaking: false,
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const createArticle = useCreateArticle();
 
   const generateSlug = (title: string) => {
     return title
@@ -820,9 +840,41 @@ const AddNewsForm = ({ category, onSuccess }: AddNewsFormProps) => {
     setIsSubmitting(true);
     
     try {
-      // In real implementation, this would call the API
-      console.log('Adding news:', formData);
-      toast.success('समाचार जोड़ा गया (डेमो)');
+      const title = (formData.title || '').trim();
+      const slug = (formData.slug || '').trim() || generateSlug(title);
+      const excerpt = (formData.excerpt || '').trim();
+      const content = (formData.content || '').trim();
+
+      const publishedDate = formData.publishedDate
+        ? new Date(formData.publishedDate).toISOString()
+        : new Date().toISOString();
+
+      const categoryHindi = newsCategories.find((c) => c.id === category)?.label || category;
+      const keywords = (formData.keywords || '')
+        .split(',')
+        .map((k) => k.trim())
+        .filter(Boolean);
+
+      await createArticle.mutateAsync({
+        title,
+        slug,
+        excerpt,
+        content,
+        image: formData.image || '/placeholder.svg',
+        featuredMediaId: formData.featuredMediaId,
+        category,
+        categoryHindi,
+        author: (formData.author || 'Admin').trim(),
+        publishedDate,
+        status: 'published',
+        isFeatured: formData.isFeatured || false,
+        isBreaking: formData.isBreaking || false,
+        seoTitle: title,
+        seoDescription: (formData.metaDescription || excerpt).trim(),
+        tags: keywords.length > 0 ? keywords : undefined,
+      });
+
+      toast.success('समाचार जोड़ा गया');
       onSuccess();
     } catch {
       toast.error('त्रुटि हुई');
@@ -910,6 +962,10 @@ const AddNewsForm = ({ category, onSuccess }: AddNewsFormProps) => {
       <ImageUploader
         value={formData.image}
         onChange={(v) => updateField('image', v as string)}
+        onMediaChange={(media) => {
+          const single = Array.isArray(media) ? media[0] : media;
+          updateField('featuredMediaId', single?.id);
+        }}
         label="फीचर्ड इमेज"
       />
 
@@ -1122,17 +1178,15 @@ const AddResultForm = ({ onSuccess }: AddResultFormProps) => {
 interface NewsEditDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
-  news: NewsArticle | null;
-  onSave: (data: Partial<NewsArticle>) => Promise<void>;
+  news: CMSArticle | null;
+  onSave: (data: Partial<CMSArticle>) => Promise<void>;
 }
 
-type NewsEditFormState = Partial<NewsArticle> & {
+type NewsEditFormState = Partial<CMSArticle> & {
   metaTitle?: string;
   metaDescription?: string;
   keywords?: string;
   ogImage?: string;
-  isFeatured?: boolean;
-  isBreaking?: boolean;
 };
 
 const NewsEditDialog = ({ open, onOpenChange, news, onSave }: NewsEditDialogProps) => {
@@ -1140,11 +1194,11 @@ const NewsEditDialog = ({ open, onOpenChange, news, onSave }: NewsEditDialogProp
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [activeTab, setActiveTab] = useState('basic');
 
-  useState(() => {
+  useEffect(() => {
     if (news) {
       setFormData({ ...news });
     }
-  });
+  }, [news]);
 
   const updateField = <K extends keyof NewsEditFormState>(key: K, value: NewsEditFormState[K]) => {
     setFormData(prev => ({ ...prev, [key]: value }));
@@ -1154,7 +1208,44 @@ const NewsEditDialog = ({ open, onOpenChange, news, onSave }: NewsEditDialogProp
     e.preventDefault();
     setIsSubmitting(true);
     try {
-      await onSave(formData);
+      const updates: Partial<CMSArticle> = {};
+
+      if (formData.title !== undefined) updates.title = formData.title;
+      if (formData.slug !== undefined) updates.slug = formData.slug;
+      if (formData.author !== undefined) updates.author = formData.author;
+
+      if (formData.category !== undefined) {
+        updates.category = formData.category;
+        updates.categoryHindi =
+          newsCategories.find((c) => c.id === formData.category)?.label || formData.category;
+      }
+
+      if (formData.excerpt !== undefined) updates.excerpt = formData.excerpt;
+      if (formData.content !== undefined) updates.content = formData.content;
+
+      if (formData.image !== undefined) updates.image = formData.image;
+      if (formData.featuredMediaId !== undefined) updates.featuredMediaId = formData.featuredMediaId;
+
+      if (formData.isFeatured !== undefined) updates.isFeatured = formData.isFeatured;
+      if (formData.isBreaking !== undefined) updates.isBreaking = formData.isBreaking;
+
+      if (formData.publishedDate !== undefined) {
+        updates.publishedDate = formData.publishedDate
+          ? new Date(formData.publishedDate).toISOString()
+          : formData.publishedDate;
+      }
+
+      if (formData.metaTitle !== undefined) updates.seoTitle = formData.metaTitle;
+      if (formData.metaDescription !== undefined) updates.seoDescription = formData.metaDescription;
+      if (formData.keywords !== undefined) {
+        const tags = formData.keywords
+          .split(',')
+          .map((t) => t.trim())
+          .filter(Boolean);
+        updates.tags = tags.length > 0 ? tags : [];
+      }
+
+      await onSave(updates);
     } finally {
       setIsSubmitting(false);
     }
@@ -1240,6 +1331,10 @@ const NewsEditDialog = ({ open, onOpenChange, news, onSave }: NewsEditDialogProp
               <ImageUploader
                 value={formData.image || news.image}
                 onChange={(v) => updateField('image', v as string)}
+                onMediaChange={(media) => {
+                  const single = Array.isArray(media) ? media[0] : media;
+                  updateField('featuredMediaId', single?.id);
+                }}
                 label="फीचर्ड इमेज"
               />
             </TabsContent>

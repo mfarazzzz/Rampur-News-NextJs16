@@ -63,11 +63,15 @@ interface NextParams {
 
 const NewsDetail = ({ nextParams }: { nextParams?: NextParams }) => {
   const routerParams = useParams<{ category: string; slug: string }>();
-  const category = nextParams?.category ?? routerParams?.category;
-  const slug = nextParams?.slug ?? routerParams?.slug;
+  const category = nextParams?.category ?? routerParams?.category ?? "";
+  const slug = nextParams?.slug ?? routerParams?.slug ?? "";
+  const isValidCategory = validCategories.includes(category);
+
+  const { data: article, isLoading: isArticleLoading } = useArticleBySlug(isValidCategory ? slug : "");
+  const { data: categoryNews = [] } = useArticlesByCategory(isValidCategory ? category : "", 20);
 
   // Validate category
-  if (!category || !validCategories.includes(category)) {
+  if (!isValidCategory) {
     return (
       <div className="min-h-screen bg-background">
         <Header />
@@ -87,9 +91,6 @@ const NewsDetail = ({ nextParams }: { nextParams?: NextParams }) => {
       </div>
     );
   }
-
-  const { data: article, isLoading: isArticleLoading } = useArticleBySlug(slug || "");
-  const { data: categoryNews = [] } = useArticlesByCategory(category, 20);
 
   if (isArticleLoading) {
     return (
