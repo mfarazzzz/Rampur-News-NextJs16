@@ -1,0 +1,92 @@
+{
+  "kind": "collectionType",
+  "collectionName": "holidays",
+  "info": {
+    "singularName": "holiday",
+    "pluralName": "holidays",
+    "displayName": "Holiday",
+    "description": "Cultural and religious holidays calendar"
+  },
+  "options": {
+    "draftAndPublish": false
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "name": {
+      "type": "string",
+      "required": true,
+      "maxLength": 200
+    },
+    "nameHindi": {
+      "type": "string",
+      "required": true,
+      "maxLength": 200
+    },
+    "slug": {
+      "type": "uid",
+      "targetField": "name",
+      "required": true
+    },
+    "date": {
+      "type": "date",
+      "required": true
+    },
+    "endDate": {
+      "type": "date"
+    },
+    "type": {
+      "type": "enumeration",
+      "enum": ["national", "regional", "religious", "cultural", "bank"],
+      "required": true
+    },
+    "religion": {
+      "type": "enumeration",
+      "enum": ["hindu", "muslim", "christian", "sikh", "buddhist", "jain", "secular"]
+    },
+    "description": {
+      "type": "richtext",
+      "required": true
+    },
+    "descriptionHindi": {
+      "type": "richtext",
+      "required": true
+    },
+    "significance": {
+      "type": "richtext"
+    },
+    "significanceHindi": {
+      "type": "richtext"
+    },
+    "rituals": {
+      "type": "json"
+    },
+    "ritualsHindi": {
+      "type": "json"
+    },
+    "image": {
+      "type": "media",
+      "multiple": false,
+      "required": false,
+      "allowedTypes": ["images"]
+    },
+    "isRecurring": {
+      "type": "boolean",
+      "default": true
+    },
+    "recurringType": {
+      "type": "enumeration",
+      "enum": ["yearly", "lunar"]
+    },
+    "isPublicHoliday": {
+      "type": "boolean",
+      "default": false
+    },
+    "regions": {
+      "type": "json"
+    },
+    "googleCalendarLink": {
+      "type": "string",
+      "maxLength": 500
+    }
+  }
+}

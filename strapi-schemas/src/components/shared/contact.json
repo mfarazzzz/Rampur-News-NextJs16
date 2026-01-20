@@ -1,0 +1,30 @@
+{
+  "collectionName": "components_shared_contact",
+  "info": {
+    "displayName": "Contact",
+    "icon": "phone",
+    "description": "Contact information component"
+  },
+  "options": {},
+  "attributes": {
+    "email": {
+      "type": "email"
+    },
+    "phone": {
+      "type": "string",
+      "maxLength": 20
+    },
+    "alternatePhone": {
+      "type": "string",
+      "maxLength": 20
+    },
+    "website": {
+      "type": "string",
+      "maxLength": 300
+    },
+    "address": {
+      "type": "text",
+      "maxLength": 500
+    }
+  }
+}

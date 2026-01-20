@@ -1,0 +1,137 @@
+{
+  "kind": "collectionType",
+  "collectionName": "exams",
+  "info": {
+    "singularName": "exam",
+    "pluralName": "exams",
+    "displayName": "Exam",
+    "description": "Educational exams calendar and details"
+  },
+  "options": {
+    "draftAndPublish": true
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "title": {
+      "type": "string",
+      "required": true,
+      "maxLength": 255
+    },
+    "titleHindi": {
+      "type": "string",
+      "required": true,
+      "maxLength": 255
+    },
+    "slug": {
+      "type": "uid",
+      "targetField": "title",
+      "required": true
+    },
+    "examDate": {
+      "type": "date",
+      "required": true
+    },
+    "applicationStartDate": {
+      "type": "date"
+    },
+    "applicationEndDate": {
+      "type": "date"
+    },
+    "admitCardDate": {
+      "type": "date"
+    },
+    "resultDate": {
+      "type": "date"
+    },
+    "organization": {
+      "type": "string",
+      "required": true,
+      "maxLength": 200
+    },
+    "organizationHindi": {
+      "type": "string",
+      "required": true,
+      "maxLength": 200
+    },
+    "category": {
+      "type": "enumeration",
+      "enum": ["board", "entrance", "government", "university", "competitive"],
+      "required": true
+    },
+    "subcategory": {
+      "type": "string",
+      "maxLength": 100
+    },
+    "description": {
+      "type": "richtext",
+      "required": true
+    },
+    "descriptionHindi": {
+      "type": "richtext"
+    },
+    "eligibility": {
+      "type": "richtext"
+    },
+    "eligibilityHindi": {
+      "type": "richtext"
+    },
+    "officialWebsite": {
+      "type": "string",
+      "maxLength": 500
+    },
+    "applicationLink": {
+      "type": "string",
+      "maxLength": 500
+    },
+    "image": {
+      "type": "media",
+      "multiple": false,
+      "required": false,
+      "allowedTypes": ["images"]
+    },
+    "status": {
+      "type": "enumeration",
+      "enum": ["upcoming", "ongoing", "completed"],
+      "default": "upcoming"
+    },
+    "applicationStatus": {
+      "type": "enumeration",
+      "enum": ["open", "closed", "upcoming", "extended"],
+      "default": "upcoming"
+    },
+    "admitCardStatus": {
+      "type": "enumeration",
+      "enum": ["available", "upcoming", "not-released"],
+      "default": "not-released"
+    },
+    "resultStatus": {
+      "type": "enumeration",
+      "enum": ["declared", "expected", "not-declared"],
+      "default": "not-declared"
+    },
+    "isPopular": {
+      "type": "boolean",
+      "default": false
+    },
+    "isFeatured": {
+      "type": "boolean",
+      "default": false
+    },
+    "isNew": {
+      "type": "boolean",
+      "default": false
+    },
+    "isLive": {
+      "type": "boolean",
+      "default": false
+    },
+    "totalPosts": {
+      "type": "integer"
+    },
+    "seo": {
+      "type": "component",
+      "repeatable": false,
+      "component": "shared.seo"
+    }
+  }
+}

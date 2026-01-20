@@ -1,0 +1,136 @@
+{
+  "kind": "collectionType",
+  "collectionName": "institutions",
+  "info": {
+    "singularName": "institution",
+    "pluralName": "institutions",
+    "displayName": "Institution",
+    "description": "Educational institutions directory"
+  },
+  "options": {
+    "draftAndPublish": true
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "name": {
+      "type": "string",
+      "required": true,
+      "maxLength": 255
+    },
+    "nameHindi": {
+      "type": "string",
+      "required": true,
+      "maxLength": 255
+    },
+    "slug": {
+      "type": "uid",
+      "targetField": "name",
+      "required": true
+    },
+    "type": {
+      "type": "enumeration",
+      "enum": ["college", "school", "university", "coaching", "vocational", "iti"],
+      "required": true
+    },
+    "address": {
+      "type": "component",
+      "repeatable": false,
+      "component": "shared.address"
+    },
+    "contact": {
+      "type": "component",
+      "repeatable": false,
+      "component": "shared.contact"
+    },
+    "establishedYear": {
+      "type": "integer"
+    },
+    "affiliation": {
+      "type": "string",
+      "maxLength": 200
+    },
+    "affiliationHindi": {
+      "type": "string",
+      "maxLength": 200
+    },
+    "courses": {
+      "type": "json"
+    },
+    "coursesHindi": {
+      "type": "json"
+    },
+    "fees": {
+      "type": "string",
+      "maxLength": 100
+    },
+    "admissionProcess": {
+      "type": "richtext"
+    },
+    "admissionProcessHindi": {
+      "type": "richtext"
+    },
+    "examsAccepted": {
+      "type": "json"
+    },
+    "facilities": {
+      "type": "json"
+    },
+    "facilitiesHindi": {
+      "type": "json"
+    },
+    "image": {
+      "type": "media",
+      "multiple": false,
+      "required": false,
+      "allowedTypes": ["images"]
+    },
+    "gallery": {
+      "type": "media",
+      "multiple": true,
+      "required": false,
+      "allowedTypes": ["images"]
+    },
+    "rating": {
+      "type": "decimal"
+    },
+    "reviewsCount": {
+      "type": "integer",
+      "default": 0
+    },
+    "description": {
+      "type": "richtext",
+      "required": true
+    },
+    "descriptionHindi": {
+      "type": "richtext",
+      "required": true
+    },
+    "about": {
+      "type": "richtext"
+    },
+    "aboutHindi": {
+      "type": "richtext"
+    },
+    "seo": {
+      "type": "component",
+      "repeatable": false,
+      "component": "shared.seo"
+    },
+    "isVerified": {
+      "type": "boolean",
+      "default": false
+    },
+    "isFeatured": {
+      "type": "boolean",
+      "default": false
+    },
+    "contactPerson": {
+      "type": "string",
+      "maxLength": 100
+    },
+    "contactPersonHindi": {
+      "type": "string",
+      "maxLength": 100
+    }
+  }
+}

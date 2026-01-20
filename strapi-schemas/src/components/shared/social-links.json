@@ -1,0 +1,39 @@
+{
+  "collectionName": "components_shared_social_links",
+  "info": {
+    "displayName": "Social Links",
+    "icon": "share-alt",
+    "description": "Social media profile links"
+  },
+  "options": {},
+  "attributes": {
+    "facebook": {
+      "type": "string",
+      "maxLength": 300
+    },
+    "twitter": {
+      "type": "string",
+      "maxLength": 300
+    },
+    "youtube": {
+      "type": "string",
+      "maxLength": 300
+    },
+    "instagram": {
+      "type": "string",
+      "maxLength": 300
+    },
+    "whatsapp": {
+      "type": "string",
+      "maxLength": 20
+    },
+    "linkedin": {
+      "type": "string",
+      "maxLength": 300
+    },
+    "telegram": {
+      "type": "string",
+      "maxLength": 300
+    }
+  }
+}
