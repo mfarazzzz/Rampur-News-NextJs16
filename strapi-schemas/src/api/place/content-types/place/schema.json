@@ -1,0 +1,90 @@
+{
+  "kind": "collectionType",
+  "collectionName": "places",
+  "info": {
+    "singularName": "place",
+    "pluralName": "places",
+    "displayName": "Famous Place",
+    "description": "Famous and historical places directory"
+  },
+  "options": {
+    "draftAndPublish": true
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "name": {
+      "type": "string",
+      "required": true,
+      "maxLength": 200
+    },
+    "nameHindi": {
+      "type": "string",
+      "required": true,
+      "maxLength": 200
+    },
+    "slug": {
+      "type": "uid",
+      "targetField": "name",
+      "required": true
+    },
+    "type": {
+      "type": "enumeration",
+      "enum": ["historical", "religious", "recreational", "market", "landmark", "food-hub"],
+      "required": true
+    },
+    "address": {
+      "type": "component",
+      "repeatable": false,
+      "component": "shared.address"
+    },
+    "image": {
+      "type": "media",
+      "multiple": false,
+      "required": false,
+      "allowedTypes": ["images"]
+    },
+    "gallery": {
+      "type": "media",
+      "multiple": true,
+      "required": false,
+      "allowedTypes": ["images"]
+    },
+    "description": {
+      "type": "richtext",
+      "required": true
+    },
+    "descriptionHindi": {
+      "type": "richtext",
+      "required": true
+    },
+    "history": {
+      "type": "richtext"
+    },
+    "historyHindi": {
+      "type": "richtext"
+    },
+    "timings": {
+      "type": "string",
+      "maxLength": 100
+    },
+    "entryFee": {
+      "type": "string",
+      "maxLength": 100
+    },
+    "bestTimeToVisit": {
+      "type": "string",
+      "maxLength": 200
+    },
+    "isFeatured": {
+      "type": "boolean",
+      "default": false
+    },
+    "rating": {
+      "type": "decimal"
+    },
+    "mapLink": {
+      "type": "string",
+      "maxLength": 500
+    }
+  }
+}

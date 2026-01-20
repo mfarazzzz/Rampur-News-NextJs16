@@ -1,0 +1,44 @@
+{
+  "collectionName": "components_shared_address",
+  "info": {
+    "displayName": "Address",
+    "icon": "map-marker-alt",
+    "description": "Physical address component"
+  },
+  "options": {},
+  "attributes": {
+    "street": {
+      "type": "string",
+      "maxLength": 300
+    },
+    "streetHindi": {
+      "type": "string",
+      "maxLength": 300
+    },
+    "city": {
+      "type": "string",
+      "required": true,
+      "maxLength": 100
+    },
+    "district": {
+      "type": "string",
+      "required": true,
+      "maxLength": 100
+    },
+    "state": {
+      "type": "string",
+      "maxLength": 100,
+      "default": "Uttar Pradesh"
+    },
+    "pincode": {
+      "type": "string",
+      "maxLength": 10
+    },
+    "latitude": {
+      "type": "decimal"
+    },
+    "longitude": {
+      "type": "decimal"
+    }
+  }
+}

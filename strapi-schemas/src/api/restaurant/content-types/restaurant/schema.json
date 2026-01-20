@@ -1,0 +1,106 @@
+{
+  "kind": "collectionType",
+  "collectionName": "restaurants",
+  "info": {
+    "singularName": "restaurant",
+    "pluralName": "restaurants",
+    "displayName": "Restaurant",
+    "description": "Food and dining establishments"
+  },
+  "options": {
+    "draftAndPublish": true
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "name": {
+      "type": "string",
+      "required": true,
+      "maxLength": 200
+    },
+    "nameHindi": {
+      "type": "string",
+      "required": true,
+      "maxLength": 200
+    },
+    "slug": {
+      "type": "uid",
+      "targetField": "name",
+      "required": true
+    },
+    "type": {
+      "type": "enumeration",
+      "enum": ["restaurant", "cafe", "street-food", "sweet-shop", "dhaba", "fine-dining"],
+      "required": true
+    },
+    "cuisine": {
+      "type": "json"
+    },
+    "address": {
+      "type": "component",
+      "repeatable": false,
+      "component": "shared.address"
+    },
+    "phone": {
+      "type": "string",
+      "maxLength": 20
+    },
+    "priceRange": {
+      "type": "enumeration",
+      "enum": ["budget", "moderate", "expensive", "luxury"],
+      "default": "moderate"
+    },
+    "rating": {
+      "type": "decimal"
+    },
+    "reviewsCount": {
+      "type": "integer",
+      "default": 0
+    },
+    "openingHours": {
+      "type": "string",
+      "maxLength": 100
+    },
+    "image": {
+      "type": "media",
+      "multiple": false,
+      "required": false,
+      "allowedTypes": ["images"]
+    },
+    "gallery": {
+      "type": "media",
+      "multiple": true,
+      "required": false,
+      "allowedTypes": ["images"]
+    },
+    "specialties": {
+      "type": "json"
+    },
+    "specialtiesHindi": {
+      "type": "json"
+    },
+    "description": {
+      "type": "richtext",
+      "required": true
+    },
+    "descriptionHindi": {
+      "type": "richtext",
+      "required": true
+    },
+    "isVeg": {
+      "type": "boolean",
+      "default": false
+    },
+    "hasDelivery": {
+      "type": "boolean",
+      "default": false
+    },
+    "isFeatured": {
+      "type": "boolean",
+      "default": false
+    },
+    "mapLink": {
+      "type": "string",
+      "maxLength": 500
+    }
+  }
+}

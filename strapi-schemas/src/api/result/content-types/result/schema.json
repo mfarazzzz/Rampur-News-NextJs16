@@ -1,0 +1,96 @@
+{
+  "kind": "collectionType",
+  "collectionName": "results",
+  "info": {
+    "singularName": "result",
+    "pluralName": "results",
+    "displayName": "Result",
+    "description": "Exam results announcements"
+  },
+  "options": {
+    "draftAndPublish": true
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "title": {
+      "type": "string",
+      "required": true,
+      "maxLength": 255
+    },
+    "titleHindi": {
+      "type": "string",
+      "required": true,
+      "maxLength": 255
+    },
+    "slug": {
+      "type": "uid",
+      "targetField": "title",
+      "required": true
+    },
+    "resultDate": {
+      "type": "date",
+      "required": true
+    },
+    "expectedDate": {
+      "type": "date"
+    },
+    "organization": {
+      "type": "string",
+      "required": true,
+      "maxLength": 200
+    },
+    "organizationHindi": {
+      "type": "string",
+      "required": true,
+      "maxLength": 200
+    },
+    "category": {
+      "type": "enumeration",
+      "enum": ["board", "entrance", "government", "university", "competitive"],
+      "required": true
+    },
+    "description": {
+      "type": "richtext",
+      "required": true
+    },
+    "descriptionHindi": {
+      "type": "richtext"
+    },
+    "resultLink": {
+      "type": "string",
+      "maxLength": 500
+    },
+    "alternateLinks": {
+      "type": "json"
+    },
+    "image": {
+      "type": "media",
+      "multiple": false,
+      "required": false,
+      "allowedTypes": ["images"]
+    },
+    "totalCandidates": {
+      "type": "integer"
+    },
+    "passPercentage": {
+      "type": "decimal"
+    },
+    "cutoffMarks": {
+      "type": "string",
+      "maxLength": 100
+    },
+    "status": {
+      "type": "enumeration",
+      "enum": ["declared", "expected", "upcoming"],
+      "default": "upcoming"
+    },
+    "isNew": {
+      "type": "boolean",
+      "default": false
+    },
+    "isFeatured": {
+      "type": "boolean",
+      "default": false
+    }
+  }
+}
