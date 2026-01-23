@@ -10,11 +10,21 @@ const queryClient = new QueryClient();
 
 export function Providers({ children }: { children: ReactNode }) {
   useEffect(() => {
-    const provider = process.env.NEXT_PUBLIC_CMS_PROVIDER;
+    const provider = import.meta.env.VITE_CMS_PROVIDER;
+    
     if (provider === "wordpress") {
       configureCMS({
         provider: "wordpress",
-        baseUrl: "/api/cms/wordpress",
+        baseUrl: import.meta.env.VITE_CMS_URL || "/api/cms/wordpress",
+      });
+      return;
+    }
+    
+    if (provider === "strapi") {
+      configureCMS({
+        provider: "strapi",
+        baseUrl: import.meta.env.VITE_STRAPI_URL || "http://localhost:1337",
+        apiKey: import.meta.env.VITE_STRAPI_TOKEN,
       });
       return;
     }

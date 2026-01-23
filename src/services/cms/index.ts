@@ -11,10 +11,12 @@ import type {
 } from './types';
 import { mockCMSProvider } from './mockProvider';
 import { createWordPressProvider } from './wordpressProvider';
+import { createStrapiProvider } from './strapiProvider';
 
 export * from './types';
 export * from './provider';
 export { createWordPressProvider } from './wordpressProvider';
+export { createStrapiProvider } from './strapiProvider';
 
 const createRestCMSProvider = (config: CMSConfig): CMSProvider => {
   const baseUrl = (config.baseUrl || '').replace(/\/+$/, '');
@@ -381,7 +383,14 @@ export const configureCMS = (config: CMSConfig): void => {
     });
   }
 
-  if ((config.provider === 'strapi' || config.provider === 'django' || config.provider === 'custom') && config.baseUrl) {
+  if (config.provider === 'strapi' && config.baseUrl) {
+    providerInstances.strapi = createStrapiProvider({
+      baseUrl: config.baseUrl,
+      apiToken: config.apiKey,
+    });
+  }
+
+  if ((config.provider === 'django' || config.provider === 'custom') && config.baseUrl) {
     providerInstances[config.provider] = createRestCMSProvider(config);
   }
 };
