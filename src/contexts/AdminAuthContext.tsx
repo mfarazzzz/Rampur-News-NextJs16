@@ -20,6 +20,24 @@ const AdminAuthContext = createContext<AdminAuthContextType | undefined>(undefin
 
 const STORAGE_KEY = 'admin_auth';
 
+// Demo credentials (for development only - replace with proper auth in production)
+const DEMO_USERS = [
+  {
+    id: 'admin-1',
+    email: 'admin@rampurnews.com',
+    password: 'admin123',
+    name: 'Admin User',
+    role: 'admin' as const,
+  },
+  {
+    id: 'editor-1',
+    email: 'editor@rampurnews.com',
+    password: 'editor123',
+    name: 'Editor User',
+    role: 'editor' as const,
+  },
+];
+
 export const AdminAuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [user, setUser] = useState<AdminUser | null>(() => {
     if (typeof window === 'undefined') {
@@ -46,40 +64,36 @@ export const AdminAuthProvider: React.FC<{ children: React.ReactNode }> = ({ chi
   const login = useCallback(async (email: string, password: string): Promise<boolean> => {
     setIsLoading(true);
     try {
-      const response = await fetch('/api/admin/login', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ email, password }),
-      });
-
-      if (!response.ok) {
-        let message = `Login failed (${response.status})`;
-        try {
-          const data = await response.json();
-          if (data?.error && typeof data.error === 'string') {
-            message = data.error;
-          }
-        } catch {
-          // ignore
-        }
-
-        if (response.status === 401) {
-          return false;
-        }
-        throw new Error(message);
+      // Simulate network delay
+      await new Promise(resolve => setTimeout(resolve, 500));
+      
+      const inputEmail = email.trim().toLowerCase();
+      const inputPassword = password.trim();
+      
+      const matchedUser = DEMO_USERS.find(
+        u => u.email.toLowerCase() === inputEmail && u.password === inputPassword
+      );
+      
+      if (!matchedUser) {
+        return false;
       }
-
-      const data = await response.json();
+      
+      const adminUser: AdminUser = {
+        id: matchedUser.id,
+        name: matchedUser.name,
+        email: matchedUser.email,
+        role: matchedUser.role,
+      };
+      
       const session = {
-        user: data.user as AdminUser,
+        user: adminUser,
         expiresAt: Date.now() + 24 * 60 * 60 * 1000,
       };
+      
       if (typeof window !== 'undefined') {
         localStorage.setItem(STORAGE_KEY, JSON.stringify(session));
       }
-      setUser(data.user as AdminUser);
+      setUser(adminUser);
       return true;
     } catch {
       return false;
@@ -90,7 +104,6 @@ export const AdminAuthProvider: React.FC<{ children: React.ReactNode }> = ({ chi
 
   const logout = useCallback(() => {
     localStorage.removeItem(STORAGE_KEY);
-    fetch('/api/admin/logout', { method: 'POST' }).catch(() => {});
     setUser(null);
   }, []);
 
