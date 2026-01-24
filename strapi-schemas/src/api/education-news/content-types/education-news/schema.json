@@ -1,0 +1,104 @@
+{
+  "kind": "collectionType",
+  "collectionName": "education_news",
+  "info": {
+    "singularName": "education-news",
+    "pluralName": "education-news",
+    "displayName": "Education News",
+    "description": "Education sector news and updates"
+  },
+  "options": {
+    "draftAndPublish": true
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "title": {
+      "type": "string",
+      "required": true,
+      "maxLength": 255
+    },
+    "titleHindi": {
+      "type": "string",
+      "required": true,
+      "maxLength": 255
+    },
+    "slug": {
+      "type": "uid",
+      "targetField": "title",
+      "required": true
+    },
+    "category": {
+      "type": "enumeration",
+      "enum": ["board-news", "exam-news", "result-news", "admission-news", "scholarship", "government-order"],
+      "required": true
+    },
+    "excerpt": {
+      "type": "text",
+      "required": true,
+      "maxLength": 500
+    },
+    "excerptHindi": {
+      "type": "text",
+      "required": true,
+      "maxLength": 500
+    },
+    "content": {
+      "type": "richtext",
+      "required": true
+    },
+    "contentHindi": {
+      "type": "richtext"
+    },
+    "image": {
+      "type": "media",
+      "multiple": false,
+      "required": false,
+      "allowedTypes": ["images"]
+    },
+    "source": {
+      "type": "string",
+      "maxLength": 200
+    },
+    "sourceLink": {
+      "type": "string",
+      "maxLength": 500
+    },
+    "author": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "api::author.author"
+    },
+    "isBreaking": {
+      "type": "boolean",
+      "default": false
+    },
+    "isImportant": {
+      "type": "boolean",
+      "default": false
+    },
+    "isFeatured": {
+      "type": "boolean",
+      "default": false
+    },
+    "relatedExams": {
+      "type": "relation",
+      "relation": "manyToMany",
+      "target": "api::exam.exam"
+    },
+    "relatedResults": {
+      "type": "relation",
+      "relation": "manyToMany",
+      "target": "api::result.result"
+    },
+    "tags": {
+      "type": "relation",
+      "relation": "manyToMany",
+      "target": "api::tag.tag"
+    },
+    "seo": {
+      "type": "component",
+      "repeatable": false,
+      "component": "shared.seo"
+    }
+  }
+}

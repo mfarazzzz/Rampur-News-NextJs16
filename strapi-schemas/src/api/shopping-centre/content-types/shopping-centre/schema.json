@@ -1,0 +1,97 @@
+{
+  "kind": "collectionType",
+  "collectionName": "shopping_centres",
+  "info": {
+    "singularName": "shopping-centre",
+    "pluralName": "shopping-centres",
+    "displayName": "Shopping Centre",
+    "description": "Malls, markets, and shopping complexes"
+  },
+  "options": {
+    "draftAndPublish": true
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "name": {
+      "type": "string",
+      "required": true,
+      "maxLength": 200
+    },
+    "nameHindi": {
+      "type": "string",
+      "required": true,
+      "maxLength": 200
+    },
+    "slug": {
+      "type": "uid",
+      "targetField": "name",
+      "required": true
+    },
+    "type": {
+      "type": "enumeration",
+      "enum": ["mall", "market", "bazaar", "complex", "plaza"],
+      "required": true
+    },
+    "address": {
+      "type": "component",
+      "repeatable": false,
+      "component": "shared.address"
+    },
+    "phone": {
+      "type": "string",
+      "maxLength": 20
+    },
+    "openingHours": {
+      "type": "string",
+      "maxLength": 100
+    },
+    "image": {
+      "type": "media",
+      "multiple": false,
+      "required": false,
+      "allowedTypes": ["images"]
+    },
+    "gallery": {
+      "type": "media",
+      "multiple": true,
+      "required": false,
+      "allowedTypes": ["images"]
+    },
+    "storeCount": {
+      "type": "integer"
+    },
+    "amenities": {
+      "type": "json"
+    },
+    "amenitiesHindi": {
+      "type": "json"
+    },
+    "parkingAvailable": {
+      "type": "boolean",
+      "default": false
+    },
+    "description": {
+      "type": "richtext",
+      "required": true
+    },
+    "descriptionHindi": {
+      "type": "richtext",
+      "required": true
+    },
+    "isFeatured": {
+      "type": "boolean",
+      "default": false
+    },
+    "mapLink": {
+      "type": "string",
+      "maxLength": 500
+    },
+    "rating": {
+      "type": "decimal"
+    },
+    "reviewsCount": {
+      "type": "integer",
+      "default": 0
+    }
+  }
+}

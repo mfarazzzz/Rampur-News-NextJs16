@@ -1,0 +1,88 @@
+{
+  "kind": "collectionType",
+  "collectionName": "video_tutorials",
+  "info": {
+    "singularName": "video-tutorial",
+    "pluralName": "video-tutorials",
+    "displayName": "Video Tutorial",
+    "description": "Educational video content and tutorials"
+  },
+  "options": {
+    "draftAndPublish": true
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "title": {
+      "type": "string",
+      "required": true,
+      "maxLength": 255
+    },
+    "titleHindi": {
+      "type": "string",
+      "required": true,
+      "maxLength": 255
+    },
+    "slug": {
+      "type": "uid",
+      "targetField": "title",
+      "required": true
+    },
+    "category": {
+      "type": "enumeration",
+      "enum": ["exam-prep", "career-guidance", "study-tips", "motivation", "subject-wise"],
+      "required": true
+    },
+    "description": {
+      "type": "text",
+      "required": true,
+      "maxLength": 500
+    },
+    "descriptionHindi": {
+      "type": "text",
+      "maxLength": 500
+    },
+    "thumbnail": {
+      "type": "media",
+      "multiple": false,
+      "required": false,
+      "allowedTypes": ["images"]
+    },
+    "videoUrl": {
+      "type": "string",
+      "required": true,
+      "maxLength": 500
+    },
+    "videoType": {
+      "type": "enumeration",
+      "enum": ["youtube", "upload", "external"],
+      "default": "youtube"
+    },
+    "duration": {
+      "type": "string",
+      "maxLength": 20
+    },
+    "views": {
+      "type": "integer",
+      "default": 0
+    },
+    "instructor": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "api::expert.expert"
+    },
+    "tags": {
+      "type": "relation",
+      "relation": "manyToMany",
+      "target": "api::tag.tag"
+    },
+    "isFeatured": {
+      "type": "boolean",
+      "default": false
+    },
+    "seo": {
+      "type": "component",
+      "repeatable": false,
+      "component": "shared.seo"
+    }
+  }
+}

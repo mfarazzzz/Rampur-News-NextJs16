@@ -1,0 +1,74 @@
+{
+  "kind": "collectionType",
+  "collectionName": "testimonials",
+  "info": {
+    "singularName": "testimonial",
+    "pluralName": "testimonials",
+    "displayName": "Testimonial",
+    "description": "Student success stories and testimonials"
+  },
+  "options": {
+    "draftAndPublish": true
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "name": {
+      "type": "string",
+      "required": true,
+      "maxLength": 100
+    },
+    "nameHindi": {
+      "type": "string",
+      "required": true,
+      "maxLength": 100
+    },
+    "designation": {
+      "type": "string",
+      "required": true,
+      "maxLength": 100
+    },
+    "designationHindi": {
+      "type": "string",
+      "required": true,
+      "maxLength": 100
+    },
+    "image": {
+      "type": "media",
+      "multiple": false,
+      "required": false,
+      "allowedTypes": ["images"]
+    },
+    "content": {
+      "type": "text",
+      "required": true,
+      "maxLength": 1000
+    },
+    "contentHindi": {
+      "type": "text",
+      "required": true,
+      "maxLength": 1000
+    },
+    "rating": {
+      "type": "integer",
+      "min": 1,
+      "max": 5
+    },
+    "exam": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "api::exam.exam"
+    },
+    "year": {
+      "type": "string",
+      "maxLength": 10
+    },
+    "isFeatured": {
+      "type": "boolean",
+      "default": false
+    },
+    "isVerified": {
+      "type": "boolean",
+      "default": false
+    }
+  }
+}

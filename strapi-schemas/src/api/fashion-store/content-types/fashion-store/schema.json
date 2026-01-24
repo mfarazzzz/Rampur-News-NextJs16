@@ -1,0 +1,99 @@
+{
+  "kind": "collectionType",
+  "collectionName": "fashion_stores",
+  "info": {
+    "singularName": "fashion-store",
+    "pluralName": "fashion-stores",
+    "displayName": "Fashion Store",
+    "description": "Fashion and clothing stores directory"
+  },
+  "options": {
+    "draftAndPublish": true
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "name": {
+      "type": "string",
+      "required": true,
+      "maxLength": 200
+    },
+    "nameHindi": {
+      "type": "string",
+      "required": true,
+      "maxLength": 200
+    },
+    "slug": {
+      "type": "uid",
+      "targetField": "name",
+      "required": true
+    },
+    "type": {
+      "type": "enumeration",
+      "enum": ["clothing", "jewelry", "footwear", "accessories", "tailor", "boutique"],
+      "required": true
+    },
+    "category": {
+      "type": "enumeration",
+      "enum": ["men", "women", "kids", "all"],
+      "default": "all"
+    },
+    "address": {
+      "type": "component",
+      "repeatable": false,
+      "component": "shared.address"
+    },
+    "phone": {
+      "type": "string",
+      "maxLength": 20
+    },
+    "priceRange": {
+      "type": "enumeration",
+      "enum": ["budget", "moderate", "expensive", "luxury"],
+      "default": "moderate"
+    },
+    "rating": {
+      "type": "decimal"
+    },
+    "reviewsCount": {
+      "type": "integer",
+      "default": 0
+    },
+    "image": {
+      "type": "media",
+      "multiple": false,
+      "required": false,
+      "allowedTypes": ["images"]
+    },
+    "gallery": {
+      "type": "media",
+      "multiple": true,
+      "required": false,
+      "allowedTypes": ["images"]
+    },
+    "brands": {
+      "type": "json"
+    },
+    "specialties": {
+      "type": "json"
+    },
+    "specialtiesHindi": {
+      "type": "json"
+    },
+    "description": {
+      "type": "richtext",
+      "required": true
+    },
+    "descriptionHindi": {
+      "type": "richtext",
+      "required": true
+    },
+    "isFeatured": {
+      "type": "boolean",
+      "default": false
+    },
+    "mapLink": {
+      "type": "string",
+      "maxLength": 500
+    }
+  }
+}
