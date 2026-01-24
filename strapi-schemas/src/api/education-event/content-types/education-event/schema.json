@@ -1,0 +1,108 @@
+{
+  "kind": "collectionType",
+  "collectionName": "education_events",
+  "info": {
+    "singularName": "education-event",
+    "pluralName": "education-events",
+    "displayName": "Education Event",
+    "description": "Educational events, webinars, and workshops"
+  },
+  "options": {
+    "draftAndPublish": true
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "title": {
+      "type": "string",
+      "required": true,
+      "maxLength": 255
+    },
+    "titleHindi": {
+      "type": "string",
+      "required": true,
+      "maxLength": 255
+    },
+    "slug": {
+      "type": "uid",
+      "targetField": "title",
+      "required": true
+    },
+    "type": {
+      "type": "enumeration",
+      "enum": ["webinar", "seminar", "workshop", "counseling", "career-fair", "admission-drive", "exam-date"],
+      "required": true
+    },
+    "date": {
+      "type": "datetime",
+      "required": true
+    },
+    "endDate": {
+      "type": "datetime"
+    },
+    "time": {
+      "type": "string",
+      "maxLength": 50
+    },
+    "venue": {
+      "type": "string",
+      "required": true,
+      "maxLength": 255
+    },
+    "venueHindi": {
+      "type": "string",
+      "required": true,
+      "maxLength": 255
+    },
+    "venueType": {
+      "type": "enumeration",
+      "enum": ["online", "offline", "hybrid"],
+      "default": "offline"
+    },
+    "registrationLink": {
+      "type": "string",
+      "maxLength": 500
+    },
+    "description": {
+      "type": "richtext",
+      "required": true
+    },
+    "descriptionHindi": {
+      "type": "richtext"
+    },
+    "organizer": {
+      "type": "string",
+      "maxLength": 200
+    },
+    "organizerHindi": {
+      "type": "string",
+      "maxLength": 200
+    },
+    "isFree": {
+      "type": "boolean",
+      "default": true
+    },
+    "registrationDeadline": {
+      "type": "datetime"
+    },
+    "image": {
+      "type": "media",
+      "multiple": false,
+      "required": false,
+      "allowedTypes": ["images"]
+    },
+    "status": {
+      "type": "enumeration",
+      "enum": ["upcoming", "ongoing", "completed", "cancelled"],
+      "default": "upcoming"
+    },
+    "isFeatured": {
+      "type": "boolean",
+      "default": false
+    },
+    "seo": {
+      "type": "component",
+      "repeatable": false,
+      "component": "shared.seo"
+    }
+  }
+}

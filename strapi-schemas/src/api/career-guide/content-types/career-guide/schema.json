@@ -1,0 +1,99 @@
+{
+  "kind": "collectionType",
+  "collectionName": "career_guides",
+  "info": {
+    "singularName": "career-guide",
+    "pluralName": "career-guides",
+    "displayName": "Career Guide",
+    "description": "Career guidance articles and resources"
+  },
+  "options": {
+    "draftAndPublish": true
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "title": {
+      "type": "string",
+      "required": true,
+      "maxLength": 255
+    },
+    "titleHindi": {
+      "type": "string",
+      "required": true,
+      "maxLength": 255
+    },
+    "slug": {
+      "type": "uid",
+      "targetField": "title",
+      "required": true
+    },
+    "category": {
+      "type": "enumeration",
+      "enum": ["after-10th", "after-12th", "graduation", "government-jobs", "private-sector", "abroad", "skills"],
+      "required": true
+    },
+    "description": {
+      "type": "text",
+      "required": true,
+      "maxLength": 500
+    },
+    "descriptionHindi": {
+      "type": "text",
+      "required": true,
+      "maxLength": 500
+    },
+    "content": {
+      "type": "richtext",
+      "required": true
+    },
+    "contentHindi": {
+      "type": "richtext"
+    },
+    "image": {
+      "type": "media",
+      "multiple": false,
+      "required": false,
+      "allowedTypes": ["images"]
+    },
+    "author": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "api::author.author"
+    },
+    "eligibility": {
+      "type": "json"
+    },
+    "eligibilityHindi": {
+      "type": "json"
+    },
+    "careerPaths": {
+      "type": "json"
+    },
+    "careerPathsHindi": {
+      "type": "json"
+    },
+    "averageSalary": {
+      "type": "string",
+      "maxLength": 100
+    },
+    "topColleges": {
+      "type": "json"
+    },
+    "requiredExams": {
+      "type": "json"
+    },
+    "isFeatured": {
+      "type": "boolean",
+      "default": false
+    },
+    "isPopular": {
+      "type": "boolean",
+      "default": false
+    },
+    "seo": {
+      "type": "component",
+      "repeatable": false,
+      "component": "shared.seo"
+    }
+  }
+}
