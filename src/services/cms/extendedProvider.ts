@@ -24,6 +24,7 @@ import {
   mockEvents,
 } from './extendedMockData';
 import type { PaginatedResponse } from './types';
+import { createStrapiExtendedProvider } from './strapiExtendedProvider';
 
 // Helper function for filtering and pagination
 const applyFiltersAndPagination = <T extends { id: string }>(
@@ -502,4 +503,32 @@ export const extendedMockProvider: ExtendedCMSProvider = {
   },
 };
 
-export const getExtendedCMSProvider = () => extendedMockProvider;
+// Provider factory - switches between mock and Strapi based on environment
+let strapiExtendedProviderInstance: ExtendedCMSProvider | null = null;
+
+export const getExtendedCMSProvider = (): ExtendedCMSProvider => {
+  const provider = typeof window !== 'undefined' 
+    ? (import.meta.env?.VITE_CMS_PROVIDER as string | undefined)
+    : process.env.VITE_CMS_PROVIDER;
+  
+  if (provider === 'strapi') {
+    if (!strapiExtendedProviderInstance) {
+      const baseUrl = typeof window !== 'undefined'
+        ? (import.meta.env?.VITE_STRAPI_URL as string | undefined) || 'http://localhost:1337'
+        : process.env.VITE_STRAPI_URL || 'http://localhost:1337';
+      
+      const apiToken = typeof window !== 'undefined'
+        ? (import.meta.env?.VITE_STRAPI_TOKEN as string | undefined)
+        : process.env.VITE_STRAPI_TOKEN;
+      
+      strapiExtendedProviderInstance = createStrapiExtendedProvider({
+        baseUrl,
+        apiToken,
+      });
+    }
+    return strapiExtendedProviderInstance;
+  }
+  
+  // Default to mock provider
+  return extendedMockProvider;
+};
